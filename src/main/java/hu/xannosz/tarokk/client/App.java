@@ -1,10 +1,10 @@
 package hu.xannosz.tarokk.client;
 
-import hu.xannosz.tarokk.client.commandline.CommandLineClient;
-import hu.xannosz.tarokk.client.common.TerminalSettings;
+import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.TerminalSettings;
 
 public class App {
     public static void main(String[] args) {
-        new CommandLineClient(new TerminalSettings());
+        new TuiClient(new TerminalSettings());
     }
 }

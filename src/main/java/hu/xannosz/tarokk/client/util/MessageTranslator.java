@@ -1,6 +1,8 @@
 package hu.xannosz.tarokk.client.util;
 
 import com.tisza.tarock.proto.MainProto;
+import hu.xannosz.tarokk.client.game.DoubleRoundType;
+import hu.xannosz.tarokk.client.game.GameType;
 
 public class MessageTranslator {
     public static MainProto.Message fbLogin(String token){
@@ -9,5 +11,14 @@ public class MessageTranslator {
 
     public static MainProto.Message listLobby(){
         return MainProto.Message.newBuilder().setStartGameSessionLobby(MainProto.StartGameSessionLobby.getDefaultInstance()).build();
+    }
+
+    public static MainProto.Message joinToGame(int id) {
+        return MainProto.Message.newBuilder().setJoinGameSession(MainProto.JoinGameSession.newBuilder().setGameSessionId(id).build()).build();
+    }
+
+    public static MainProto.Message newGame(DoubleRoundType doubleRoundType, GameType type) {
+        return MainProto.Message.newBuilder().setCreateGameSession(MainProto.CreateGameSession.newBuilder()
+                .setDoubleRoundType(doubleRoundType.getName()).setType(type.getName()).build()).build();
     }
 }

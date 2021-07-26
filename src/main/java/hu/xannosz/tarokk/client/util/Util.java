@@ -1,16 +1,22 @@
 package hu.xannosz.tarokk.client.util;
 
+import com.googlecode.lanterna.graphics.SimpleTheme;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Label;
+import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import hu.xannosz.tarokk.client.android.network.MessageHandler;
 import hu.xannosz.tarokk.client.android.network.ProtoConnection;
+import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -31,6 +37,22 @@ public class Util {
     public static Screen createScreen() throws IOException {
         Terminal terminal = new DefaultTerminalFactory().createTerminal();
         return new TerminalScreen(terminal);
+    }
+
+    private Panel formatActions(TerminalSettings terminalSettings, KeyMapDictionary dictionary) {
+        Panel panel = new Panel();
+        panel.setTheme(new SimpleTheme(terminalSettings.getActionsPanelForeGround(), terminalSettings.getActionsPanelBackGround()));
+
+        for (Map.Entry<String, String> entry : dictionary.getFunctionNames().entrySet()) {
+            Panel tag = new Panel();
+            tag.setLayoutManager(new GridLayout(3));
+            tag.addComponent(new Label("["));
+            tag.addComponent(new Label(entry.getKey()).setTheme(new SimpleTheme(terminalSettings.getKeyColor(), terminalSettings.getActionsPanelBackGround())));
+            tag.addComponent(new Label("]: " + entry.getValue()));
+            panel.addComponent(tag);
+        }
+
+        return panel;
     }
 
     public static void log(String color, String message) {

@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.common;
+package hu.xannosz.tarokk.client.tui;
 
 import lombok.Getter;
 
