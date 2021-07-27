@@ -39,7 +39,7 @@ public class Util {
         return new TerminalScreen(terminal);
     }
 
-    private Panel formatActions(TerminalSettings terminalSettings, KeyMapDictionary dictionary) {
+    public static Panel formatActions(TerminalSettings terminalSettings, KeyMapDictionary dictionary) {
         Panel panel = new Panel();
         panel.setTheme(new SimpleTheme(terminalSettings.getActionsPanelForeGround(), terminalSettings.getActionsPanelBackGround()));
 
@@ -53,6 +53,15 @@ public class Util {
         }
 
         return panel;
+    }
+
+    public static boolean anyNull(Object... objects) {
+        for (Object obj : objects) {
+            if (obj == null) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void log(String color, String message) {

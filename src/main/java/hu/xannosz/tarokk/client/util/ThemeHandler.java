@@ -7,10 +7,34 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class ThemeHandler {
     public Theme getHighLightedTheme(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getMainPanelHighLightedForeGround(), terminalSettings.getBackGround());
+        return new SimpleTheme(terminalSettings.getHighLightedForeGround(), terminalSettings.getBackGround());
+    }
+
+    public Theme getHighLightedThemeMainPanel(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getHighLightedForeGround(), terminalSettings.getMainPanelBackGround());
     }
 
     public Theme getErrorTheme(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getMainPanelErrorForeGround(), terminalSettings.getBackGround());
+        return new SimpleTheme(terminalSettings.getErrorForeGround(), terminalSettings.getBackGround());
+    }
+
+    public Theme getErrorThemeMainPanel(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getErrorForeGround(), terminalSettings.getMainPanelBackGround());
+    }
+
+    public Theme getSubLightedTheme(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getSubLightedForeGround(), terminalSettings.getBackGround());
+    }
+
+    public Theme getSubLightedThemeMainPanel(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getSubLightedForeGround(), terminalSettings.getMainPanelBackGround());
+    }
+
+    public Theme getOnlineColorTheme(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getOnlineColor(), terminalSettings.getBackGround());
+    }
+
+    public Theme getOnlineColorThemeMainPanel(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getOnlineColor(), terminalSettings.getMainPanelBackGround());
     }
 }

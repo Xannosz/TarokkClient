@@ -123,7 +123,7 @@ public class TuiClient implements WindowListener {
         if (serverLiveData.getLoginResult() != null) {
             int userId = serverLiveData.getLoginResult().getUserId();
             head.addComponent(new Label("User Id:"));
-            head.addComponent(new Label("" + userId).setTheme(new SimpleTheme(terminalSettings.getMainPanelHighLightedForeGround(), terminalSettings.getBackGround())));
+            head.addComponent(new Label("" + userId).setTheme(new SimpleTheme(terminalSettings.getHighLightedForeGround(), terminalSettings.getBackGround())));
             if (serverLiveData.getUsers() != null) {
                 if (userId != 0) {
                     MainProto.User user = serverLiveData.getUsers().get(userId);
