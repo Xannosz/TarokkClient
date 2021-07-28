@@ -13,8 +13,8 @@ public class TerminalSettings {
     private TextColor highLightedForeGround = new TextColor.RGB(153, 51, 204);
     private TextColor subLightedForeGround = new TextColor.RGB(70,70,70);
     private TextColor onlineColor = new TextColor.RGB(68, 180, 204);
-    private TextColor actionsPanelBackGround = new TextColor.RGB(31, 32, 41);
-    private TextColor actionsPanelForeGround = new TextColor.RGB(25, 209, 216);
+    private TextColor footerPanelBackGround = new TextColor.RGB(31, 32, 41);
+    private TextColor footerPanelForeGround = new TextColor.RGB(25, 209, 216);
     private TextColor keyColor = new TextColor.RGB(255, 102, 0);
 
 

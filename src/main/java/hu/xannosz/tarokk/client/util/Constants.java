@@ -7,7 +7,7 @@ public class Constants {
     public static final int THREADS = 8;
 
     public static final String FB_TOKEN =
-            "EAAYqIBuQ6zgBAH18omQtoKNZAuZCtyS4IiB4tVcIVgOaAvqZAE2aU8CUwv2eHOEYvo18HKX88D2z5z5KGnmVjjgCnTAWk6xzRRm5TqlwrZAPErPXy5msJHx8jnjsaMFnfZAeegWQaA7ly9yW0H2XudErb5XCC52F0X06SU3vzcfKR536FHeGXVWfcy4zaGmCmVoRaEeqZClJqCwzO8Plxz";
+            "EAAYqIBuQ6zgBAJFaD1uybgwNSoZBqV80uiqf1Jt1beZCdZC74D6xBFj77tZCnI7QaKdfOe18A2TQPgkks3GtP3M988DzwleTX6Y1QNZARvgV1ZAb0FYEeLJPnvt39CWbcVCRSQZAvhZCp0wGbUXFOfTl9rk6nbFVPbq5WiC53qAAv4TNRbBJ9XBRZC4TzEI9Te8vp2xYvOpZAcb7MAcTyWX1fn";
 
     public static class Color {
         public static final String ANSI_RESET = "\u001B[0m";

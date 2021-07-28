@@ -6,6 +6,14 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ThemeHandler {
+    public Theme getTheme(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getForeGround(), terminalSettings.getBackGround());
+    }
+
+    public SimpleTheme getMainTheme(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getMainPanelForeGround(), terminalSettings.getMainPanelBackGround());
+    }
+
     public Theme getHighLightedTheme(TerminalSettings terminalSettings) {
         return new SimpleTheme(terminalSettings.getHighLightedForeGround(), terminalSettings.getBackGround());
     }
@@ -36,5 +44,13 @@ public class ThemeHandler {
 
     public Theme getOnlineColorThemeMainPanel(TerminalSettings terminalSettings) {
         return new SimpleTheme(terminalSettings.getOnlineColor(), terminalSettings.getMainPanelBackGround());
+    }
+
+    public Theme getKeyThemeFooterPanel(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getKeyColor(), terminalSettings.getFooterPanelBackGround());
+    }
+
+    public Theme getFooterPanelTheme(TerminalSettings terminalSettings) {
+        return new SimpleTheme(terminalSettings.getFooterPanelForeGround(), terminalSettings.getFooterPanelBackGround());
     }
 }

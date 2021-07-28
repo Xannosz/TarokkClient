@@ -1,6 +1,5 @@
 package hu.xannosz.tarokk.client.util;
 
-import com.googlecode.lanterna.graphics.SimpleTheme;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
@@ -41,13 +40,13 @@ public class Util {
 
     public static Panel formatActions(TerminalSettings terminalSettings, KeyMapDictionary dictionary) {
         Panel panel = new Panel();
-        panel.setTheme(new SimpleTheme(terminalSettings.getActionsPanelForeGround(), terminalSettings.getActionsPanelBackGround()));
+        panel.setTheme(ThemeHandler.getFooterPanelTheme(terminalSettings));
 
         for (Map.Entry<String, String> entry : dictionary.getFunctionNames().entrySet()) {
             Panel tag = new Panel();
             tag.setLayoutManager(new GridLayout(3));
             tag.addComponent(new Label("["));
-            tag.addComponent(new Label(entry.getKey()).setTheme(new SimpleTheme(terminalSettings.getKeyColor(), terminalSettings.getActionsPanelBackGround())));
+            tag.addComponent(new Label(entry.getKey()).setTheme(ThemeHandler.getKeyThemeFooterPanel(terminalSettings)));
             tag.addComponent(new Label("]: " + entry.getValue()));
             panel.addComponent(tag);
         }

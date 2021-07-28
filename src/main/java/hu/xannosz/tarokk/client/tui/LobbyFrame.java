@@ -4,19 +4,23 @@ import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class LobbyFrame extends Frame {
 
     private Panel frame = new Panel();
     private int gamePage = 0;
-    private int userPage = 0;
-    private int selected = 0;
+    private int namePage = 0;
+    private boolean namePanelActivated = false;
 
     private int maxNameSize;
     private TerminalSize gameListSize;
@@ -26,6 +30,11 @@ public class LobbyFrame extends Frame {
     private TerminalSize nameNamePanelSize;
     private TerminalSize nameOnlinePanelSize;
     private TerminalSize nameFriendPanelSize;
+    private boolean drawNamePanel;
+    private boolean drawNameOnlinePanel;
+    private boolean drawNameFriendPanel;
+    private int nameListHeight;
+    private int gameListHeight;
 
     public LobbyFrame(TuiClient tuiClient) {
         super(tuiClient);
@@ -37,8 +46,74 @@ public class LobbyFrame extends Frame {
     }
 
     @Override
-    public void handleKeyStroke(KeyStroke keyStroke) {
+    public Component getFooter() {
+        Panel footer = new Panel();
+        footer.setLayoutManager(new GridLayout(9));
 
+        footer.addComponent(new Label("["));
+        footer.addComponent(new Label("Arrows").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
+        footer.addComponent(new Label("]: Movement"));
+
+        footer.addComponent(new Label("["));
+        footer.addComponent(new Label("Enter").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
+        footer.addComponent(new Label("]: Join to game"));
+
+        footer.addComponent(new Label("["));
+        footer.addComponent(new Label("+").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
+        footer.addComponent(new Label("]: Create Game"));
+
+        return footer;
+    }
+
+    @Override
+    public void handleKeyStroke(KeyStroke keyStroke) {
+        if (keyStroke.getKeyType().equals(KeyType.ArrowLeft) && namePanelActivated) {
+            namePanelActivated = false;
+        }
+        if (keyStroke.getKeyType().equals(KeyType.ArrowRight) && !namePanelActivated && drawNamePanel) {
+            namePanelActivated = true;
+        }
+
+        if (keyStroke.getKeyType().equals(KeyType.ArrowUp)) {
+            if (namePanelActivated) {
+                namePage--;
+                if (namePage < 0) {
+                    namePage = 0;
+                }
+            } else {
+                gamePage--;
+                if (gamePage < 0) {
+                    gamePage = 0;
+                }
+            }
+        }
+        if (keyStroke.getKeyType().equals(KeyType.ArrowDown)) {
+            if (namePanelActivated) {
+                namePage++;
+                if (namePage > tuiClient.getServerLiveData().getUsers().size() - nameListHeight) {
+                    namePage = tuiClient.getServerLiveData().getUsers().size() - nameListHeight;
+                }
+                if (namePage < 0) {
+                    namePage = 0;
+                }
+            } else {
+                gamePage++;
+                if (gamePage > tuiClient.getServerLiveData().getGameSessions().size() - 1) {
+                    gamePage = tuiClient.getServerLiveData().getGameSessions().size() - 1;
+                }
+            }
+        }
+
+        if (keyStroke.getKeyType().equals(KeyType.Enter) && !namePanelActivated) {
+            tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
+            //TODO
+        }
+        if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('+') && !namePanelActivated) {
+            tuiClient.setFrame(new NewGameFrame(tuiClient));
+        }
+
+        update();
+        tuiClient.redraw();
     }
 
     @Override
@@ -56,24 +131,32 @@ public class LobbyFrame extends Frame {
         calculatePanelSizes();
 
         Panel gamePanel = new Panel();
-        gamePanel.setPreferredSize(new TerminalSize(size.getColumns() / 2, size.getRows() - 2));
-        for (MainProto.GameSession game : tuiClient.getServerLiveData().getGameSessions()) {
-            gamePanel.addComponent(createGameSessionPanel(game).withBorder(Borders.singleLine()));
-        }
-
-        Panel userPanel = new Panel();
-        userPanel.setPreferredSize(new TerminalSize(size.getColumns() / 2, size.getRows() - 2));
-        for (Map.Entry<Integer, MainProto.User> user : tuiClient.getServerLiveData().getUsers().entrySet()) {
-            if (!user.getValue().getBot() && user.getValue().getId() != tuiClient.getServerLiveData().getLoginResult().getUserId()) {
-                userPanel.addComponent(createUserPanel(user));
+        for (int i = gamePage; i < tuiClient.getServerLiveData().getGameSessions().size() && i < gamePage + gameListHeight; i++) {
+            if (i == gamePage && !namePanelActivated) {
+                gamePanel.addComponent(createGameSessionPanel(tuiClient.getServerLiveData().getGameSessions().get(i)).withBorder(Borders.doubleLine()));
+            } else {
+                gamePanel.addComponent(createGameSessionPanel(tuiClient.getServerLiveData().getGameSessions().get(i)).withBorder(Borders.singleLine()));
             }
         }
-
         frame.addComponent(gamePanel.setPreferredSize(gameListSize).withBorder(Borders.singleLine()));
-        frame.addComponent(userPanel.setPreferredSize(nameListSize).withBorder(Borders.singleLine()));
+
+        if (drawNamePanel) {
+            Panel userPanel = new Panel();
+            List<Map.Entry<Integer, MainProto.User>> userList = new ArrayList<>(tuiClient.getServerLiveData().getUsers().entrySet());
+            for (int i = namePage; i < userList.size() && i < namePage + nameListHeight; i++) {
+                if (!userList.get(i).getValue().getBot() && userList.get(i).getValue().getId() != tuiClient.getServerLiveData().getLoginResult().getUserId()) {
+                    userPanel.addComponent(createUserPanel(userList.get(i)));
+                }
+            }
+            if (namePanelActivated) {
+                frame.addComponent(userPanel.setPreferredSize(nameListSize).withBorder(Borders.doubleLine()));
+            } else {
+                frame.addComponent(userPanel.setPreferredSize(nameListSize).withBorder(Borders.singleLine()));
+            }
+        }
     }
 
-    private void calculatePanelSizes() { //TODO
+    private void calculatePanelSizes() {
         getMaxNameSize();
         TerminalSize size = tuiClient.getSize();
         int gamePanelNameWidth = maxNameSize + 3 + 2; //name, online indicator and ghost border
@@ -85,44 +168,54 @@ public class LobbyFrame extends Frame {
         int friendPanelWidth = 10 + 2; //Word and ghost border
         int halfBoardWidth = boardWidth / 2 - 2; //minus border
         int listPanelHeight = size.getRows() - 2 - 2 - 2; //minus board border, two main line and list border
+        nameListHeight = listPanelHeight;
+        gameListHeight = listPanelHeight / (6 + 2); //data panel height and border
 
         gameDataPanelSize = new TerminalSize(gameDataPanelWidth, 6);
         gameNamePanelSize = new TerminalSize(maxNameSize + 3, 1);
         nameNamePanelSize = new TerminalSize(maxNameSize, 1);
+        nameOnlinePanelSize = new TerminalSize(7, 1);
+        nameFriendPanelSize = new TerminalSize(10, 1);
 
-        if (namePanelWidth + onlinePanelWidth + friendPanelWidth >= halfBoardWidth && gameListMinWidth >= halfBoardWidth) {
+        if (namePanelWidth + onlinePanelWidth + friendPanelWidth <= halfBoardWidth && gameListMinWidth <= halfBoardWidth) {
             gameListSize = new TerminalSize(halfBoardWidth, listPanelHeight);
             nameListSize = new TerminalSize(halfBoardWidth, listPanelHeight);
-            nameOnlinePanelSize = new TerminalSize(7, 1);
-            nameFriendPanelSize = new TerminalSize(10, 1);
+            drawNamePanel = true;
+            drawNameOnlinePanel = true;
+            drawNameFriendPanel = true;
             return;
         }
-        if (namePanelWidth + onlinePanelWidth + friendPanelWidth + gameListMinWidth >= 2*halfBoardWidth) {
-            gameListSize = new TerminalSize(2*halfBoardWidth-(namePanelWidth + onlinePanelWidth + friendPanelWidth), listPanelHeight);
+        if (namePanelWidth + onlinePanelWidth + friendPanelWidth + gameListMinWidth <= 2 * halfBoardWidth) {
+            gameListSize = new TerminalSize(2 * halfBoardWidth - (namePanelWidth + onlinePanelWidth + friendPanelWidth), listPanelHeight);
             nameListSize = new TerminalSize(namePanelWidth + onlinePanelWidth + friendPanelWidth, listPanelHeight);
-            nameOnlinePanelSize = new TerminalSize(7, 1);
-            nameFriendPanelSize = new TerminalSize(10, 1);
+            drawNamePanel = true;
+            drawNameOnlinePanel = true;
+            drawNameFriendPanel = true;
             return;
         }
-        if (namePanelWidth + onlinePanelWidth  + gameListMinWidth >= 2*halfBoardWidth) {
-            gameListSize = new TerminalSize(2*halfBoardWidth-(namePanelWidth + onlinePanelWidth), listPanelHeight);
+        if (namePanelWidth + onlinePanelWidth + gameListMinWidth <= 2 * halfBoardWidth) {
+            gameListSize = new TerminalSize(2 * halfBoardWidth - (namePanelWidth + onlinePanelWidth), listPanelHeight);
             nameListSize = new TerminalSize(namePanelWidth + onlinePanelWidth, listPanelHeight);
-            nameOnlinePanelSize = new TerminalSize(7, 1);
-            nameFriendPanelSize = new TerminalSize(0, 1);
+            drawNamePanel = true;
+            drawNameOnlinePanel = true;
+            drawNameFriendPanel = false;
             return;
         }
-        if (namePanelWidth   + gameListMinWidth >= 2*halfBoardWidth) {
-            gameListSize = new TerminalSize(2*halfBoardWidth-namePanelWidth , listPanelHeight);
-            nameListSize = new TerminalSize(namePanelWidth , listPanelHeight);
-            nameOnlinePanelSize = new TerminalSize(0, 1);
-            nameFriendPanelSize = new TerminalSize(0, 1);
+        if (namePanelWidth + gameListMinWidth <= 2 * halfBoardWidth) {
+            gameListSize = new TerminalSize(2 * halfBoardWidth - namePanelWidth, listPanelHeight);
+            nameListSize = new TerminalSize(namePanelWidth, listPanelHeight);
+            drawNamePanel = true;
+            namePanelActivated = false;
+            drawNameOnlinePanel = false;
+            drawNameFriendPanel = false;
             return;
         }
 
         gameListSize = new TerminalSize(boardWidth - 2, listPanelHeight);
-        nameListSize = new TerminalSize(0, listPanelHeight);
-        nameOnlinePanelSize = new TerminalSize(0, 1);
-        nameFriendPanelSize = new TerminalSize(0, 1);
+        nameListSize = new TerminalSize(1, listPanelHeight);
+        drawNamePanel = false;
+        drawNameOnlinePanel = false;
+        drawNameFriendPanel = false;
     }
 
     private void getMaxNameSize() {
@@ -143,15 +236,19 @@ public class LobbyFrame extends Frame {
     private Panel createUserPanel(Map.Entry<Integer, MainProto.User> user) {
         Panel panel = new Panel();
         panel.addComponent(new Label(user.getValue().getName()).setPreferredSize(nameNamePanelSize));
-        if (user.getValue().getOnline()) {
-            panel.addComponent(new Label("Online ").setPreferredSize(nameOnlinePanelSize).setTheme(ThemeHandler.getHighLightedTheme(tuiClient.getTerminalSettings())));
-        } else {
-            panel.addComponent(new Label("Offline").setPreferredSize(nameOnlinePanelSize).setTheme(ThemeHandler.getSubLightedTheme(tuiClient.getTerminalSettings())));
+        if (drawNameOnlinePanel) {
+            if (user.getValue().getOnline()) {
+                panel.addComponent(new Label("Online ").setPreferredSize(nameOnlinePanelSize).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+            } else {
+                panel.addComponent(new Label("Offline").setPreferredSize(nameOnlinePanelSize).setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+            }
         }
-        if (user.getValue().getIsFriend()) {
-            panel.addComponent(new Label("  Friend  ").setPreferredSize(nameFriendPanelSize).setTheme(ThemeHandler.getHighLightedTheme(tuiClient.getTerminalSettings())));
-        } else {
-            panel.addComponent(new Label("Not Friend").setPreferredSize(nameFriendPanelSize).setTheme(ThemeHandler.getSubLightedTheme(tuiClient.getTerminalSettings())));
+        if (drawNameFriendPanel) {
+            if (user.getValue().getIsFriend()) {
+                panel.addComponent(new Label("  Friend  ").setPreferredSize(nameFriendPanelSize).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+            } else {
+                panel.addComponent(new Label("Not Friend").setPreferredSize(nameFriendPanelSize).setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+            }
         }
         panel.setLayoutManager(new GridLayout(3));
         return panel;

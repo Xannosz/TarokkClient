@@ -14,6 +14,8 @@ public abstract class Frame {
 
     public abstract Component getPanel();
 
+    public abstract Component getFooter();
+
     public abstract void handleKeyStroke(KeyStroke keyStroke);
 
     public abstract void update();
