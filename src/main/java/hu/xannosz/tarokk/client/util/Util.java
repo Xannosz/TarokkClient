@@ -15,11 +15,17 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 public class Util {
+
+    public static final String LOG_FILE_PATH = "log.txt";
+
     public static ProtoConnection createProtoConnection(MessageHandler messageHandler) throws IOException {
         SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
         socket.connect(new InetSocketAddress(Constants.ADDRESS, Constants.PORT), Constants.TIME_OUT);
@@ -65,6 +71,14 @@ public class Util {
 
     public static void log(String color, String message) {
         System.out.println(color + message + Constants.Color.ANSI_RESET);
+        try {
+            if (!Files.exists(Paths.get(LOG_FILE_PATH))) {
+                Files.createFile(Paths.get(LOG_FILE_PATH));
+            }
+            Files.write(Paths.get(LOG_FILE_PATH), (message+"\n").getBytes(), StandardOpenOption.APPEND);
+        } catch (IOException e) {
+            //Unexpected
+        }
     }
 
     public static void log(String message) {

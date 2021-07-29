@@ -99,7 +99,7 @@ public class NewGameFrame extends Frame {
 
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
             tuiClient.getConnection().sendMessage(MessageTranslator.newGame(doubleRoundType, gameType));
-            //TODO
+            tuiClient.setFrame(new GameFrame(tuiClient));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('/')) {
             tuiClient.setFrame(new LobbyFrame(tuiClient));
@@ -136,11 +136,11 @@ public class NewGameFrame extends Frame {
         }
 
         if (doublePanelActivated) {
-            frame.addComponent(gameTypePanel.withBorder(Borders.singleLine()));
-            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.doubleLine()));
+            frame.addComponent(gameTypePanel.withBorder(Borders.singleLine("Game Type")));
+            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.doubleLine("Double Round Type")));
         } else {
-            frame.addComponent(gameTypePanel.withBorder(Borders.doubleLine()));
-            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.singleLine()));
+            frame.addComponent(gameTypePanel.withBorder(Borders.doubleLine("Game Type")));
+            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.singleLine("Double Round Type")));
         }
     }
 }

@@ -1,11 +1,15 @@
 package hu.xannosz.tarokk.client.network;
 
+import com.tisza.tarock.proto.EventProto;
 import com.tisza.tarock.proto.MainProto;
+import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.android.network.MessageHandler;
+import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +20,25 @@ public class ServerLiveData implements MessageHandler {
     private List<MainProto.GameSession> gameSessions;
     private MainProto.LoginResult loginResult;
     private Map<Integer, MainProto.User> users;
+
+    //Game data
+    private String gameType;
+    private int beginnerPlayer;
+    private GamePhase phase;
+    private int playerTurn;
+    private Map<GamePhase,List<Douplet<Integer, String>>> playerActions;
+    private EventProto.Event.Chat chat;
+    private EventProto.Event.PlayerTeamInfo playerTeamInfo;
+    private EventProto.Event.PlayerCards playerCards;
+    private EventProto.Event.AvailableBids availableBids;
+    private EventProto.Event.AvailableCalls availableCalls;
+    private EventProto.Event.ChangeDone foldDone;
+    private EventProto.Event.SkartTarock skartTarock;
+    private EventProto.Event.AvailableAnnouncements availableAnnouncements;
+    private EventProto.Event.CardsTaken cardsTaken;
+    private EventProto.Event.Statistics statistics;
+    private EventProto.Event.PlayerPoints playerPoints;
+    private EventProto.Event.PendingNewGame pendingNewGame;
 
     private final TuiClient tuiClient;
 
@@ -32,8 +55,9 @@ public class ServerLiveData implements MessageHandler {
             case LOGIN:
             case JOIN_GAME_SESSION:
             case START_GAME_SESSION_LOBBY:
+            case ACTION:
                 // Server message
-                return;
+                return;//TODO
             case KEEPALIVE:
                 break;
             case LOGIN_RESULT:
@@ -41,15 +65,71 @@ public class ServerLiveData implements MessageHandler {
                 break;
             case FCM_TOKEN:
                 break;
-            case ACTION:
-                break;
             case EVENT:
+                EventProto.Event event = message.getEvent();
+                switch (event.getEventTypeCase()) {
+                    case START_GAME:
+                        gameType = event.getStartGame().getGameType();
+                        beginnerPlayer = event.getStartGame().getBeginnerPlayer();
+                        break;
+                    case PLAYER_ACTION:
+                        playerActions.computeIfAbsent(phase, k -> new ArrayList<>());
+                        playerActions.get(phase).add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction()));
+                        break;
+                    case CHAT:
+                        chat = event.getChat();
+                        break;
+                    case TURN:
+                        playerTurn = event.getTurn().getPlayer();
+                        break;
+                    case PLAYER_TEAM_INFO:
+                        playerTeamInfo = event.getPlayerTeamInfo();
+                        break;
+                    case PLAYER_CARDS:
+                        playerCards = event.getPlayerCards();
+                        break;
+                    case PHASE_CHANGED:
+                        phase = GamePhase.getPhase(event.getPhaseChanged().getPhase());
+                        break;
+                    case AVAILABLE_BIDS:
+                        availableBids = event.getAvailableBids();
+                        break;
+                    case AVAILABLE_CALLS:
+                        availableCalls = event.getAvailableCalls();
+                        break;
+                    case FOLD_DONE:
+                        foldDone = event.getFoldDone();
+                        break;
+                    case SKART_TAROCK:
+                        skartTarock = event.getSkartTarock();
+                        break;
+                    case AVAILABLE_ANNOUNCEMENTS:
+                        availableAnnouncements = event.getAvailableAnnouncements();
+                        break;
+                    case CARDS_TAKEN:
+                        cardsTaken = event.getCardsTaken();
+                        break;
+                    case STATISTICS:
+                        statistics = event.getStatistics();
+                        break;
+                    case PLAYER_POINTS:
+                        playerPoints = event.getPlayerPoints();
+                        break;
+                    case PENDING_NEW_GAME:
+                        pendingNewGame = event.getPendingNewGame();
+                        break;
+                    case EVENTTYPE_NOT_SET:
+                        Util.error("Event type not set: " + message);
+                        break;
+                }
+                EventProto.Event.PhaseChanged phaseChanged = event.getPhaseChanged();
+                phaseChanged.getPhase();
                 break;
             case SERVER_STATUS:
                 gameSessions = message.getServerStatus().getAvailableGameSessionList();
                 users = new HashMap<>();
                 for (MainProto.User user : message.getServerStatus().getAvailableUserList()) {
-                    users.put(user.getId(),user);
+                    users.put(user.getId(), user);
                 }
                 break;
             case DELETE_GAME_SESSION:

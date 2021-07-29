@@ -106,7 +106,7 @@ public class LobbyFrame extends Frame {
 
         if (keyStroke.getKeyType().equals(KeyType.Enter) && !namePanelActivated) {
             tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
-            //TODO
+            tuiClient.setFrame(new GameFrame(tuiClient));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('+') && !namePanelActivated) {
             tuiClient.setFrame(new NewGameFrame(tuiClient));
@@ -120,7 +120,6 @@ public class LobbyFrame extends Frame {
     public void update() {
         frame = new Panel();
         frame.setLayoutManager(new GridLayout(2));
-        TerminalSize size = tuiClient.getSize();
 
         if (Util.anyNull(tuiClient.getServerLiveData().getGameSessions(),
                 tuiClient.getServerLiveData().getUsers(),
