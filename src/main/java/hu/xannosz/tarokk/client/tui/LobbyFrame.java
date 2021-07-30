@@ -166,7 +166,7 @@ public class LobbyFrame extends Frame {
         int onlinePanelWidth = 7 + 2; //Word and ghost border
         int friendPanelWidth = 10 + 2; //Word and ghost border
         int halfBoardWidth = boardWidth / 2 - 2; //minus border
-        int listPanelHeight = size.getRows() - 2 - 2 - 2; //minus board border, two main line and list border
+        int listPanelHeight = size.getRows() - 2 - 2; //minus board border and two main line
         nameListHeight = listPanelHeight;
         gameListHeight = listPanelHeight / (6 + 2); //data panel height and border
 
