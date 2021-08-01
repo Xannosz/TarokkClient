@@ -136,11 +136,11 @@ public class NewGameFrame extends Frame {
         }
 
         if (doublePanelActivated) {
-            frame.addComponent(gameTypePanel.withBorder(Borders.singleLine("Game Type")));
-            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.doubleLine("Double Round Type")));
+            frame.addComponent(gameTypePanel.withBorder(Borders.singleLine(" Game Type ")));
+            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.doubleLine(" Double Round Type ")));
         } else {
-            frame.addComponent(gameTypePanel.withBorder(Borders.doubleLine("Game Type")));
-            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.singleLine("Double Round Type")));
+            frame.addComponent(gameTypePanel.withBorder(Borders.doubleLine(" Game Type ")));
+            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.singleLine(" Double Round Type ")));
         }
     }
 }

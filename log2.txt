@@ -1,39 +1,5 @@
 Message: event {
   phase_changed {
-    phase: "bidding"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "bid:p"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "bid:3"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "bid:p"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "bid:p"
-  }
-}
-
-Message: event {
-  phase_changed {
     phase: "folding"
   }
 }
@@ -878,57 +844,6 @@ Message: event {
     increment_points: 0
     increment_points: 0
     increment_points: 0
-  }
-}
-
-Message: event {
-  phase_changed {
-    phase: "bidding"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "bid:p"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "bid:p"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "bid:0"
-  }
-}
-
-Message: event {
-  phase_changed {
-    phase: "folding"
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 2
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 0
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 1
   }
 }
 

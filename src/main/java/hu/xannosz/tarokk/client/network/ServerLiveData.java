@@ -26,10 +26,10 @@ public class ServerLiveData implements MessageHandler {
     private int beginnerPlayer;
     private GamePhase phase;
     private int playerTurn;
-    private Map<GamePhase,List<Douplet<Integer, String>>> playerActions;
+    private final Map<GamePhase,List<Douplet<Integer, String>>> playerActions = new HashMap<>();
+    private List<String> playerCards;
     private EventProto.Event.Chat chat;
     private EventProto.Event.PlayerTeamInfo playerTeamInfo;
-    private EventProto.Event.PlayerCards playerCards;
     private EventProto.Event.AvailableBids availableBids;
     private EventProto.Event.AvailableCalls availableCalls;
     private EventProto.Event.ChangeDone foldDone;
@@ -86,7 +86,7 @@ public class ServerLiveData implements MessageHandler {
                         playerTeamInfo = event.getPlayerTeamInfo();
                         break;
                     case PLAYER_CARDS:
-                        playerCards = event.getPlayerCards();
+                        playerCards = event.getPlayerCards().getCardList();
                         break;
                     case PHASE_CHANGED:
                         phase = GamePhase.getPhase(event.getPhaseChanged().getPhase());
