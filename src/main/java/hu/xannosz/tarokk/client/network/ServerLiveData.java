@@ -28,11 +28,11 @@ public class ServerLiveData implements MessageHandler {
     private int playerTurn;
     private final Map<GamePhase,List<Douplet<Integer, String>>> playerActions = new HashMap<>();
     private List<String> playerCards;
+    private final List<Integer> foldDone= new ArrayList<>();
     private EventProto.Event.Chat chat;
     private EventProto.Event.PlayerTeamInfo playerTeamInfo;
     private EventProto.Event.AvailableBids availableBids;
     private EventProto.Event.AvailableCalls availableCalls;
-    private EventProto.Event.ChangeDone foldDone;
     private EventProto.Event.SkartTarock skartTarock;
     private EventProto.Event.AvailableAnnouncements availableAnnouncements;
     private EventProto.Event.CardsTaken cardsTaken;
@@ -98,7 +98,7 @@ public class ServerLiveData implements MessageHandler {
                         availableCalls = event.getAvailableCalls();
                         break;
                     case FOLD_DONE:
-                        foldDone = event.getFoldDone();
+                        foldDone.add(event.getFoldDone().getPlayer());
                         break;
                     case SKART_TAROCK:
                         skartTarock = event.getSkartTarock();

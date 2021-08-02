@@ -9,6 +9,8 @@ import com.googlecode.lanterna.screen.Screen;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.android.network.ProtoConnection;
 import hu.xannosz.tarokk.client.network.ServerLiveData;
+import hu.xannosz.tarokk.client.tui.frame.Frame;
+import hu.xannosz.tarokk.client.tui.frame.LobbyFrame;
 import hu.xannosz.tarokk.client.util.*;
 import lombok.Getter;
 import lombok.Setter;

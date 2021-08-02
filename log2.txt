@@ -1,42 +1,5 @@
 Message: event {
   phase_changed {
-    phase: "folding"
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 1
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 3
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 2
-  }
-}
-
-Message: event {
-  fold_done {
-    player: 0
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "fold:t2"
-  }
-}
-
-Message: event {
-  phase_changed {
     phase: "calling"
   }
 }

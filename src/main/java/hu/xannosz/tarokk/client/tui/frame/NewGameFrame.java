@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.tui;
+package hu.xannosz.tarokk.client.tui.frame;
 
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
@@ -6,6 +6,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 
