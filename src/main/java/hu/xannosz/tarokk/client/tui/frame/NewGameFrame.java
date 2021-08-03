@@ -9,6 +9,7 @@ import hu.xannosz.tarokk.client.game.GameType;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Util;
 
 public class NewGameFrame extends Frame {
 
@@ -31,17 +32,9 @@ public class NewGameFrame extends Frame {
         Panel footer = new Panel();
         footer.setLayoutManager(new GridLayout(9));
 
-        footer.addComponent(new Label("["));
-        footer.addComponent(new Label("Arrows").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: Movement"));
-
-        footer.addComponent(new Label("["));
-        footer.addComponent(new Label("Enter").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: Create game"));
-
-        footer.addComponent(new Label("["));
-        footer.addComponent(new Label("/").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: Cancel"));
+        Util.addKey(footer, "Arrows", "Movement", tuiClient);
+        Util.addKey(footer, "Enter", "Create game", tuiClient);
+        Util.addKey(footer, "/", "Cancel", tuiClient);
 
         return footer;
     }

@@ -74,6 +74,12 @@ public class Util {
         data.addComponent(new Label(value).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
     }
 
+    public static void addKey(Panel footer, String key, String name, TuiClient tuiClient) {
+        footer.addComponent(new Label("["));
+        footer.addComponent(new Label(key).setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
+        footer.addComponent(new Label("]: "+name));
+    }
+
     public static boolean anyNull(Object... objects) {
         for (Object obj : objects) {
             if (obj == null) {

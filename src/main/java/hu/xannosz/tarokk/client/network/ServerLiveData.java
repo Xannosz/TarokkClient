@@ -26,14 +26,15 @@ public class ServerLiveData implements MessageHandler {
     private int beginnerPlayer;
     private GamePhase phase;
     private int playerTurn;
-    private final Map<GamePhase,List<Douplet<Integer, String>>> playerActions = new HashMap<>();
-    private List<String> playerCards;
-    private final List<Integer> foldDone= new ArrayList<>();
+    private final Map<GamePhase, List<Douplet<Integer, String>>> playerActions = new HashMap<>();
+    private List<String> playerCardIds;
+    private final List<Integer> foldDone = new ArrayList<>();
+    private final Map<Integer, Integer> skartedTarocks = new HashMap<>();
+
     private EventProto.Event.Chat chat;
     private EventProto.Event.PlayerTeamInfo playerTeamInfo;
     private EventProto.Event.AvailableBids availableBids;
     private EventProto.Event.AvailableCalls availableCalls;
-    private EventProto.Event.SkartTarock skartTarock;
     private EventProto.Event.AvailableAnnouncements availableAnnouncements;
     private EventProto.Event.CardsTaken cardsTaken;
     private EventProto.Event.Statistics statistics;
@@ -86,7 +87,7 @@ public class ServerLiveData implements MessageHandler {
                         playerTeamInfo = event.getPlayerTeamInfo();
                         break;
                     case PLAYER_CARDS:
-                        playerCards = event.getPlayerCards().getCardList();
+                        playerCardIds = event.getPlayerCards().getCardList();
                         break;
                     case PHASE_CHANGED:
                         phase = GamePhase.getPhase(event.getPhaseChanged().getPhase());
@@ -101,7 +102,9 @@ public class ServerLiveData implements MessageHandler {
                         foldDone.add(event.getFoldDone().getPlayer());
                         break;
                     case SKART_TAROCK:
-                        skartTarock = event.getSkartTarock();
+                        for (int player = 0; player < event.getSkartTarock().getCountCount(); player++) {
+                            skartedTarocks.put(player, event.getSkartTarock().getCount(player));
+                        }
                         break;
                     case AVAILABLE_ANNOUNCEMENTS:
                         availableAnnouncements = event.getAvailableAnnouncements();

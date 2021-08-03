@@ -1,19 +1,21 @@
 package hu.xannosz.tarokk.client.tui.subframe;
 
 import com.googlecode.lanterna.gui2.Component;
-import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
+import com.googlecode.lanterna.input.KeyStroke;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import lombok.Getter;
+
+import java.util.Map;
 
 public abstract class SubFrame {
     protected TuiClient tuiClient;
-    @Getter
-    protected KeyMapDictionary keyMapDictionary;
 
-    public SubFrame(TuiClient tuiClient, KeyMapDictionary keyMapDictionary) {
+    public SubFrame(TuiClient tuiClient) {
         this.tuiClient = tuiClient;
-        this.keyMapDictionary = keyMapDictionary;
     }
 
     public abstract Component getPanel();
+
+    public abstract Map<String,String> getFooter();
+
+    public abstract void handleKeyStroke(KeyStroke keyStroke);
 }

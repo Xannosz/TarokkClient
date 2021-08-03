@@ -1,19 +1,4 @@
 Message: event {
-  phase_changed {
-    phase: "calling"
-  }
-}
-
-Message: event {
-  skart_tarock {
-    count: 0
-    count: 1
-    count: 1
-    count: 1
-  }
-}
-
-Message: event {
   player_action {
     player: 1
     action: "call:t4"
