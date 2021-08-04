@@ -1,34 +1,7 @@
 Message: event {
   player_action {
     player: 1
-    action: "call:t4"
-  }
-}
-
-Message: event {
-  phase_changed {
-    phase: "announcing"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
     action: "announce:jatek"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
   }
 }
 
@@ -47,13 +20,6 @@ Message: event {
 }
 
 Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
-  }
-}
-
-Message: event {
   player_action {
     player: 1
     action: "announce:passz"
@@ -75,23 +41,9 @@ Message: event {
 }
 
 Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
-  }
-}
-
-Message: event {
   player_action {
     player: 0
     action: "announce:jatekK1"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
   }
 }
 
@@ -120,34 +72,6 @@ Message: event {
   player_action {
     player: 2
     action: "announce:passz"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 3
-    is_caller: true
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 2
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
   }
 }
 
@@ -173,20 +97,6 @@ Message: event {
 }
 
 Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
-  }
-}
-
-Message: event {
   player_action {
     player: 0
     action: "announce:negykiralyK2"
@@ -204,13 +114,6 @@ Message: event {
   player_action {
     player: 1
     action: "announce:volat"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
   }
 }
 
@@ -242,11 +145,7 @@ Message: event {
   }
 }
 
-Message: event {
-  phase_changed {
-    phase: "gameplay"
-  }
-}
+/// ####################################### ///
 
 Message: event {
   statistics {
@@ -283,360 +182,6 @@ Message: event {
 }
 
 Message: event {
-  player_action {
-    player: 0
-    action: "play:c2"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:c1"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:c5"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:t18"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 3
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:b1"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:t5"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:b2"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:b4"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 0
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:t15"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:t21"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:t17"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:t1"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 1
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:t20"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:t10"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:t12"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:t8"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 1
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:t7"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:t22"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:t13"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:t9"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 2
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:d4"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:d3"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:d5"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 0
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:d2"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:a4"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:t14"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:a2"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 1
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:t3"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:t11"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:a1"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 3
-    is_caller: true
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:t4"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 2
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:a5"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 1
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "play:t16"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "play:b5"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "play:b3"
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "play:a3"
-  }
-}
-
-Message: event {
-  cards_taken {
-    player: 1
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 1
-    is_caller: true
-  }
-}
-
-Message: event {
-  phase_changed {
-    phase: "end"
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 3
-    is_caller: true
-  }
-}
-
-Message: event {
   statistics {
     caller_game_points: 61
     opponent_game_points: 33
@@ -669,130 +214,3 @@ Message: event {
     point_multiplier: 1
   }
 }
-
-Message: event {
-  player_team_info {
-    player: 2
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_action {
-    player: 2
-    action: "newgame:"
-  }
-}
-
-Message: event {
-  player_points {
-    point: 82
-    point: -82
-    point: 82
-    point: -82
-    increment_points: 82
-    increment_points: -82
-    increment_points: 82
-    increment_points: -82
-  }
-}
-
-Message: event {
-  pending_new_game {
-  }
-}
-
-Message: event {
-  player_action {
-    player: 1
-    action: "newgame:"
-  }
-}
-
-Message: event {
-  player_points {
-    point: 82
-    point: -82
-    point: 82
-    point: -82
-    increment_points: 82
-    increment_points: -82
-    increment_points: 82
-    increment_points: -82
-  }
-}
-
-Message: event {
-  player_points {
-    point: 82
-    point: -82
-    point: 82
-    point: -82
-    increment_points: 82
-    increment_points: -82
-    increment_points: 82
-    increment_points: -82
-  }
-}
-
-Message: event {
-  player_action {
-    player: 3
-    action: "newgame:"
-  }
-}
-
-Message: event {
-  player_points {
-    point: 82
-    point: -82
-    point: 82
-    point: -82
-    increment_points: 82
-    increment_points: -82
-    increment_points: 82
-    increment_points: -82
-  }
-}
-
-Message: event {
-  player_team_info {
-    player: 0
-    is_caller: false
-  }
-}
-
-Message: event {
-  player_action {
-    player: 0
-    action: "newgame:"
-  }
-}
-
-Message: event {
-  player_points {
-    point: 82
-    point: -82
-    point: 82
-    point: -82
-    increment_points: 82
-    increment_points: -82
-    increment_points: 82
-    increment_points: -82
-  }
-}
-
-Message: event {
-  player_points {
-    point: 82
-    point: -82
-    point: 82
-    point: -82
-    increment_points: 0
-    increment_points: 0
-    increment_points: 0
-    increment_points: 0
-  }
-}
-
-++++++++++++++++++++++++

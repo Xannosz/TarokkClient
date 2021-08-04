@@ -6,21 +6,22 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import hu.xannosz.tarokk.client.game.Card;
+import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import static hu.xannosz.tarokk.client.util.Util.addKeyWithCardToPanel;
 import static hu.xannosz.tarokk.client.util.Util.getFormattedCardName;
 
 public class FoldingSubFrame extends SubFrame {
 
-    private final List<String> foldedCardIds = new ArrayList<>();
-    private List<String> cardIds;
+    private final List<Card> foldedCard = new ArrayList<>();
+    private List<Card> card;
 
     public FoldingSubFrame(TuiClient tuiClient) {
         super(tuiClient);
@@ -36,24 +37,24 @@ public class FoldingSubFrame extends SubFrame {
 
         panel.addComponent(new Label("Cards:"));
 
-        cardIds = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCardIds());
-        cardIds.removeAll(foldedCardIds);
+        card = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCard());
+        card.removeAll(foldedCard);
 
-        for (int i = 0; i < cardIds.size(); i++) {
+        for (int i = 0; i < card.size(); i++) {
             if (i <= 9) {
-                addKeyWithCardToPanel(panel, "" + i, cardIds.get(i));
+                addKeyWithCardToPanel(panel, "" + i, card.get(i).getFormattedName(),tuiClient);
             }
             if (i == 10) {
-                addKeyWithCardToPanel(panel, "-", cardIds.get(i));
+                addKeyWithCardToPanel(panel, "-", card.get(i).getFormattedName(),tuiClient);
             }
             if (i == 11) {
-                addKeyWithCardToPanel(panel, "+", cardIds.get(i));
+                addKeyWithCardToPanel(panel, "+", card.get(i).getFormattedName(),tuiClient);
             }
         }
 
         panel.addComponent(new Label("Folded Cards:"));
-        for (String cardId : foldedCardIds) {
-            panel.addComponent(new Label(getFormattedCardName(cardId)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+        for (Card card : foldedCard) {
+            panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
         }
 
         return panel;
@@ -61,35 +62,36 @@ public class FoldingSubFrame extends SubFrame {
 
     @Override
     public Map<String, String> getFooter() {
-        return Collections.singletonMap("*", "Reset folding");
+        Map<String, String> response = new HashMap<>();
+        response.put("*", "Reset folding");
+        response.put("Enter", "Send folding");
+        return response;
     }
 
     @Override
     public void handleKeyStroke(KeyStroke keyStroke) {
+        if (keyStroke.getKeyType().equals(KeyType.Enter)) {
+            tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.fold(foldedCard)));
+        }
         if (keyStroke.getKeyType().equals(KeyType.Character)) {
             if (keyStroke.getCharacter().equals('*')) {
-                foldedCardIds.clear();
+                foldedCard.clear();
             }
             if (keyStroke.getCharacter().equals('-')) {
-                if (cardIds.size() > 10) {
-                    foldedCardIds.add(cardIds.get(10));
+                if (card.size() > 10) {
+                    foldedCard.add(card.get(10));
                 }
             }
             if (keyStroke.getCharacter().equals('+')) {
-                if (cardIds.size() > 11) {
-                    foldedCardIds.add(cardIds.get(11));
+                if (card.size() > 11) {
+                    foldedCard.add(card.get(11));
                 }
             }
-            for (int i = 0; i < cardIds.size(); i++) {
-                if (keyStroke.getCharacter().equals((char)i)) {
-                        foldedCardIds.add(cardIds.get(i));
+            for (int i = 0; i < card.size(); i++) {
+                if (keyStroke.getCharacter().equals((char) i)) {
+                    foldedCard.add(card.get(i));
                 }
             }
         }
-    }
-
-    private void addKeyWithCardToPanel(Panel panel, String key, String cardId) {
-        panel.addComponent(new Label(key + ":"));
-        panel.addComponent(new Label(getFormattedCardName(cardId)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
     }
 }

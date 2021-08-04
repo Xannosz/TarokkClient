@@ -2,6 +2,7 @@ package hu.xannosz.tarokk.client.network;
 
 import hu.xannosz.tarokk.client.android.Utils;
 import hu.xannosz.tarokk.client.android.game.Announcement;
+import hu.xannosz.tarokk.client.game.Card;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

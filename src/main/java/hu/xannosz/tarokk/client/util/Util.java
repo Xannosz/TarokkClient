@@ -9,6 +9,7 @@ import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import hu.xannosz.tarokk.client.android.network.MessageHandler;
 import hu.xannosz.tarokk.client.android.network.ProtoConnection;
+import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 
@@ -65,8 +66,8 @@ public class Util {
         return "player:" + playerId;
     }
 
-    public static String getFormattedCardName(String card) {//TODO
-        return card;
+    public static String getFormattedCardName(String card) {
+        return Card.parseCard(card).getFormattedName();
     }
 
     public static void addData(Panel data, String name, String value, TuiClient tuiClient) {
@@ -78,6 +79,11 @@ public class Util {
         footer.addComponent(new Label("["));
         footer.addComponent(new Label(key).setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
         footer.addComponent(new Label("]: "+name));
+    }
+
+    public static void addKeyWithCardToPanel(Panel panel, String key, String cardId, TuiClient tuiClient) {
+        panel.addComponent(new Label(key + ":"));
+        panel.addComponent(new Label(getFormattedCardName(cardId)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
     }
 
     public static boolean anyNull(Object... objects) {

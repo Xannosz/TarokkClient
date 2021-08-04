@@ -4,6 +4,7 @@ import com.tisza.tarock.proto.EventProto;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.android.network.MessageHandler;
+import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.Util;
@@ -27,19 +28,20 @@ public class ServerLiveData implements MessageHandler {
     private GamePhase phase;
     private int playerTurn;
     private final Map<GamePhase, List<Douplet<Integer, String>>> playerActions = new HashMap<>();
-    private List<String> playerCardIds;
+    private final List<Card> playerCard = new ArrayList<>();
     private final List<Integer> foldDone = new ArrayList<>();
     private final Map<Integer, Integer> skartedTarocks = new HashMap<>();
+    private final Map<Integer, Boolean> playerTeamInfo = new HashMap<>();
+    private final Map<Integer, Integer> cardsTakenUsers = new HashMap<>();
+    private final Map<Integer, Integer> playerPoints = new HashMap<>();
+    private final Map<Integer, Integer> incrementPlayerPoints = new HashMap<>();
+    private boolean pendingNewGame = false;
 
     private EventProto.Event.Chat chat;
-    private EventProto.Event.PlayerTeamInfo playerTeamInfo;
     private EventProto.Event.AvailableBids availableBids;
     private EventProto.Event.AvailableCalls availableCalls;
     private EventProto.Event.AvailableAnnouncements availableAnnouncements;
-    private EventProto.Event.CardsTaken cardsTaken;
     private EventProto.Event.Statistics statistics;
-    private EventProto.Event.PlayerPoints playerPoints;
-    private EventProto.Event.PendingNewGame pendingNewGame;
 
     private final TuiClient tuiClient;
 
@@ -84,10 +86,12 @@ public class ServerLiveData implements MessageHandler {
                         playerTurn = event.getTurn().getPlayer();
                         break;
                     case PLAYER_TEAM_INFO:
-                        playerTeamInfo = event.getPlayerTeamInfo();
+                        playerTeamInfo.put(event.getPlayerTeamInfo().getPlayer(), event.getPlayerTeamInfo().getIsCaller());
                         break;
                     case PLAYER_CARDS:
-                        playerCardIds = event.getPlayerCards().getCardList();
+                        for (String id : event.getPlayerCards().getCardList()) {
+                            playerCard.add(Card.parseCard(id));
+                        }
                         break;
                     case PHASE_CHANGED:
                         phase = GamePhase.getPhase(event.getPhaseChanged().getPhase());
@@ -110,16 +114,26 @@ public class ServerLiveData implements MessageHandler {
                         availableAnnouncements = event.getAvailableAnnouncements();
                         break;
                     case CARDS_TAKEN:
-                        cardsTaken = event.getCardsTaken();
+                        int player = event.getCardsTaken().getPlayer();
+                        if (cardsTakenUsers.containsKey(player)) {
+                            cardsTakenUsers.put(event.getCardsTaken().getPlayer(), cardsTakenUsers.get(event.getCardsTaken().getPlayer()) + 1);
+                        } else {
+                            cardsTakenUsers.put(event.getCardsTaken().getPlayer(), 1);
+                        }
                         break;
                     case STATISTICS:
                         statistics = event.getStatistics();
                         break;
                     case PLAYER_POINTS:
-                        playerPoints = event.getPlayerPoints();
+                        for (int i = 0; i < event.getPlayerPoints().getPointCount(); i++) {
+                            playerPoints.put(i, event.getPlayerPoints().getPoint(i));
+                        }
+                        for (int i = 0; i < event.getPlayerPoints().getIncrementPointsCount(); i++) {
+                            incrementPlayerPoints.put(i, event.getPlayerPoints().getIncrementPoints(i));
+                        }
                         break;
                     case PENDING_NEW_GAME:
-                        pendingNewGame = event.getPendingNewGame();
+                        pendingNewGame = true;
                         break;
                     case EVENTTYPE_NOT_SET:
                         Util.error("Event type not set: " + message);
@@ -158,5 +172,17 @@ public class ServerLiveData implements MessageHandler {
     @Override
     public void connectionClosed() {
         Util.info("Connection closed!");
+    }
+
+    public void clearGameData() {
+        playerActions.clear();
+        playerCard.clear();
+        foldDone.clear();
+        skartedTarocks.clear();
+        playerTeamInfo.clear();
+        cardsTakenUsers.clear();
+        playerPoints.clear();
+        incrementPlayerPoints.clear();
+        pendingNewGame = false;
     }
 }

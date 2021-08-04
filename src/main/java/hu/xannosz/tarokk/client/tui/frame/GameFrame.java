@@ -4,12 +4,10 @@ import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import hu.xannosz.microtools.pack.Douplet;
+import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.tui.subframe.BiddingSubFrame;
-import hu.xannosz.tarokk.client.tui.subframe.CallingSubFrame;
-import hu.xannosz.tarokk.client.tui.subframe.FoldingSubFrame;
-import hu.xannosz.tarokk.client.tui.subframe.SubFrame;
+import hu.xannosz.tarokk.client.tui.subframe.*;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
@@ -80,13 +78,13 @@ public class GameFrame extends Frame {
                 subFrame = new CallingSubFrame(tuiClient);
                 break;
             case ANNOUNCING:
-
+                subFrame = new AnnouncingSubFrame(tuiClient);
                 break;
             case GAMEPLAY:
-
+                subFrame = new GamePlaySubFrame(tuiClient);
                 break;
             case END:
-
+                subFrame = new EndSubFrame(tuiClient);
                 break;
         }
 
@@ -97,8 +95,8 @@ public class GameFrame extends Frame {
     private Panel createCardPanel() {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(3));
-        for (String card : tuiClient.getServerLiveData().getPlayerCardIds()) {
-            panel.addComponent(new Label(getFormattedCardName(card)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+        for (Card card : tuiClient.getServerLiveData().getPlayerCard()) {
+            panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
         }
         return panel;
     }
@@ -118,10 +116,24 @@ public class GameFrame extends Frame {
         for (Map.Entry<Integer, Integer> skartedTarock : tuiClient.getServerLiveData().getSkartedTarocks().entrySet()) {
             addData(data, getPlayerName(skartedTarock.getKey()) + " folded tarock", "" + skartedTarock.getValue(), tuiClient);
         }
+        if (tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.CALLING) != null) {
+            for (Douplet<Integer, String> call : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.CALLING)) {
+                addData(data, getPlayerName(call.getFirst()) + " called tarock", getFormattedCardName(call.getSecond().replace("call:", "")), tuiClient);
+            }
+        }
+
+        for (Map.Entry<Integer, Integer> entry : tuiClient.getServerLiveData().getCardsTakenUsers().entrySet()) {
+            addData(data, getPlayerName(entry.getKey()) + " taken cards:", "" + entry.getValue(), tuiClient);
+        }
         return data;
     }
 
-    private Panel createHudPanel() { //TODO
-        return new Panel();
+    private Panel createHudPanel() {
+        Panel panel = new Panel();
+        panel.setLayoutManager(new GridLayout(2));
+        for (Map.Entry<Integer, Boolean> info : tuiClient.getServerLiveData().getPlayerTeamInfo().entrySet()) {
+            addData(panel, getPlayerName(info.getKey()) + " is caller:", "" + info.getValue(), tuiClient);
+        }
+        return panel;
     }
 }
