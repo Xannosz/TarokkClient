@@ -1,5 +1,7 @@
 package hu.xannosz.tarokk.client.util;
 
+import com.googlecode.lanterna.Symbols;
+import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
@@ -7,6 +9,7 @@ import com.googlecode.lanterna.screen.Screen;
 import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
+import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.android.network.MessageHandler;
 import hu.xannosz.tarokk.client.android.network.ProtoConnection;
 import hu.xannosz.tarokk.client.game.Card;
@@ -62,8 +65,13 @@ public class Util {
         return panel;
     }
 
-    public static String getPlayerName(int playerId) {//TODO
-        return "player:" + playerId;
+    public static String getPlayerName(int playerId, MainProto.GameSession gameData, TuiClient tuiClient) {
+        MainProto.User user = tuiClient.getServerLiveData().getUsers().get(gameData.getUserId(playerId));
+        if (user.getBot()) {
+            return "Bot";
+        } else {
+            return user.getName();
+        }
     }
 
     public static String getFormattedCardName(String card) {
@@ -78,12 +86,42 @@ public class Util {
     public static void addKey(Panel footer, String key, String name, TuiClient tuiClient) {
         footer.addComponent(new Label("["));
         footer.addComponent(new Label(key).setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: "+name));
+        footer.addComponent(new Label("]: " + name));
     }
 
     public static void addKeyWithCardToPanel(Panel panel, String key, String cardId, TuiClient tuiClient) {
         panel.addComponent(new Label(key + ":"));
         panel.addComponent(new Label(getFormattedCardName(cardId)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+    }
+
+    public static Component createUserPanel(int userId, TuiClient tuiClient) {
+        if (userId != 0) {
+            MainProto.User user = tuiClient.getServerLiveData().getUsers().get(userId);
+            if (user.getBot()) {
+                return new Label(" Bot").setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings()));
+            } else {
+                Panel panel = new Panel(new GridLayout(2));
+                panel.addComponent(new Label(user.getName()));
+                if (user.getOnline()) {
+                    panel.addComponent(new Label("" + Symbols.TRIANGLE_UP_POINTING_BLACK).setTheme(ThemeHandler.getOnlineColorThemeMainPanel(tuiClient.getTerminalSettings())));
+                } else {
+                    panel.addComponent(new Label("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK).setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+                }
+                return panel;
+            }
+        } else {
+            return new Label("");
+        }
+    }
+
+    public static MainProto.GameSession getGameData(int id, TuiClient tuiClient) {
+        MainProto.GameSession result = null;
+        for (MainProto.GameSession gameData : tuiClient.getServerLiveData().getGameSessions()) {
+            if (id == gameData.getId()) {
+                result = gameData;
+            }
+        }
+        return result;
     }
 
     public static boolean anyNull(Object... objects) {
@@ -101,7 +139,7 @@ public class Util {
             if (!Files.exists(Paths.get(LOG_FILE_PATH))) {
                 Files.createFile(Paths.get(LOG_FILE_PATH));
             }
-            Files.write(Paths.get(LOG_FILE_PATH), (message+"\n").getBytes(), StandardOpenOption.APPEND);
+            Files.write(Paths.get(LOG_FILE_PATH), (message + "\n").getBytes(), StandardOpenOption.APPEND);
         } catch (IOException e) {
             //Unexpected
         }

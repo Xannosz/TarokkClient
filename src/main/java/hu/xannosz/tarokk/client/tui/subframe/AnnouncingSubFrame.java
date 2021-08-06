@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.network.Action;
@@ -18,26 +19,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static hu.xannosz.tarokk.client.util.Util.addData;
-import static hu.xannosz.tarokk.client.util.Util.getPlayerName;
+import static hu.xannosz.tarokk.client.util.Util.*;
 
 public class AnnouncingSubFrame extends SubFrame {
     private int page = 0;
     private List<String> availableAnnouncing;
+    private final int gameId;
 
-    public AnnouncingSubFrame(TuiClient tuiClient) {
+    public AnnouncingSubFrame(TuiClient tuiClient, int gameId) {
         super(tuiClient);
+        this.gameId = gameId;
     }
 
     @Override
     public Component getPanel() {
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(4));
         availableAnnouncing = new ArrayList<>(tuiClient.getServerLiveData().getAvailableAnnouncements());
 
         if (tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.ANNOUNCING) != null) {
             for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.ANNOUNCING)) {
-                addData(panel, getPlayerName(announce.getFirst()) + " announce", announce.getSecond().replace("announce:", ""), tuiClient);
+                addData(panel, getPlayerName(announce.getFirst(), gameData, tuiClient) + " announce", announce.getSecond().replace("announce:", ""), tuiClient);
             }
         }
 

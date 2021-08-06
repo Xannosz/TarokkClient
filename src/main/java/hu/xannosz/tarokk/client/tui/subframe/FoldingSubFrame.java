@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
@@ -13,26 +14,32 @@ import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static hu.xannosz.tarokk.client.util.Util.addKeyWithCardToPanel;
-import static hu.xannosz.tarokk.client.util.Util.getFormattedCardName;
+import static hu.xannosz.tarokk.client.util.Util.getGameData;
 
 public class FoldingSubFrame extends SubFrame {
 
     private final List<Card> foldedCard = new ArrayList<>();
     private List<Card> card;
+    private final int gameId;
 
-    public FoldingSubFrame(TuiClient tuiClient) {
+    public FoldingSubFrame(TuiClient tuiClient, int gameId) {
         super(tuiClient);
+        this.gameId = gameId;
     }
 
     @Override
     public Component getPanel() {
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(4));
         for (int foldedUser : tuiClient.getServerLiveData().getFoldDone()) {
-            Util.addData(panel, Util.getPlayerName(foldedUser), "Fold done", tuiClient);
+            Util.addData(panel, Util.getPlayerName(foldedUser, gameData, tuiClient), "Fold done", tuiClient);
         }
 
         panel.addComponent(new Label("Cards:"));
@@ -42,13 +49,13 @@ public class FoldingSubFrame extends SubFrame {
 
         for (int i = 0; i < card.size(); i++) {
             if (i <= 9) {
-                addKeyWithCardToPanel(panel, "" + i, card.get(i).getFormattedName(),tuiClient);
+                addKeyWithCardToPanel(panel, "" + i, card.get(i).getFormattedName(), tuiClient);
             }
             if (i == 10) {
-                addKeyWithCardToPanel(panel, "-", card.get(i).getFormattedName(),tuiClient);
+                addKeyWithCardToPanel(panel, "-", card.get(i).getFormattedName(), tuiClient);
             }
             if (i == 11) {
-                addKeyWithCardToPanel(panel, "+", card.get(i).getFormattedName(),tuiClient);
+                addKeyWithCardToPanel(panel, "+", card.get(i).getFormattedName(), tuiClient);
             }
         }
 

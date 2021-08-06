@@ -5,6 +5,7 @@ import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
@@ -18,26 +19,27 @@ import java.util.List;
 import java.util.Map;
 
 import static hu.xannosz.tarokk.client.util.Util.*;
-import static hu.xannosz.tarokk.client.util.Util.getFormattedCardName;
 
 public class GamePlaySubFrame extends SubFrame {
     private List<Card> card;
+    private final int gameId;
 
-    public GamePlaySubFrame(TuiClient tuiClient) {
+    public GamePlaySubFrame(TuiClient tuiClient, int gameId) {
         super(tuiClient);
+        this.gameId = gameId;
     }
 
     @Override
     public Component getPanel() {
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(4));
 
         card = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCard());
 
         if (tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.GAMEPLAY) != null) {
-            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.GAMEPLAY)) {
-                addData(panel, getPlayerName(play.getFirst()) + " play card", getFormattedCardName(play.getSecond().replace("play:", "")), tuiClient);
-           //TODO see just last round.
+            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getTurnPlayerActions()) {
+                addData(panel, getPlayerName(play.getFirst(), gameData, tuiClient) + " play card", getFormattedCardName(play.getSecond()), tuiClient);
             }
         }
 

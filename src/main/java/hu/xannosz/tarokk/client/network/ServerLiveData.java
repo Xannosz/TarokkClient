@@ -27,6 +27,11 @@ public class ServerLiveData implements MessageHandler {
     private int beginnerPlayer;
     private GamePhase phase;
     private int playerTurn;
+    private boolean pendingNewGame = false;
+    private EventProto.Event.Statistics statistics;
+    private List<Integer> availableBids;  //TODO Not used jet.
+    private List<Card> availableCalls;
+    private List<String> availableAnnouncements;
     private final Map<GamePhase, List<Douplet<Integer, String>>> playerActions = new HashMap<>();
     private final List<Card> playerCard = new ArrayList<>();
     private final List<Integer> foldDone = new ArrayList<>();
@@ -35,13 +40,8 @@ public class ServerLiveData implements MessageHandler {
     private final Map<Integer, Integer> cardsTakenUsers = new HashMap<>();
     private final Map<Integer, Integer> playerPoints = new HashMap<>();
     private final Map<Integer, Integer> incrementPlayerPoints = new HashMap<>();
-    private boolean pendingNewGame = false;
-    private EventProto.Event.Statistics statistics;
-    private List<Integer> availableBids;  //TODO Not used jet.
-    private List<Card> availableCalls;
-    private List<String> availableAnnouncements;
-
-    private EventProto.Event.Chat chat;
+    private final List<Douplet<Integer, String>> turnPlayerActions = new ArrayList<>();
+    private final List<Douplet<Integer, String>> chat = new ArrayList<>();  //TODO implement chatting
 
     private final TuiClient tuiClient;
 
@@ -57,6 +57,7 @@ public class ServerLiveData implements MessageHandler {
             case CREATE_GAME_SESSION:
             case LOGIN:
             case JOIN_GAME_SESSION:
+            case DELETE_GAME_SESSION:
             case START_GAME_SESSION_LOBBY:
             case ACTION:
                 // Server message
@@ -78,9 +79,12 @@ public class ServerLiveData implements MessageHandler {
                     case PLAYER_ACTION:
                         playerActions.computeIfAbsent(phase, k -> new ArrayList<>());
                         playerActions.get(phase).add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction()));
+                        if (phase.equals(GamePhase.GAMEPLAY)) {
+                            turnPlayerActions.add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction().replace("play:", "")));
+                        }
                         break;
                     case CHAT:
-                        chat = event.getChat();
+                        chat.add(new Douplet<>(event.getChat().getUserId(), event.getChat().getMessage().replace("chat:", "")));
                         break;
                     case TURN:
                         playerTurn = event.getTurn().getPlayer();
@@ -123,6 +127,7 @@ public class ServerLiveData implements MessageHandler {
                         } else {
                             cardsTakenUsers.put(event.getCardsTaken().getPlayer(), 1);
                         }
+                        turnPlayerActions.clear();
                         break;
                     case STATISTICS:
                         statistics = event.getStatistics();
@@ -151,8 +156,6 @@ public class ServerLiveData implements MessageHandler {
                 for (MainProto.User user : message.getServerStatus().getAvailableUserList()) {
                     users.put(user.getId(), user);
                 }
-                break;
-            case DELETE_GAME_SESSION:
                 break;
             case JOIN_HISTORY_GAME:
                 break;
@@ -186,6 +189,8 @@ public class ServerLiveData implements MessageHandler {
         cardsTakenUsers.clear();
         playerPoints.clear();
         incrementPlayerPoints.clear();
+        turnPlayerActions.clear();
+        chat.clear();
         pendingNewGame = false;
     }
 }

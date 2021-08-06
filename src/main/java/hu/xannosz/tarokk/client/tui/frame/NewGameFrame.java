@@ -4,6 +4,8 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.tisza.tarock.proto.MainProto;
+import hu.xannosz.microtools.Sleep;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
 import hu.xannosz.tarokk.client.tui.TuiClient;
@@ -93,7 +95,16 @@ public class NewGameFrame extends Frame {
 
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
             tuiClient.getConnection().sendMessage(MessageTranslator.newGame(doubleRoundType, gameType));
-            tuiClient.setFrame(new GameFrame(tuiClient));
+            Sleep.sleepMillis(200);
+            int gameId = 0;
+            for (MainProto.GameSession gameData : tuiClient.getServerLiveData().getGameSessions()) {
+                if (gameData.getState() == MainProto.GameSession.State.LOBBY &&
+                        gameData.getUserIdList().contains(tuiClient.getServerLiveData().getLoginResult().getUserId())) {
+                    gameId = gameData.getId();
+                }
+            }
+            tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(gameId));
+            tuiClient.setFrame(new GameFrame(tuiClient, gameId));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('/')) {
             tuiClient.setFrame(new LobbyFrame(tuiClient));

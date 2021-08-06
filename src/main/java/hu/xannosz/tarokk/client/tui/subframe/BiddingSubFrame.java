@@ -3,6 +3,7 @@ package hu.xannosz.tarokk.client.tui.subframe;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
+import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.network.Action;
@@ -12,17 +13,18 @@ import hu.xannosz.tarokk.client.util.MessageTranslator;
 
 import java.util.Map;
 
-import static hu.xannosz.tarokk.client.util.Util.addData;
-import static hu.xannosz.tarokk.client.util.Util.getPlayerName;
+import static hu.xannosz.tarokk.client.util.Util.*;
 
 public class BiddingSubFrame extends SubFrame {
 
     private int lastBid = 4;
     private boolean hold;
     private final KeyMapDictionary keyMapDictionary = new KeyMapDictionary();
+    private final int gameId;
 
-    public BiddingSubFrame(TuiClient tuiClient) {
+    public BiddingSubFrame(TuiClient tuiClient, int gameId) {
         super(tuiClient);
+        this.gameId = gameId;
     }
 
     @Override
@@ -37,10 +39,11 @@ public class BiddingSubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         keyMapDictionary.clear();
         Panel panel = new Panel();
         for (Douplet<Integer, String> action : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.BIDDING)) {
-            addData(panel, getPlayerName(action.getFirst()), biddingToString(action.getSecond()), tuiClient);
+            addData(panel, getPlayerName(action.getFirst(), gameData, tuiClient), biddingToString(action.getSecond()), tuiClient);
         }
         if (lastBid == 4) {
             keyMapDictionary.addFunction("3", "Three", () ->

@@ -48,8 +48,27 @@ public class LobbyFrame extends Frame {
 
     @Override
     public Component getFooter() {
+        MainProto.GameSession gameInfo = tuiClient.getServerLiveData().getGameSessions().get(gamePage);
+        int userID = tuiClient.getServerLiveData().getLoginResult().getUserId();
+
+        String joinButtonText;
+        if (gameInfo.getState() == MainProto.GameSession.State.LOBBY) {
+            joinButtonText = "Join to lobby";
+        } else if (gameInfo.getUserIdList().contains(userID)) {
+            joinButtonText = "Join to game";
+        } else {
+            joinButtonText = "Join to game as observer";
+        }
+
+        boolean deleteButtonVisible;
+        if (gameInfo.getState() == MainProto.GameSession.State.LOBBY) {
+            deleteButtonVisible = gameInfo.getUserIdCount() > 0 && gameInfo.getUserId(0) == userID;
+        } else {
+            deleteButtonVisible = gameInfo.getUserIdList().contains(userID);
+        }
+
         Panel footer = new Panel();
-        footer.setLayoutManager(new GridLayout(9));
+        footer.setLayoutManager(new GridLayout(deleteButtonVisible ? 12 : 9));
 
         footer.addComponent(new Label("["));
         footer.addComponent(new Label("Arrows").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
@@ -57,11 +76,17 @@ public class LobbyFrame extends Frame {
 
         footer.addComponent(new Label("["));
         footer.addComponent(new Label("Enter").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: Join to game"));
+        footer.addComponent(new Label("]: " + joinButtonText));
 
         footer.addComponent(new Label("["));
         footer.addComponent(new Label("+").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
         footer.addComponent(new Label("]: Create Game"));
+
+        if (deleteButtonVisible) {
+            footer.addComponent(new Label("["));
+            footer.addComponent(new Label("-").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
+            footer.addComponent(new Label("]: Delete Game"));
+        }
 
         return footer;
     }
@@ -107,10 +132,13 @@ public class LobbyFrame extends Frame {
 
         if (keyStroke.getKeyType().equals(KeyType.Enter) && !namePanelActivated) {
             tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
-            tuiClient.setFrame(new GameFrame(tuiClient));
+            tuiClient.setFrame(new GameFrame(tuiClient, tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('+') && !namePanelActivated) {
             tuiClient.setFrame(new NewGameFrame(tuiClient));
+        }
+        if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('-') && !namePanelActivated) {
+            tuiClient.getConnection().sendMessage(MessageTranslator.deleteToGame(tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
         }
 
         update();
@@ -263,7 +291,7 @@ public class LobbyFrame extends Frame {
         panel.addComponent(new Label(game.getType()).setPreferredSize(gameNamePanelSize));
 
         for (int i = 0; i < game.getUserIdCount(); i++) {
-            panel.addComponent(createUserPanel(game.getUserId(i)).setPreferredSize(gameNamePanelSize));
+            panel.addComponent(Util.createUserPanel(game.getUserId(i),tuiClient).setPreferredSize(gameNamePanelSize));
         }
         for (int i = game.getUserIdCount(); i < 4; i++) {
             panel.addComponent(new Label("").setPreferredSize(gameNamePanelSize));
@@ -273,25 +301,5 @@ public class LobbyFrame extends Frame {
         panel.addComponent(new Label("" + game.getState()).setPreferredSize(gameNamePanelSize));
 
         return panel;
-    }
-
-    private Component createUserPanel(int userId) {
-        if (userId != 0) {
-            MainProto.User user = tuiClient.getServerLiveData().getUsers().get(userId);
-            if (user.getBot()) {
-                return new Label(" Bot").setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings()));
-            } else {
-                Panel panel = new Panel(new GridLayout(2));
-                panel.addComponent(new Label(user.getName()));
-                if (user.getOnline()) {
-                    panel.addComponent(new Label("" + Symbols.TRIANGLE_UP_POINTING_BLACK).setTheme(ThemeHandler.getOnlineColorThemeMainPanel(tuiClient.getTerminalSettings())));
-                } else {
-                    panel.addComponent(new Label("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK).setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings())));
-                }
-                return panel;
-            }
-        } else {
-            return new Label("");
-        }
     }
 }
