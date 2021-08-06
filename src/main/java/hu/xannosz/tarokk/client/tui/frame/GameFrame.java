@@ -3,6 +3,7 @@ package hu.xannosz.tarokk.client.tui.frame;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
+import com.tisza.tarock.proto.EventProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
@@ -123,8 +124,23 @@ public class GameFrame extends Frame {
         }
 
         for (Map.Entry<Integer, Integer> entry : tuiClient.getServerLiveData().getCardsTakenUsers().entrySet()) {
-            addData(data, getPlayerName(entry.getKey()) + " taken cards:", "" + entry.getValue(), tuiClient);
+            addData(data, getPlayerName(entry.getKey()) + " taken cards", "" + entry.getValue(), tuiClient);
         }
+
+        EventProto.Event.Statistics statistic = tuiClient.getServerLiveData().getStatistics();
+        addData(data, "caller game points", "" + statistic.getCallerGamePoints(), tuiClient);
+        addData(data, "opponent game points", "" + statistic.getOpponentGamePoints(), tuiClient);
+        addData(data, "sum points", "" + statistic.getSumPoints(), tuiClient);
+        addData(data, "point multiplier", "" + statistic.getPointMultiplier(), tuiClient);
+
+        for (EventProto.Event.Statistics.AnnouncementResult stat : statistic.getAnnouncementResultList()) {
+            Panel panel = new Panel();
+            addData(data, "announcement", stat.getAnnouncement(), tuiClient);
+            addData(data, "points", "" + stat.getPoints(), tuiClient);
+            addData(data, "caller team", "" + stat.getCallerTeam(), tuiClient);
+            data.addComponent(panel.withBorder(Borders.singleLine()));
+        }
+
         return data;
     }
 

@@ -25,8 +25,8 @@ public class Action {
         return new Action("call:" + card.getId());
     }
 
-    public static Action announce(Announcement announcement) {
-        return new Action("announce:" + announcement.getID());
+    public static Action announce(String announcement) {
+        return new Action("announce:" + announcement);
     }
 
     public static Action announcePass() {

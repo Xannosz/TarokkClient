@@ -36,12 +36,12 @@ public class ServerLiveData implements MessageHandler {
     private final Map<Integer, Integer> playerPoints = new HashMap<>();
     private final Map<Integer, Integer> incrementPlayerPoints = new HashMap<>();
     private boolean pendingNewGame = false;
+    private EventProto.Event.Statistics statistics;
+    private List<Integer> availableBids;  //TODO Not used jet.
+    private List<Card> availableCalls;
+    private List<String> availableAnnouncements;
 
     private EventProto.Event.Chat chat;
-    private EventProto.Event.AvailableBids availableBids;
-    private EventProto.Event.AvailableCalls availableCalls;
-    private EventProto.Event.AvailableAnnouncements availableAnnouncements;
-    private EventProto.Event.Statistics statistics;
 
     private final TuiClient tuiClient;
 
@@ -97,10 +97,13 @@ public class ServerLiveData implements MessageHandler {
                         phase = GamePhase.getPhase(event.getPhaseChanged().getPhase());
                         break;
                     case AVAILABLE_BIDS:
-                        availableBids = event.getAvailableBids();
+                        availableBids = event.getAvailableBids().getBidList();
                         break;
                     case AVAILABLE_CALLS:
-                        availableCalls = event.getAvailableCalls();
+                        availableCalls = new ArrayList<>();
+                        for (String card : event.getAvailableCalls().getCardList()) {
+                            availableCalls.add(Card.parseCard(card));
+                        }
                         break;
                     case FOLD_DONE:
                         foldDone.add(event.getFoldDone().getPlayer());
@@ -111,7 +114,7 @@ public class ServerLiveData implements MessageHandler {
                         }
                         break;
                     case AVAILABLE_ANNOUNCEMENTS:
-                        availableAnnouncements = event.getAvailableAnnouncements();
+                        availableAnnouncements = event.getAvailableAnnouncements().getAnnouncementList();
                         break;
                     case CARDS_TAKEN:
                         int player = event.getCardsTaken().getPlayer();

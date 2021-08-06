@@ -12,14 +12,11 @@ import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CallingSubFrame extends SubFrame {
     private int page = 0;
-    private final List<Card> availableCards = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
+    private  List<Card> availableCards;// = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
 
     public CallingSubFrame(TuiClient tuiClient) {
         super(tuiClient);
@@ -29,6 +26,7 @@ public class CallingSubFrame extends SubFrame {
     public Component getPanel() {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(3));
+        availableCards = new ArrayList<>(tuiClient.getServerLiveData().getAvailableCalls());
         for (int i = 0; i < availableCards.size(); i++) {
             if (i == page) {
                 panel.addComponent(new Label(availableCards.get(i).getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
