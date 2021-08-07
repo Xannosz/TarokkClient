@@ -10,6 +10,7 @@ import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.Map;
 
@@ -42,6 +43,11 @@ public class BiddingSubFrame extends SubFrame {
         MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         keyMapDictionary.clear();
         Panel panel = new Panel();
+
+        if (Util.anyNull(tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.BIDDING))) {
+            return panel;
+        }
+
         for (Douplet<Integer, String> action : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.BIDDING)) {
             addData(panel, getPlayerName(action.getFirst(), gameData, tuiClient), biddingToString(action.getSecond()), tuiClient);
         }

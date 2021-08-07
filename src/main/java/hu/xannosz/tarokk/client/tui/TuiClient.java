@@ -119,7 +119,8 @@ public class TuiClient implements WindowListener {
             }
             frame.handleKeyStroke(keyStroke);
         } catch (Exception ex) {
-            Util.error("Error during execution: " + ex);
+            Util.error("Error during execution: ");
+            ex.printStackTrace();
         }
     }
 

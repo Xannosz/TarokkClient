@@ -38,6 +38,10 @@ public class GameFrame extends Frame {
 
     @Override
     public Component getFooter() {
+        if (Util.anyNull(subFrame)) {
+            return new Panel();
+        }
+
         Map<String, String> subFrameFooter = subFrame.getFooter();
 
         Panel panel = new Panel();
@@ -68,18 +72,21 @@ public class GameFrame extends Frame {
         frame = new Panel();
         frame.setLayoutManager(new GridLayout(2));
 
-        if (Util.anyNull(tuiClient.getServerLiveData().getPhase())) {
-            return;
-        }
-
         frame.addComponent(createCardPanel().withBorder(Borders.singleLine(" Cards ")));
         frame.addComponent(createDatePanel().withBorder(Borders.singleLine(" Data ")));
 
         gameData = getGameData(gameId, tuiClient);
 
+        if (Util.anyNull(gameData)) {
+            return;
+        }
+
         if (gameData.getState().equals(MainProto.GameSession.State.LOBBY)) {
             subFrame = new StartGameSubFrame(tuiClient, gameId);
         } else {
+            if (Util.anyNull(tuiClient.getServerLiveData().getPhase())) {
+                return;
+            }
             switch (tuiClient.getServerLiveData().getPhase()) {
                 case BIDDING:
                     subFrame = new BiddingSubFrame(tuiClient, gameId);
@@ -102,7 +109,7 @@ public class GameFrame extends Frame {
             }
         }
 
-        frame.addComponent(subFrame.getPanel().withBorder(Borders.singleLine(" " + tuiClient.getServerLiveData().getPhase().getName() + " ")));
+        frame.addComponent(subFrame.getPanel().withBorder(Borders.singleLine(" " + (tuiClient.getServerLiveData().getPhase() == null ? "Lobby" : tuiClient.getServerLiveData().getPhase().getName()) + " ")));
         frame.addComponent(createHudPanel().withBorder(Borders.singleLine(" Hud ")));
     }
 
@@ -117,7 +124,15 @@ public class GameFrame extends Frame {
 
     private Panel createDatePanel() {
         Panel data = new Panel();
-        data.setLayoutManager(new GridLayout(2));
+        data.setLayoutManager(new GridLayout(4));
+
+        if (Util.anyNull(tuiClient.getServerLiveData().getGameType(),
+                tuiClient.getServerLiveData().getPhase(),
+                tuiClient.getServerLiveData().getBeginnerPlayer(),
+                gameData)) {
+            return data;
+        }
+
         addData(data, "Game Type", tuiClient.getServerLiveData().getGameType(), tuiClient);
         addData(data, "Beginner Player", getPlayerName(tuiClient.getServerLiveData().getBeginnerPlayer(), gameData, tuiClient), tuiClient);
         addData(data, "Phase", tuiClient.getServerLiveData().getPhase().getName(), tuiClient);
@@ -141,18 +156,20 @@ public class GameFrame extends Frame {
         }
 
         EventProto.Event.Statistics statistic = tuiClient.getServerLiveData().getStatistics();
-        addData(data, "caller game points", "" + statistic.getCallerGamePoints(), tuiClient);
-        addData(data, "opponent game points", "" + statistic.getOpponentGamePoints(), tuiClient);
-        addData(data, "sum points", "" + statistic.getSumPoints(), tuiClient);
-        addData(data, "point multiplier", "" + statistic.getPointMultiplier(), tuiClient);
+/*        if (!Util.anyNull(statistic)) {
+            addData(data, "caller game points", "" + statistic.getCallerGamePoints(), tuiClient);
+            addData(data, "opponent game points", "" + statistic.getOpponentGamePoints(), tuiClient);
+            addData(data, "sum points", "" + statistic.getSumPoints(), tuiClient);
+            addData(data, "point multiplier", "" + statistic.getPointMultiplier(), tuiClient);
 
-        for (EventProto.Event.Statistics.AnnouncementResult stat : statistic.getAnnouncementResultList()) {
-            Panel panel = new Panel();
-            addData(data, "announcement", stat.getAnnouncement(), tuiClient);
-            addData(data, "points", "" + stat.getPoints(), tuiClient);
-            addData(data, "caller team", "" + stat.getCallerTeam(), tuiClient);
-            data.addComponent(panel.withBorder(Borders.singleLine()));
-        }
+            for (EventProto.Event.Statistics.AnnouncementResult stat : statistic.getAnnouncementResultList()) {
+                Panel panel = new Panel();
+                addData(data, "announcement", stat.getAnnouncement(), tuiClient);
+                addData(data, "points", "" + stat.getPoints(), tuiClient);
+                addData(data, "caller team", "" + stat.getCallerTeam(), tuiClient);
+                data.addComponent(panel.withBorder(Borders.singleLine()));
+            }
+        }*/  //TODO new panel
 
         return data;
     }

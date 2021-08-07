@@ -33,19 +33,30 @@ public class GamePlaySubFrame extends SubFrame {
     public Component getPanel() {
         MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         Panel panel = new Panel();
-        panel.setLayoutManager(new GridLayout(4));
 
         card = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCard());
 
+        Panel playCard = new Panel();
+        playCard.setLayoutManager(new GridLayout(4));
         if (tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.GAMEPLAY) != null) {
             for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getTurnPlayerActions()) {
-                addData(panel, getPlayerName(play.getFirst(), gameData, tuiClient) + " play card", getFormattedCardName(play.getSecond()), tuiClient);
+                addData(playCard, getPlayerName(play.getFirst(), gameData, tuiClient) + " play card", getFormattedCardName(play.getSecond()), tuiClient);
+            }
+            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.GAMEPLAY)) {
+                if(gameData.getUserId(play.getFirst())==tuiClient.getServerLiveData().getLoginResult().getUserId()){
+                    card.remove(Card.parseCard(play.getSecond().replace("play:","")));
+                }
             }
         }
+        panel.addComponent(playCard);
 
+        Panel cards = new Panel();
+        cards.setLayoutManager(new GridLayout(8));
         for (int i = 0; i < card.size(); i++) {
-            addKeyWithCardToPanel(panel, "" + (i + 1), card.get(i).getFormattedName(), tuiClient);
+            addKeyWithCardToPanel(cards, "" + (i + 1), card.get(i), tuiClient);
         }
+        panel.addComponent(cards);
+
         return panel;
     }
 
@@ -58,7 +69,7 @@ public class GamePlaySubFrame extends SubFrame {
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.Character)) {
             for (int i = 0; i < card.size(); i++) {
-                if (keyStroke.getCharacter().equals((char) (i + 1))) {
+                if (keyStroke.getCharacter().toString().equals("" + (i + 1))) {
                     tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.play(card.get(i))));
                 }
             }

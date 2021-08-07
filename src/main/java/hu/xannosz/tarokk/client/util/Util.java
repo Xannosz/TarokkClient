@@ -66,6 +66,9 @@ public class Util {
     }
 
     public static String getPlayerName(int playerId, MainProto.GameSession gameData, TuiClient tuiClient) {
+        if(gameData.getUserIdCount()<=playerId){
+            return "";
+        }
         MainProto.User user = tuiClient.getServerLiveData().getUsers().get(gameData.getUserId(playerId));
         if (user.getBot()) {
             return "Bot";
@@ -75,7 +78,8 @@ public class Util {
     }
 
     public static String getFormattedCardName(String card) {
-        return Card.parseCard(card).getFormattedName();
+        Card cardObj = Card.parseCard(card);
+        return cardObj==null?"":cardObj.getFormattedName();
     }
 
     public static void addData(Panel data, String name, String value, TuiClient tuiClient) {
@@ -89,9 +93,9 @@ public class Util {
         footer.addComponent(new Label("]: " + name));
     }
 
-    public static void addKeyWithCardToPanel(Panel panel, String key, String cardId, TuiClient tuiClient) {
+    public static void addKeyWithCardToPanel(Panel panel, String key, Card card, TuiClient tuiClient) {
         panel.addComponent(new Label(key + ":"));
-        panel.addComponent(new Label(getFormattedCardName(cardId)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+        panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
     }
 
     public static Component createUserPanel(int userId, TuiClient tuiClient) {

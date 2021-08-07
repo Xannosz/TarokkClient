@@ -24,7 +24,7 @@ import static hu.xannosz.tarokk.client.util.Util.getGameData;
 
 public class FoldingSubFrame extends SubFrame {
 
-    private final List<Card> foldedCard = new ArrayList<>();
+    private final static List<Card> foldedCard = new ArrayList<>(); //TODO
     private List<Card> card;
     private final int gameId;
 
@@ -37,32 +37,43 @@ public class FoldingSubFrame extends SubFrame {
     public Component getPanel() {
         MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         Panel panel = new Panel();
-        panel.setLayoutManager(new GridLayout(4));
+        panel.setLayoutManager(new GridLayout(1));
+
+        Panel foldDone = new Panel();
+        foldDone.setLayoutManager(new GridLayout(4));
         for (int foldedUser : tuiClient.getServerLiveData().getFoldDone()) {
-            Util.addData(panel, Util.getPlayerName(foldedUser, gameData, tuiClient), "Fold done", tuiClient);
+            Util.addData(foldDone, Util.getPlayerName(foldedUser, gameData, tuiClient), "Fold done", tuiClient);
         }
+        panel.addComponent(foldDone);
 
         panel.addComponent(new Label("Cards:"));
 
         card = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCard());
         card.removeAll(foldedCard);
 
+        Panel cards = new Panel();
+        cards.setLayoutManager(new GridLayout(4));
         for (int i = 0; i < card.size(); i++) {
             if (i <= 9) {
-                addKeyWithCardToPanel(panel, "" + i, card.get(i).getFormattedName(), tuiClient);
+                addKeyWithCardToPanel(cards, "" + i, card.get(i), tuiClient);
             }
             if (i == 10) {
-                addKeyWithCardToPanel(panel, "-", card.get(i).getFormattedName(), tuiClient);
+                addKeyWithCardToPanel(cards, "-", card.get(i), tuiClient);
             }
             if (i == 11) {
-                addKeyWithCardToPanel(panel, "+", card.get(i).getFormattedName(), tuiClient);
+                addKeyWithCardToPanel(cards, "+", card.get(i), tuiClient);
             }
         }
+        panel.addComponent(cards);
 
         panel.addComponent(new Label("Folded Cards:"));
+
+        Panel foldedCards = new Panel();
+        foldedCards.setLayoutManager(new GridLayout(4));
         for (Card card : foldedCard) {
-            panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+            foldedCards.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
         }
+        panel.addComponent(foldedCards);
 
         return panel;
     }
@@ -95,7 +106,7 @@ public class FoldingSubFrame extends SubFrame {
                 }
             }
             for (int i = 0; i < card.size(); i++) {
-                if (keyStroke.getCharacter().equals((char) i)) {
+                if (keyStroke.getCharacter().toString().equals("" + i)) {
                     foldedCard.add(card.get(i));
                 }
             }

@@ -1,6 +1,5 @@
 package hu.xannosz.tarokk.client.tui.frame;
 
-import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.*;
 import com.googlecode.lanterna.input.KeyStroke;
@@ -22,6 +21,7 @@ public class LobbyFrame extends Frame {
     private int gamePage = 0;
     private int namePage = 0;
     private boolean namePanelActivated = false;
+    private List< MainProto.GameSession> gameSessions;
 
     private int maxNameSize;
     private TerminalSize gameListSize;
@@ -48,7 +48,16 @@ public class LobbyFrame extends Frame {
 
     @Override
     public Component getFooter() {
-        MainProto.GameSession gameInfo = tuiClient.getServerLiveData().getGameSessions().get(gamePage);
+        if (Util.anyNull(tuiClient.getServerLiveData().getGameSessions(),
+                tuiClient.getServerLiveData().getUsers(),
+                tuiClient.getServerLiveData().getLoginResult(),
+                gameSessions)) {
+            return new Panel();
+        }
+
+        resetPagers();
+
+        MainProto.GameSession gameInfo = gameSessions.get(gamePage);
         int userID = tuiClient.getServerLiveData().getLoginResult().getUserId();
 
         String joinButtonText;
@@ -103,42 +112,28 @@ public class LobbyFrame extends Frame {
         if (keyStroke.getKeyType().equals(KeyType.ArrowUp)) {
             if (namePanelActivated) {
                 namePage--;
-                if (namePage < 0) {
-                    namePage = 0;
-                }
             } else {
                 gamePage--;
-                if (gamePage < 0) {
-                    gamePage = 0;
-                }
             }
         }
         if (keyStroke.getKeyType().equals(KeyType.ArrowDown)) {
             if (namePanelActivated) {
                 namePage++;
-                if (namePage > tuiClient.getServerLiveData().getUsers().size() - nameListHeight) {
-                    namePage = tuiClient.getServerLiveData().getUsers().size() - nameListHeight;
-                }
-                if (namePage < 0) {
-                    namePage = 0;
-                }
             } else {
                 gamePage++;
-                if (gamePage > tuiClient.getServerLiveData().getGameSessions().size() - 1) {
-                    gamePage = tuiClient.getServerLiveData().getGameSessions().size() - 1;
-                }
             }
         }
+        resetPagers();
 
         if (keyStroke.getKeyType().equals(KeyType.Enter) && !namePanelActivated) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
-            tuiClient.setFrame(new GameFrame(tuiClient, tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
+            tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(gameSessions.get(gamePage).getId()));
+            tuiClient.setFrame(new GameFrame(tuiClient, gameSessions.get(gamePage).getId()));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('+') && !namePanelActivated) {
             tuiClient.setFrame(new NewGameFrame(tuiClient));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('-') && !namePanelActivated) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.deleteToGame(tuiClient.getServerLiveData().getGameSessions().get(gamePage).getId()));
+            tuiClient.getConnection().sendMessage(MessageTranslator.deleteToGame(gameSessions.get(gamePage).getId()));
         }
 
         update();
@@ -156,14 +151,16 @@ public class LobbyFrame extends Frame {
             return;
         }
 
+        gameSessions = new ArrayList<>(tuiClient.getServerLiveData().getGameSessions());
+        resetPagers();
         calculatePanelSizes();
 
         Panel gamePanel = new Panel();
         for (int i = gamePage; i < tuiClient.getServerLiveData().getGameSessions().size() && i < gamePage + gameListHeight; i++) {
             if (i == gamePage && !namePanelActivated) {
-                gamePanel.addComponent(createGameSessionPanel(tuiClient.getServerLiveData().getGameSessions().get(i)).withBorder(Borders.doubleLine()));
+                gamePanel.addComponent(createGameSessionPanel(gameSessions.get(i)).withBorder(Borders.doubleLine()));
             } else {
-                gamePanel.addComponent(createGameSessionPanel(tuiClient.getServerLiveData().getGameSessions().get(i)).withBorder(Borders.singleLine()));
+                gamePanel.addComponent(createGameSessionPanel(gameSessions.get(i)).withBorder(Borders.singleLine()));
             }
         }
         frame.addComponent(gamePanel.setPreferredSize(gameListSize).withBorder(Borders.singleLine()));
@@ -291,7 +288,7 @@ public class LobbyFrame extends Frame {
         panel.addComponent(new Label(game.getType()).setPreferredSize(gameNamePanelSize));
 
         for (int i = 0; i < game.getUserIdCount(); i++) {
-            panel.addComponent(Util.createUserPanel(game.getUserId(i),tuiClient).setPreferredSize(gameNamePanelSize));
+            panel.addComponent(Util.createUserPanel(game.getUserId(i), tuiClient).setPreferredSize(gameNamePanelSize));
         }
         for (int i = game.getUserIdCount(); i < 4; i++) {
             panel.addComponent(new Label("").setPreferredSize(gameNamePanelSize));
@@ -301,5 +298,20 @@ public class LobbyFrame extends Frame {
         panel.addComponent(new Label("" + game.getState()).setPreferredSize(gameNamePanelSize));
 
         return panel;
+    }
+
+    private void resetPagers() {
+        if (gamePage < 0) {
+            gamePage = 0;
+        }
+        if (namePage > tuiClient.getServerLiveData().getUsers().size() - nameListHeight) {
+            namePage = tuiClient.getServerLiveData().getUsers().size() - nameListHeight;
+        }
+        if (namePage < 0) {
+            namePage = 0;
+        }
+        if (gamePage > tuiClient.getServerLiveData().getGameSessions().size() - 1) {
+            gamePage = tuiClient.getServerLiveData().getGameSessions().size() - 1;
+        }
     }
 }

@@ -14,13 +14,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentMap;
 
 @Getter
 public class ServerLiveData implements MessageHandler {
 
-    private List<MainProto.GameSession> gameSessions;
+    private ConcurrentLinkedQueue<MainProto.GameSession> gameSessions;
     private MainProto.LoginResult loginResult;
-    private Map<Integer, MainProto.User> users;
+    private ConcurrentMap<Integer, MainProto.User> users;
 
     //Game data
     private String gameType;
@@ -29,19 +32,19 @@ public class ServerLiveData implements MessageHandler {
     private int playerTurn;
     private boolean pendingNewGame = false;
     private EventProto.Event.Statistics statistics;
-    private List<Integer> availableBids;  //TODO Not used jet.
-    private List<Card> availableCalls;
-    private List<String> availableAnnouncements;
-    private final Map<GamePhase, List<Douplet<Integer, String>>> playerActions = new HashMap<>();
-    private final List<Card> playerCard = new ArrayList<>();
-    private final List<Integer> foldDone = new ArrayList<>();
-    private final Map<Integer, Integer> skartedTarocks = new HashMap<>();
-    private final Map<Integer, Boolean> playerTeamInfo = new HashMap<>();
-    private final Map<Integer, Integer> cardsTakenUsers = new HashMap<>();
-    private final Map<Integer, Integer> playerPoints = new HashMap<>();
-    private final Map<Integer, Integer> incrementPlayerPoints = new HashMap<>();
-    private final List<Douplet<Integer, String>> turnPlayerActions = new ArrayList<>();
-    private final List<Douplet<Integer, String>> chat = new ArrayList<>();  //TODO implement chatting
+    private ConcurrentLinkedQueue<Integer> availableBids;  //TODO Not used jet.
+    private ConcurrentLinkedQueue<Card> availableCalls;
+    private ConcurrentLinkedQueue<String> availableAnnouncements;
+    private final ConcurrentMap<GamePhase, ConcurrentLinkedQueue<Douplet<Integer, String>>> playerActions = new ConcurrentHashMap<>();  //TODO separate actions by action
+    private final ConcurrentLinkedQueue<Card> playerCard = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Integer> foldDone = new ConcurrentLinkedQueue<>();
+    private final ConcurrentMap<Integer, Integer> skartedTarocks = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Boolean> playerTeamInfo = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Integer> cardsTakenUsers = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Integer> playerPoints = new ConcurrentHashMap<>();
+    private final ConcurrentMap<Integer, Integer> incrementPlayerPoints = new ConcurrentHashMap<>();
+    private final ConcurrentLinkedQueue<Douplet<Integer, String>> turnPlayerActions = new ConcurrentLinkedQueue<>();
+    private final ConcurrentLinkedQueue<Douplet<Integer, String>> chat = new ConcurrentLinkedQueue<>();  //TODO implement chatting
 
     private final TuiClient tuiClient;
 
@@ -77,7 +80,7 @@ public class ServerLiveData implements MessageHandler {
                         beginnerPlayer = event.getStartGame().getBeginnerPlayer();
                         break;
                     case PLAYER_ACTION:
-                        playerActions.computeIfAbsent(phase, k -> new ArrayList<>());
+                        playerActions.computeIfAbsent(phase, k -> new ConcurrentLinkedQueue<>());
                         playerActions.get(phase).add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction()));
                         if (phase.equals(GamePhase.GAMEPLAY)) {
                             turnPlayerActions.add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction().replace("play:", "")));
@@ -93,6 +96,7 @@ public class ServerLiveData implements MessageHandler {
                         playerTeamInfo.put(event.getPlayerTeamInfo().getPlayer(), event.getPlayerTeamInfo().getIsCaller());
                         break;
                     case PLAYER_CARDS:
+                        playerCard.clear();
                         for (String id : event.getPlayerCards().getCardList()) {
                             playerCard.add(Card.parseCard(id));
                         }
@@ -101,10 +105,10 @@ public class ServerLiveData implements MessageHandler {
                         phase = GamePhase.getPhase(event.getPhaseChanged().getPhase());
                         break;
                     case AVAILABLE_BIDS:
-                        availableBids = event.getAvailableBids().getBidList();
+                        availableBids = new ConcurrentLinkedQueue<>(event.getAvailableBids().getBidList());
                         break;
                     case AVAILABLE_CALLS:
-                        availableCalls = new ArrayList<>();
+                        availableCalls = new ConcurrentLinkedQueue<>();
                         for (String card : event.getAvailableCalls().getCardList()) {
                             availableCalls.add(Card.parseCard(card));
                         }
@@ -118,7 +122,7 @@ public class ServerLiveData implements MessageHandler {
                         }
                         break;
                     case AVAILABLE_ANNOUNCEMENTS:
-                        availableAnnouncements = event.getAvailableAnnouncements().getAnnouncementList();
+                        availableAnnouncements = new ConcurrentLinkedQueue<>( event.getAvailableAnnouncements().getAnnouncementList());
                         break;
                     case CARDS_TAKEN:
                         int player = event.getCardsTaken().getPlayer();
@@ -151,8 +155,8 @@ public class ServerLiveData implements MessageHandler {
                 phaseChanged.getPhase();
                 break;
             case SERVER_STATUS:
-                gameSessions = message.getServerStatus().getAvailableGameSessionList();
-                users = new HashMap<>();
+                gameSessions = new ConcurrentLinkedQueue<>(message.getServerStatus().getAvailableGameSessionList());
+                users = new ConcurrentHashMap<>();
                 for (MainProto.User user : message.getServerStatus().getAvailableUserList()) {
                     users.put(user.getId(), user);
                 }

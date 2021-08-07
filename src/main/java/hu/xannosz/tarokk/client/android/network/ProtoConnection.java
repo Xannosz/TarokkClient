@@ -1,236 +1,193 @@
 package hu.xannosz.tarokk.client.android.network;
 
-import com.tisza.tarock.proto.*;
-import com.tisza.tarock.proto.MainProto.*;
+import com.tisza.tarock.proto.MainProto;
+import com.tisza.tarock.proto.MainProto.Message;
 
-import java.io.*;
-import java.net.*;
-import java.nio.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.Socket;
+import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
-public class ProtoConnection implements Closeable
-{
-	private static final String HELLO_STRING = "Tarokk";
-	private static final int VERSION = 8;
-	private static final int KEEP_ALIVE_DELAY = 1;
-	private static final int SOCKET_TIMEOUT = 10;
+public class ProtoConnection implements Closeable {
+    private static final String HELLO_STRING = "Tarokk";
+    private static final int VERSION = 8;
+    private static final int KEEP_ALIVE_DELAY = 1;
+    private static final int SOCKET_TIMEOUT = 10;
 
-	private final Executor messageHandlerExecutor;
-	private Socket socket;
-	private InputStream is;
-	private OutputStream os;
-	private final Object packetHandlersLock = new Object();
-	private List<MessageHandler> packetHandlers = new ArrayList<>();
-	private BlockingQueue<Message> messagesToSend = new LinkedBlockingQueue<>();
-	private volatile boolean started = false;
-	private volatile boolean closeRequested = false;
+    private final Executor messageHandlerExecutor;
+    private Socket socket;
+    private InputStream is;
+    private OutputStream os;
+    private final Object packetHandlersLock = new Object();
+    private List<MessageHandler> packetHandlers = new ArrayList<>();
+    private BlockingQueue<Message> messagesToSend = new LinkedBlockingQueue<>();
+    private volatile boolean started = false;
+    private volatile boolean closeRequested = false;
 
-	private Thread readerThread = new Thread(new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			try
-			{
-				byte[] helloArr = new byte[10];
-				is.read(helloArr);
-				ByteBuffer helloByteBuffer = ByteBuffer.wrap(helloArr);
-				String serverHelloString = new String(helloArr, 0, 6);
-				int serverVersion = helloByteBuffer.getInt(6);
-				System.out.println("serverHelloString:"+serverHelloString);
-				if (!serverHelloString.equals(HELLO_STRING))
-				{
-					error(MessageHandler.ErrorType.INVALID_HELLO);
-				}
-				else if (serverVersion != VERSION)
-				{
-					error(MessageHandler.ErrorType.VERSION_MISMATCH);
-				}
+    private Thread readerThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                byte[] helloArr = new byte[10];
+                is.read(helloArr);
+                ByteBuffer helloByteBuffer = ByteBuffer.wrap(helloArr);
+                String serverHelloString = new String(helloArr, 0, 6);
+                int serverVersion = helloByteBuffer.getInt(6);
 
-				while (!closeRequested)
-				{
-					Message message = Message.parseDelimitedFrom(is);
+                if (!serverHelloString.equals(HELLO_STRING)) {
+                    error(MessageHandler.ErrorType.INVALID_HELLO);
+                } else if (serverVersion != VERSION) {
+                    error(MessageHandler.ErrorType.VERSION_MISMATCH);
+                }
 
-					if (message == null)
-						break;
+                while (!closeRequested) {
+                    Message message = Message.parseDelimitedFrom(is);
 
-					if (message.getMessageTypeCase() == Message.MessageTypeCase.KEEPALIVE)
-						continue;
+                    if (message == null)
+                        break;
 
-					synchronized (packetHandlersLock)
-					{
-						for (MessageHandler handler : packetHandlers)
-						{
-							messageHandlerExecutor.execute(() -> handler.handleMessage(message));
-						}
-					}
-				}
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				if (!closeRequested)
-				{
-					try
-					{
-						close();
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	});
-	
-	private Thread writerThread = new Thread(new Runnable()
-	{
-		@Override
-		public void run()
-		{
-			try
-			{
-				while (!closeRequested)
-				{
-					try
-					{
-						Message message = messagesToSend.poll(KEEP_ALIVE_DELAY, TimeUnit.SECONDS);
+                    if (message.getMessageTypeCase() == Message.MessageTypeCase.KEEPALIVE)
+                        continue;
 
-						if (message == null)
-							message = MainProto.Message.newBuilder().setKeepAlive(MainProto.KeepAlive.getDefaultInstance()).build();
+                    synchronized (packetHandlersLock) {
+                        for (MessageHandler handler : packetHandlers) {
+                            messageHandlerExecutor.execute(() -> handler.handleMessage(message));
+                        }
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (!closeRequested) {
+                    try {
+                        close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    });
 
-						message.writeDelimitedTo(os);
-					}
-					catch (InterruptedException e)
-					{
-						break;
-					}
-				}
-			}
-			catch (IOException e)
-			{
-				e.printStackTrace();
-			}
-			finally
-			{
-				if (!closeRequested)
-				{
-					try
-					{
-						close();
-					}
-					catch (IOException e)
-					{
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-	});
-	
-	public ProtoConnection(Socket socket, Executor messageHandlerExecutor) throws IOException
-	{
-		this.socket = socket;
-		this.messageHandlerExecutor = messageHandlerExecutor;
+    private Thread writerThread = new Thread(new Runnable() {
+        @Override
+        public void run() {
+            try {
+                while (!closeRequested) {
+                    try {
+                        Message message = messagesToSend.poll(KEEP_ALIVE_DELAY, TimeUnit.SECONDS);
 
-		socket.setTcpNoDelay(true);
-		socket.setSoTimeout(SOCKET_TIMEOUT * 1000);
+                        if (message == null)
+                            message = MainProto.Message.newBuilder().setKeepAlive(MainProto.KeepAlive.getDefaultInstance()).build();
 
-		is = socket.getInputStream();
-		os = socket.getOutputStream();
-	}
+                        message.writeDelimitedTo(os);
+                    } catch (InterruptedException e) {
+                        break;
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (!closeRequested) {
+                    try {
+                        close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    });
 
-	private void error(MessageHandler.ErrorType errorType) throws IOException
-	{
-		synchronized (packetHandlersLock)
-		{
-			for (MessageHandler handler : packetHandlers)
-			{
-				messageHandlerExecutor.execute(() -> handler.connectionError(errorType));
-			}
-		}
-		close();
-	}
-	
-	public synchronized void start()
-	{
-		if (started || closeRequested)
-			throw new IllegalStateException();
+    public ProtoConnection(Socket socket, Executor messageHandlerExecutor) throws IOException {
+        this.socket = socket;
+        this.messageHandlerExecutor = messageHandlerExecutor;
 
-		started = true;
-		readerThread.start();
-		writerThread.start();
-	}
-	
-	public void addMessageHandler(MessageHandler handler)
-	{
-		synchronized (packetHandlersLock)
-		{
-			packetHandlers.add(handler);
-		}
-	}
-	
-	public void removeMessageHandler(MessageHandler handler)
-	{
-		synchronized (packetHandlersLock)
-		{
-			packetHandlers.remove(handler);
-		}
-	}
-	
-	public void sendMessage(Message message)
-	{
-		messagesToSend.offer(message);
-	}
+        socket.setTcpNoDelay(true);
+        socket.setSoTimeout(SOCKET_TIMEOUT * 1000);
 
-	private void stopThreads()
-	{
-		stopThread(readerThread);
-		stopThread(writerThread);
-	}
+        is = socket.getInputStream();
+        os = socket.getOutputStream();
+    }
 
-	private void stopThread(Thread thread)
-	{
-		if (!thread.isAlive())
-			return;
+    private void error(MessageHandler.ErrorType errorType) throws IOException {
+        synchronized (packetHandlersLock) {
+            for (MessageHandler handler : packetHandlers) {
+                messageHandlerExecutor.execute(() -> handler.connectionError(errorType));
+            }
+        }
+        close();
+    }
 
-		if (thread == Thread.currentThread())
-			return;
+    public synchronized void start() {
+        if (started || closeRequested)
+            throw new IllegalStateException();
 
-		thread.interrupt();
-	}
+        started = true;
+        readerThread.start();
+        writerThread.start();
+    }
 
-	public synchronized boolean isAlive()
-	{
-		return started && !closeRequested;
-	}
-	
-	public synchronized void close() throws IOException
-	{
-		if (closeRequested)
-			return;
+    public void addMessageHandler(MessageHandler handler) {
+        synchronized (packetHandlersLock) {
+            packetHandlers.add(handler);
+        }
+    }
 
-		closeRequested = true;
+    public void removeMessageHandler(MessageHandler handler) {
+        synchronized (packetHandlersLock) {
+            packetHandlers.remove(handler);
+        }
+    }
 
-		if (socket != null)
-		{
-			socket.close();
-			socket = null;
-		}
+    public void sendMessage(Message message) {
+        messagesToSend.offer(message);
+    }
 
-		stopThreads();
+    private void stopThreads() {
+        stopThread(readerThread);
+        stopThread(writerThread);
+    }
 
-		synchronized (packetHandlersLock)
-		{
-			for (MessageHandler handler : packetHandlers)
-			{
-				messageHandlerExecutor.execute(() -> handler.connectionClosed());
-			}
-		}
-	}
+    private void stopThread(Thread thread) {
+        if (!thread.isAlive())
+            return;
+
+        if (thread == Thread.currentThread())
+            return;
+
+        thread.interrupt();
+    }
+
+    public synchronized boolean isAlive() {
+        return started && !closeRequested;
+    }
+
+    public synchronized void close() throws IOException {
+        if (closeRequested)
+            return;
+
+        closeRequested = true;
+
+        if (socket != null) {
+            socket.close();
+            socket = null;
+        }
+
+        stopThreads();
+
+        synchronized (packetHandlersLock) {
+            for (MessageHandler handler : packetHandlers) {
+                messageHandlerExecutor.execute(() -> handler.connectionClosed());
+            }
+        }
+    }
 }

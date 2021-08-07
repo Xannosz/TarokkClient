@@ -11,11 +11,12 @@ import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.*;
 
 public class CallingSubFrame extends SubFrame {
-    private int page = 0;
+    private static int page = 0; //TODO remove static
     private  List<Card> availableCards;// = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
 
     public CallingSubFrame(TuiClient tuiClient) {
@@ -26,6 +27,11 @@ public class CallingSubFrame extends SubFrame {
     public Component getPanel() {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(3));
+
+        if (Util.anyNull(tuiClient.getServerLiveData().getAvailableCalls())) {
+            return panel;
+        }
+
         availableCards = new ArrayList<>(tuiClient.getServerLiveData().getAvailableCalls());
         for (int i = 0; i < availableCards.size(); i++) {
             if (i == page) {
