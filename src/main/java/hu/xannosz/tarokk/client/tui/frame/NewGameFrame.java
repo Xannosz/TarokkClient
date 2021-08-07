@@ -15,30 +15,17 @@ import hu.xannosz.tarokk.client.util.Util;
 
 public class NewGameFrame extends Frame {
 
-    private Panel frame = new Panel();
     private GameType gameType = GameType.values()[0];
     private DoubleRoundType doubleRoundType = DoubleRoundType.values()[0];
     private boolean doublePanelActivated;
 
     public NewGameFrame(TuiClient tuiClient) {
         super(tuiClient);
-    }
-
-    @Override
-    public Component getPanel() {
-        return frame;
-    }
-
-    @Override
-    public Component getFooter() {
-        Panel footer = new Panel();
+        footer = new Panel();
         footer.setLayoutManager(new GridLayout(9));
-
         Util.addKey(footer, "Arrows", "Movement", tuiClient);
         Util.addKey(footer, "Enter", "Create game", tuiClient);
         Util.addKey(footer, "/", "Cancel", tuiClient);
-
-        return footer;
     }
 
     @Override

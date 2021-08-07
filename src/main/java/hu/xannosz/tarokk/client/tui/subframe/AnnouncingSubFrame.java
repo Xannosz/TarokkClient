@@ -23,7 +23,7 @@ import java.util.Map;
 import static hu.xannosz.tarokk.client.util.Util.*;
 
 public class AnnouncingSubFrame extends SubFrame {
-    private static int page = 0; //TODO remove static
+    private int page = 0;
     private List<String> availableAnnouncing;
     private final int gameId;
 
@@ -44,24 +44,24 @@ public class AnnouncingSubFrame extends SubFrame {
 
         availableAnnouncing = new ArrayList<>(tuiClient.getServerLiveData().getAvailableAnnouncements());
 
-        if (tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.ANNOUNCING) != null) {
-            for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.ANNOUNCING)) {
-                addData(panel, getPlayerName(announce.getFirst(), gameData, tuiClient) + " announce", announce.getSecond().replace("announce:", ""), tuiClient);
+        Panel playerAnnouncing=new Panel();
+        if (tuiClient.getServerLiveData().getPlayerActions().get("announce") != null) {
+            for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get("announce")) {
+                addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, tuiClient) + " announce", announce.getSecond(), tuiClient);
             }
         }
+        panel.addComponent(playerAnnouncing);
 
-        panel.addComponent(new Label("")); //TODO empty line
-        panel.addComponent(new Label(""));
-        panel.addComponent(new Label(""));
-        panel.addComponent(new Label(""));
-
+        Panel nextAnnouncing=new Panel();
         for (int i = 0; i < availableAnnouncing.size(); i++) {
             if (i == page) {
-                panel.addComponent(new Label(availableAnnouncing.get(i)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
             } else {
-                panel.addComponent(new Label(availableAnnouncing.get(i)));
+                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)));
             }
         }
+        panel.addComponent(nextAnnouncing);
+
         return panel;
     }
 

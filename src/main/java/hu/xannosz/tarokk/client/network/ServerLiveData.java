@@ -10,10 +10,6 @@ import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -32,10 +28,10 @@ public class ServerLiveData implements MessageHandler {
     private int playerTurn;
     private boolean pendingNewGame = false;
     private EventProto.Event.Statistics statistics;
-    private ConcurrentLinkedQueue<Integer> availableBids;  //TODO Not used jet.
+    private ConcurrentLinkedQueue<Integer> availableBids;
     private ConcurrentLinkedQueue<Card> availableCalls;
     private ConcurrentLinkedQueue<String> availableAnnouncements;
-    private final ConcurrentMap<GamePhase, ConcurrentLinkedQueue<Douplet<Integer, String>>> playerActions = new ConcurrentHashMap<>();  //TODO separate actions by action
+    private final ConcurrentMap<String, ConcurrentLinkedQueue<Douplet<Integer, String>>> playerActions = new ConcurrentHashMap<>();
     private final ConcurrentLinkedQueue<Card> playerCard = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Integer> foldDone = new ConcurrentLinkedQueue<>();
     private final ConcurrentMap<Integer, Integer> skartedTarocks = new ConcurrentHashMap<>();
@@ -63,14 +59,13 @@ public class ServerLiveData implements MessageHandler {
             case DELETE_GAME_SESSION:
             case START_GAME_SESSION_LOBBY:
             case ACTION:
-                // Server message
-                return;//TODO
             case KEEPALIVE:
-                break;
+            case FCM_TOKEN:
+            case JOIN_HISTORY_GAME:
+                // Server message
+                return;
             case LOGIN_RESULT:
                 loginResult = message.getLoginResult();
-                break;
-            case FCM_TOKEN:
                 break;
             case EVENT:
                 EventProto.Event event = message.getEvent();
@@ -80,10 +75,12 @@ public class ServerLiveData implements MessageHandler {
                         beginnerPlayer = event.getStartGame().getBeginnerPlayer();
                         break;
                     case PLAYER_ACTION:
-                        playerActions.computeIfAbsent(phase, k -> new ConcurrentLinkedQueue<>());
-                        playerActions.get(phase).add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction()));
-                        if (phase.equals(GamePhase.GAMEPLAY)) {
-                            turnPlayerActions.add(new Douplet<>(event.getPlayerAction().getPlayer(), event.getPlayerAction().getAction().replace("play:", "")));
+                        String[] action = event.getPlayerAction().getAction().split(":");
+                        playerActions.computeIfAbsent(action[0], k -> new ConcurrentLinkedQueue<>());
+                        playerActions.get(action[0]).add(new Douplet<>(event.getPlayerAction().getPlayer(), action.length > 1 ? action[1] : action[0]));
+
+                        if (action[0].equals("play")) {
+                            turnPlayerActions.add(new Douplet<>(event.getPlayerAction().getPlayer(), action.length > 1 ? action[1] : action[0]));
                         }
                         break;
                     case CHAT:
@@ -122,7 +119,7 @@ public class ServerLiveData implements MessageHandler {
                         }
                         break;
                     case AVAILABLE_ANNOUNCEMENTS:
-                        availableAnnouncements = new ConcurrentLinkedQueue<>( event.getAvailableAnnouncements().getAnnouncementList());
+                        availableAnnouncements = new ConcurrentLinkedQueue<>(event.getAvailableAnnouncements().getAnnouncementList());
                         break;
                     case CARDS_TAKEN:
                         int player = event.getCardsTaken().getPlayer();
@@ -160,9 +157,7 @@ public class ServerLiveData implements MessageHandler {
                 for (MainProto.User user : message.getServerStatus().getAvailableUserList()) {
                     users.put(user.getId(), user);
                 }
-                break;
-            case JOIN_HISTORY_GAME:
-                break;
+                break;//TODO
             case CHAT:
                 break;
             case JOIN_HISTORY_GAME_RESULT:

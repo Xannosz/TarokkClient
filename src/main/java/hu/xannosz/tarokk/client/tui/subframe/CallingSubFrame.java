@@ -13,11 +13,14 @@ import hu.xannosz.tarokk.client.util.MessageTranslator;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CallingSubFrame extends SubFrame {
-    private static int page = 0; //TODO remove static
-    private  List<Card> availableCards;// = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
+    private int page = 0;
+    private List<Card> availableCards;// = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
 
     public CallingSubFrame(TuiClient tuiClient) {
         super(tuiClient);
@@ -53,11 +56,11 @@ public class CallingSubFrame extends SubFrame {
 
     @Override
     public void handleKeyStroke(KeyStroke keyStroke) {
-        if (keyStroke.getKeyType().equals(KeyType.ArrowUp)||keyStroke.getKeyType().equals(KeyType.ArrowLeft)) {
+        if (keyStroke.getKeyType().equals(KeyType.ArrowUp) || keyStroke.getKeyType().equals(KeyType.ArrowLeft)) {
             page--;
             page = Math.max(page, 0);
         }
-        if (keyStroke.getKeyType().equals(KeyType.ArrowDown)||keyStroke.getKeyType().equals(KeyType.ArrowRight)) {
+        if (keyStroke.getKeyType().equals(KeyType.ArrowDown) || keyStroke.getKeyType().equals(KeyType.ArrowRight)) {
             page++;
             page = Math.min(page, availableCards.size() - 1);
         }

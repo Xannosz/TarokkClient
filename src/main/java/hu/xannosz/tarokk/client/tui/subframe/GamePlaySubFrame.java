@@ -8,7 +8,6 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Card;
-import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
@@ -38,13 +37,13 @@ public class GamePlaySubFrame extends SubFrame {
 
         Panel playCard = new Panel();
         playCard.setLayoutManager(new GridLayout(4));
-        if (tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.GAMEPLAY) != null) {
+        if (tuiClient.getServerLiveData().getPlayerActions().get("play") != null) {
             for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getTurnPlayerActions()) {
                 addData(playCard, getPlayerName(play.getFirst(), gameData, tuiClient) + " play card", getFormattedCardName(play.getSecond()), tuiClient);
             }
-            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get(GamePhase.GAMEPLAY)) {
-                if(gameData.getUserId(play.getFirst())==tuiClient.getServerLiveData().getLoginResult().getUserId()){
-                    card.remove(Card.parseCard(play.getSecond().replace("play:","")));
+            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get("play")) {
+                if (gameData.getUserId(play.getFirst()) == tuiClient.getServerLiveData().getLoginResult().getUserId()) {
+                    card.remove(Card.parseCard(play.getSecond()));
                 }
             }
         }

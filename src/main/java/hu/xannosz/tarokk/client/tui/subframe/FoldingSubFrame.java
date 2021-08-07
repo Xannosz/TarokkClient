@@ -24,7 +24,7 @@ import static hu.xannosz.tarokk.client.util.Util.getGameData;
 
 public class FoldingSubFrame extends SubFrame {
 
-    private final static List<Card> foldedCard = new ArrayList<>(); //TODO
+    private final List<Card> foldedCard = new ArrayList<>();
     private List<Card> card;
     private final int gameId;
 
