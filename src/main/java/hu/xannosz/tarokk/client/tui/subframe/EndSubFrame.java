@@ -8,6 +8,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.tui.frame.GameFrame;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
 
 import java.util.Collections;
@@ -46,6 +47,7 @@ public class EndSubFrame extends SubFrame {
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
             tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.readyForNewGame()));
+            tuiClient.setFrame(new GameFrame(tuiClient,gameId));
             tuiClient.getServerLiveData().clearGameData();
         }
     }

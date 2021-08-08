@@ -20,7 +20,8 @@ import java.util.Map;
 
 public class CallingSubFrame extends SubFrame {
     private int page = 0;
-    private List<Card> availableCards;// = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
+    private List<Card> availableCards;//TODO why?
+    // = Arrays.asList(Card.XX, Card.XIX, Card.XVIII, Card.XVII, Card.XVI, Card.XV, Card.XIV, Card.XIII, Card.XII);
 
     public CallingSubFrame(TuiClient tuiClient) {
         super(tuiClient);
@@ -36,6 +37,9 @@ public class CallingSubFrame extends SubFrame {
         }
 
         availableCards = new ArrayList<>(tuiClient.getServerLiveData().getAvailableCalls());
+
+        resetPager();
+
         for (int i = 0; i < availableCards.size(); i++) {
             if (i == page) {
                 panel.addComponent(new Label(availableCards.get(i).getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
@@ -58,14 +62,18 @@ public class CallingSubFrame extends SubFrame {
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.ArrowUp) || keyStroke.getKeyType().equals(KeyType.ArrowLeft)) {
             page--;
-            page = Math.max(page, 0);
         }
         if (keyStroke.getKeyType().equals(KeyType.ArrowDown) || keyStroke.getKeyType().equals(KeyType.ArrowRight)) {
             page++;
-            page = Math.min(page, availableCards.size() - 1);
         }
+        resetPager();
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
             tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.call(availableCards.get(page))));
         }
+    }
+
+    private void resetPager(){
+        page = Math.max(page, 0);
+        page = Math.min(page, availableCards.size() - 1);
     }
 }

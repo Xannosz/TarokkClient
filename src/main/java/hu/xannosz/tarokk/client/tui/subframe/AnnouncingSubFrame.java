@@ -8,7 +8,6 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
-import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.MessageTranslator;
@@ -36,7 +35,6 @@ public class AnnouncingSubFrame extends SubFrame {
     public Component getPanel() {
         MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         Panel panel = new Panel();
-        panel.setLayoutManager(new GridLayout(4));
 
         if (Util.anyNull(tuiClient.getServerLiveData().getAvailableAnnouncements())) {
             return panel;
@@ -44,7 +42,10 @@ public class AnnouncingSubFrame extends SubFrame {
 
         availableAnnouncing = new ArrayList<>(tuiClient.getServerLiveData().getAvailableAnnouncements());
 
-        Panel playerAnnouncing=new Panel();
+        resetPager();
+
+        Panel playerAnnouncing = new Panel();
+        playerAnnouncing.setLayoutManager(new GridLayout(4));
         if (tuiClient.getServerLiveData().getPlayerActions().get("announce") != null) {
             for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get("announce")) {
                 addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, tuiClient) + " announce", announce.getSecond(), tuiClient);
@@ -52,7 +53,8 @@ public class AnnouncingSubFrame extends SubFrame {
         }
         panel.addComponent(playerAnnouncing);
 
-        Panel nextAnnouncing=new Panel();
+        Panel nextAnnouncing = new Panel();
+        nextAnnouncing.setLayoutManager(new GridLayout(4));
         for (int i = 0; i < availableAnnouncing.size(); i++) {
             if (i == page) {
                 nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
@@ -78,12 +80,11 @@ public class AnnouncingSubFrame extends SubFrame {
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.ArrowUp) || keyStroke.getKeyType().equals(KeyType.ArrowLeft)) {
             page--;
-            page = Math.max(page, 0);
         }
         if (keyStroke.getKeyType().equals(KeyType.ArrowDown) || keyStroke.getKeyType().equals(KeyType.ArrowRight)) {
             page++;
-            page = Math.min(page, availableAnnouncing.size() - 1);
         }
+        resetPager();
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
             tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.announce(availableAnnouncing.get(page))));
         }
@@ -92,5 +93,10 @@ public class AnnouncingSubFrame extends SubFrame {
                 tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.announcePass()));
             }
         }
+    }
+
+    private void resetPager() {
+        page = Math.max(page, 0);
+        page = Math.min(page, availableAnnouncing.size() - 1);
     }
 }

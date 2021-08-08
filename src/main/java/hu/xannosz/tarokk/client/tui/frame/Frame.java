@@ -8,8 +8,8 @@ import hu.xannosz.tarokk.client.tui.TuiClient;
 public abstract class Frame {
 
     protected TuiClient tuiClient;
-    protected Panel frame;
-    protected Panel footer;
+    protected Panel frame=new Panel();
+    protected Panel footer=new Panel();
 
     public Frame(TuiClient tuiClient) {
         this.tuiClient = tuiClient;

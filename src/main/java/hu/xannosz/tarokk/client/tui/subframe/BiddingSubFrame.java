@@ -1,6 +1,7 @@
 package hu.xannosz.tarokk.client.tui.subframe;
 
 import com.googlecode.lanterna.gui2.Component;
+import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.tisza.tarock.proto.MainProto;
@@ -40,7 +41,7 @@ public class BiddingSubFrame extends SubFrame {
     public Component getPanel() {
         MainProto.GameSession gameData = getGameData(gameId, tuiClient);
         keyMapDictionary.clear();
-        Panel panel = new Panel();
+        Panel panel = new Panel(new GridLayout(4));
 
         if (Util.anyNull(tuiClient.getServerLiveData().getPlayerActions().get("bid"),
                 tuiClient.getServerLiveData().getAvailableBids())) {
@@ -52,16 +53,7 @@ public class BiddingSubFrame extends SubFrame {
         }
 
         for (int bid : tuiClient.getServerLiveData().getAvailableBids()) {
-            String name = "";
-
-            if (bid == 3) name = "Three";
-            if (bid == 2) name = "Two";
-            if (bid == 1) name = "One";
-            if (bid == 0) name = "Solo";
-            if (bid == -1) name = "Pass";
-            if (bid == lastBid) name = "Hold";
-
-            keyMapDictionary.addFunction("" + bid, name, () ->
+            keyMapDictionary.addFunction("" + bid, biddingToString(bid), () ->
                     tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.bid(bid))));
         }
 
@@ -72,10 +64,19 @@ public class BiddingSubFrame extends SubFrame {
         if (action.equals("p")) {
             return "Pass";
         }
-        int num = Integer.parseInt(action);
+
+        return biddingToString(Integer.parseInt(action));
+    }
+
+    private String biddingToString(int num) {
+        if (num == -1) {
+            return "Pass";
+        }
+
         if (num == lastBid) {
             return "Hold";
         }
+
         lastBid = num;
 
         if (num == 3) {
@@ -90,6 +91,7 @@ public class BiddingSubFrame extends SubFrame {
         if (num == 0) {
             return "Solo";
         }
-        return null;
+
+        return "invalid:" + num;
     }
 }

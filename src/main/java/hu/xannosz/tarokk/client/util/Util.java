@@ -66,12 +66,12 @@ public class Util {
     }
 
     public static String getPlayerName(int playerId, MainProto.GameSession gameData, TuiClient tuiClient) {
-        if(gameData.getUserIdCount()<=playerId){
+        if (gameData.getUserIdCount() <= playerId) {
             return "";
         }
         MainProto.User user = tuiClient.getServerLiveData().getUsers().get(gameData.getUserId(playerId));
         if (user.getBot()) {
-            return "Bot";
+            return "Bot " + user.getName().replace("bot", "");
         } else {
             return user.getName();
         }
@@ -79,7 +79,7 @@ public class Util {
 
     public static String getFormattedCardName(String card) {
         Card cardObj = Card.parseCard(card);
-        return cardObj==null?"":cardObj.getFormattedName();
+        return cardObj == null ? "" : cardObj.getFormattedName();
     }
 
     public static void addData(Panel data, String name, String value, TuiClient tuiClient) {
