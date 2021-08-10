@@ -52,7 +52,7 @@ public class TuiClient implements WindowListener {
             gui.setTheme(ThemeHandler.getTheme(terminalSettings));
             gui.addWindowAndWait(window);
         } catch (Exception ex) {
-            Util.error("Error client creation: " + ex);
+            Util.Log.logError("Error client creation: " + ex);
         }
     }
 
@@ -110,7 +110,7 @@ public class TuiClient implements WindowListener {
 
     @Override
     public void onInput(Window basePane, KeyStroke keyStroke, AtomicBoolean deliverEvent) {
-        Util.debug("Pressed: " + keyStroke);
+        Util.Log.logKey("Key: " + keyStroke);
         try {
             if (keyStroke.getKeyType() == KeyType.Escape) {
                 connection.close();
@@ -119,8 +119,8 @@ public class TuiClient implements WindowListener {
             }
             frame.handleKeyStroke(keyStroke);
         } catch (Exception ex) {
-            Util.error("Error during execution: ");
-            ex.printStackTrace();
+            Util.Log.logError("Error during execution: ");
+            ex.printStackTrace(); //TODO print to file
         }
     }
 

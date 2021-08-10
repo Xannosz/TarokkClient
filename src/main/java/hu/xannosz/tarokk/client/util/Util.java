@@ -15,6 +15,7 @@ import hu.xannosz.tarokk.client.android.network.ProtoConnection;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import lombok.experimental.UtilityClass;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -23,14 +24,14 @@ import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+@UtilityClass
 public class Util {
-
-    public static final String LOG_FILE_PATH = "log.txt";
-
     public static ProtoConnection createProtoConnection(MessageHandler messageHandler) throws IOException {
         SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
         socket.connect(new InetSocketAddress(Constants.ADDRESS, Constants.PORT), Constants.TIME_OUT);
@@ -137,31 +138,88 @@ public class Util {
         return false;
     }
 
-    public static void log(String color, String message) {
-        System.out.println(color + message + Constants.Color.ANSI_RESET);
-        try {
-            if (!Files.exists(Paths.get(LOG_FILE_PATH))) {
-                Files.createFile(Paths.get(LOG_FILE_PATH));
+    @UtilityClass
+    public static class Log {
+        private static final String LOG_DIRECTORY = "logs";
+        private static final String MESSAGE_LOG_FILE = "message_log.txt";
+        private static final String GAME_LOG_FILE = "game_log.txt";
+        private static final String KEY_LOG_FILE = "key_log.txt";
+        private static final String ERROR_LOG_FILE = "error_log.txt";
+        private static final String COMBINED_LOG_FILE = "combined_log.txt";
+
+        private static final String DIRECTORY_INFIX = new SimpleDateFormat("yyyyy.MM.dd_hh.mm.ss").format(new Date());
+
+        static {
+            boolean logSetup = true;
+            if (!Paths.get(LOG_DIRECTORY).toFile().exists()) {
+                logSetup = Paths.get(LOG_DIRECTORY).toFile().mkdir();
             }
-            Files.write(Paths.get(LOG_FILE_PATH), (message + "\n").getBytes(), StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            //Unexpected
+            if (!Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX).toFile().exists()) {
+                logSetup &= Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX).toFile().mkdir();
+            }
+
+            try {
+                if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, MESSAGE_LOG_FILE))) {
+                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, MESSAGE_LOG_FILE));
+                }
+                if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, GAME_LOG_FILE))) {
+                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, GAME_LOG_FILE));
+                }
+                if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, KEY_LOG_FILE))) {
+                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, KEY_LOG_FILE));
+                }
+                if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, ERROR_LOG_FILE))) {
+                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE));
+                }
+                if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE))) {
+                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE));
+                }
+            } catch (IOException e) {
+                logSetup = false;
+            }
+
+            if (!logSetup) {
+                logToConsole(Constants.Color.ANSI_RED, "Logging service not started.");
+            }
         }
-    }
 
-    public static void log(String message) {
-        log("", message);
-    }
+        private static void logToConsole(String color, String message) {
+            System.out.println(color + message + Constants.Color.ANSI_RESET);
+        }
 
-    public static void error(String message) {
-        log(Constants.Color.ANSI_RED, message);
-    }
+        private static void logToFile(String line, String fileName) {
+            try {
+                Files.write(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, fileName), (line + "\n").getBytes(), StandardOpenOption.APPEND);
+                Files.write(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE), (line + "\n").getBytes(), StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                //Unexpected
+            }
+        }
 
-    public static void info(String message) {
-        log(Constants.Color.ANSI_BLUE, message);
-    }
+        public static void logMessage(String log) {
+            if (LogSettings.INSTANCE.isMessageLog()) {
+                logToConsole(Constants.Color.ANSI_GREEN, log);
+            }
+            logToFile(log, MESSAGE_LOG_FILE);
+        }
 
-    public static void debug(String message) {
-        log(Constants.Color.ANSI_CYAN, message);
+        public static void logGame(String log) {
+            if (LogSettings.INSTANCE.isGameLog()) {
+                logToConsole(Constants.Color.ANSI_BLUE, log);
+            }
+            logToFile(log, GAME_LOG_FILE);
+        }
+
+        public static void logKey(String log) {
+            if (LogSettings.INSTANCE.isKeyLog()) {
+                logToConsole(Constants.Color.ANSI_CYAN, log);
+            }
+            logToFile(log, KEY_LOG_FILE);
+        }
+
+        public static void logError(String log) {
+            logToConsole(Constants.Color.ANSI_RED, log);
+            logToFile(log, ERROR_LOG_FILE);
+        }
     }
 }

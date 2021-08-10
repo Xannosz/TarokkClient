@@ -50,8 +50,7 @@ public class ServerLiveData implements MessageHandler {
 
     @Override
     public void handleMessage(MainProto.Message message) {
-        Util.info("Message Type: " + message.getMessageTypeCase());
-        Util.debug("Message: " + message);
+        Util.Log.logMessage("Message("+message.getMessageTypeCase()+"): " + message);
         switch (message.getMessageTypeCase()) {
             case CREATE_GAME_SESSION:
             case LOGIN:
@@ -145,7 +144,7 @@ public class ServerLiveData implements MessageHandler {
                         pendingNewGame = true;
                         break;
                     case EVENTTYPE_NOT_SET:
-                        Util.error("Event type not set: " + message);
+                        Util.Log.logError("Event type not set: " + message);
                         break;
                 }
                 EventProto.Event.PhaseChanged phaseChanged = event.getPhaseChanged();
@@ -163,7 +162,7 @@ public class ServerLiveData implements MessageHandler {
             case JOIN_HISTORY_GAME_RESULT:
                 break;
             case MESSAGETYPE_NOT_SET:
-                Util.error("Message type not set: " + message);
+                Util.Log.logError("Message type not set: " + message);
                 return;
         }
         tuiClient.update();
@@ -171,12 +170,12 @@ public class ServerLiveData implements MessageHandler {
 
     @Override
     public void connectionError(ErrorType errorType) {
-        Util.error("Error: " + errorType);
+        Util.Log.logError("Error: " + errorType);
     }
 
     @Override
     public void connectionClosed() {
-        Util.info("Connection closed!");
+        Util.Log.logMessage("Connection closed!");
     }
 
     public void clearGameData() {
