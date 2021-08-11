@@ -7,7 +7,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.GameType;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
@@ -66,14 +66,14 @@ public class LobbyFrame extends Frame {
         resetPagers();
 
         if (keyStroke.getKeyType().equals(KeyType.Enter) && !namePanelActivated) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(gameSessions.get(gamePage).getId()));
+            tuiClient.getConnection().sendMessage(Messages.joinToGame(gameSessions.get(gamePage).getId()));
             tuiClient.setFrame(new GameFrame(tuiClient, gameSessions.get(gamePage).getId()));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('+') && !namePanelActivated) {
             tuiClient.setFrame(new NewGameFrame(tuiClient));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('-') && !namePanelActivated) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.deleteToGame(gameSessions.get(gamePage).getId()));
+            tuiClient.getConnection().sendMessage(Messages.deleteToGame(gameSessions.get(gamePage).getId()));
         }
 
         update();

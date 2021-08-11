@@ -9,7 +9,7 @@ import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.tui.frame.GameFrame;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 
 import java.util.Collections;
 import java.util.Map;
@@ -46,7 +46,7 @@ public class EndSubFrame extends SubFrame {
     @Override
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.readyForNewGame()));
+            tuiClient.getConnection().sendMessage(Messages.sendAction(Action.readyForNewGame()));
             tuiClient.setFrame(new GameFrame(tuiClient,gameId));
             tuiClient.getServerLiveData().clearGameData();
         }

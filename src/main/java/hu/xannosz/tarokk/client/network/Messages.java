@@ -1,11 +1,11 @@
-package hu.xannosz.tarokk.client.util;
+package hu.xannosz.tarokk.client.network;
 
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
 import hu.xannosz.tarokk.client.network.Action;
 
-public class MessageTranslator {
+public class Messages {
     public static MainProto.Message fbLogin(String token){
         return MainProto.Message.newBuilder().setLogin( MainProto.Login.newBuilder().setFacebookToken(token).build()).build();
     }

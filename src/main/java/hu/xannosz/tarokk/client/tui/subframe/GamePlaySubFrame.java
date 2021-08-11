@@ -10,7 +10,7 @@ import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -69,7 +69,7 @@ public class GamePlaySubFrame extends SubFrame {
         if (keyStroke.getKeyType().equals(KeyType.Character)) {
             for (int i = 0; i < card.size(); i++) {
                 if (keyStroke.getCharacter().toString().equals("" + (i + 1))) {
-                    tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.play(card.get(i))));
+                    tuiClient.getConnection().sendMessage(Messages.sendAction(Action.play(card.get(i))));
                 }
             }
         }

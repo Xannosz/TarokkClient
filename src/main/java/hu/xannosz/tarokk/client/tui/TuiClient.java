@@ -7,11 +7,13 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.tisza.tarock.proto.MainProto;
-import hu.xannosz.tarokk.client.android.network.ProtoConnection;
+import hu.xannosz.tarokk.client.android.legacy.ProtoConnection;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.network.ServerLiveData;
 import hu.xannosz.tarokk.client.tui.frame.Frame;
 import hu.xannosz.tarokk.client.tui.frame.LobbyFrame;
 import hu.xannosz.tarokk.client.util.*;
+import hu.xannosz.tarokk.client.util.settings.TerminalSettings;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +21,7 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TuiClient implements WindowListener {
-
+//TODO closing problem
     private Screen screen;
     @Getter
     private ProtoConnection connection;
@@ -45,7 +47,7 @@ public class TuiClient implements WindowListener {
 
             // start proto
             connection = Util.createProtoConnection(serverLiveData);
-            connection.sendMessage(MessageTranslator.fbLogin(Constants.FB_TOKEN));
+            connection.sendMessage(Messages.fbLogin(InternalData.INSTANCE.getFaceBookToken()));
 
             // init gui
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
@@ -103,7 +105,7 @@ public class TuiClient implements WindowListener {
         footerPanel.addComponent(new Label("["));
         footerPanel.addComponent(new Label("Esc").setTheme(ThemeHandler.getKeyThemeFooterPanel(terminalSettings)));
         footerPanel.addComponent(new Label("]: Quit"));
-        footerPanel.addComponent(frame.getFooter());
+        footerPanel.addComponent(frame.getFooter()); //TODO get footer as map
         footerPanel.setPreferredSize(new TerminalSize(getSize().getColumns(),1));
         return footerPanel;
     }

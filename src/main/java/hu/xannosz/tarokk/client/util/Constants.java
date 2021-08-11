@@ -1,13 +1,16 @@
 package hu.xannosz.tarokk.client.util;
 
+import lombok.experimental.UtilityClass;
+
+@UtilityClass
 public class Constants {
     public static final String ADDRESS = "tarokk.net";
     public static final int PORT = 8128;
     public static final int TIME_OUT = 1000;
-    public static final int THREADS = 8;
-
-    public static final String FB_TOKEN =
-            "EAAYqIBuQ6zgBAMpEDxTlplwrcdPuUoIqfLbGaPWuwlEGcp9SnOS3VP5FLjHvhC4DZBkOb1yLRyZAQuVyYoKcfAZBpDeBiZC4TklLsVshX8ZAsDaKLDHwdqQGRJoEm9URTdCUIJHtWbAVs3TeqNAXdpRww8W8n8ckG2sYZAdI14QYy6kjK1taPqD4CBo1oUyLqdr2gQtNUVdTFpf0XI68o56P1nhVPzb5UZD" ;
+    public static final int THREADS = 1; //One track processing
+    public static final String LOG_DIRECTORY = "logs";
+    public static final String CONFIG_DIRECTORY = "config";
+    public static final String INTERNAL_DATA_DIRECTORY = "internalData";
 
     public static class Color {
         public static final String ANSI_RESET = "\u001B[0m";

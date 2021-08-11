@@ -9,10 +9,10 @@ import com.tisza.tarock.proto.EventProto;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.tui.panel.CardPanel;
-import hu.xannosz.tarokk.client.tui.panel.DataPanel;
-import hu.xannosz.tarokk.client.tui.panel.HudPanel;
-import hu.xannosz.tarokk.client.tui.panel.StatisticPanel;
+import hu.xannosz.tarokk.client.tui.metapanel.CardMetaPanel;
+import hu.xannosz.tarokk.client.tui.metapanel.DataMetaPanel;
+import hu.xannosz.tarokk.client.tui.metapanel.HudMetaPanel;
+import hu.xannosz.tarokk.client.tui.metapanel.StatisticMetaPanel;
 import hu.xannosz.tarokk.client.tui.subframe.*;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
@@ -53,13 +53,13 @@ public class GameFrame extends Frame {
 
         updateFooter();
 
-        frame.addComponent(new CardPanel(tuiClient).withBorder(Borders.singleLine(" Cards ")));
-        frame.addComponent(new DataPanel(tuiClient, gameData).withBorder(Borders.singleLine(" Data ")));
+        frame.addComponent(new CardMetaPanel(tuiClient).withBorder(Borders.singleLine(" Cards ")));
+        frame.addComponent(new DataMetaPanel(tuiClient, gameData).withBorder(Borders.singleLine(" Data ")));
 
         EventProto.Event.Statistics statistic = tuiClient.getServerLiveData().getStatistics();
         if (!Util.anyNull(statistic)) {
             frame.setLayoutManager(new GridLayout(3));
-            frame.addComponent(new StatisticPanel(tuiClient, statistic));
+            frame.addComponent(new StatisticMetaPanel(tuiClient, statistic));
         }
 
         gameData = getGameData(gameId, tuiClient);
@@ -86,7 +86,7 @@ public class GameFrame extends Frame {
         }
 
         frame.addComponent(subFrame.getPanel().withBorder(Borders.singleLine(" " + (tuiClient.getServerLiveData().getPhase() == null ? "Lobby" : tuiClient.getServerLiveData().getPhase().getName()) + " ")));
-        frame.addComponent(new HudPanel(tuiClient, gameData).withBorder(Borders.singleLine(" Hud ")));
+        frame.addComponent(new HudMetaPanel(tuiClient, gameData).withBorder(Borders.singleLine(" Hud ")));
     }
 
     private void updateFooter() {

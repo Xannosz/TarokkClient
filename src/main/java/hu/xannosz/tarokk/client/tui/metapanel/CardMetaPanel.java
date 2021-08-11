@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.tui.panel;
+package hu.xannosz.tarokk.client.tui.metapanel;
 
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Label;
@@ -8,8 +8,8 @@ import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
-public class CardPanel extends Panel {
-    public CardPanel(TuiClient tuiClient) {
+public class CardMetaPanel extends Panel {
+    public CardMetaPanel(TuiClient tuiClient) {
         if (!Util.anyNull(tuiClient.getServerLiveData().getPlayerCard())) {
             setLayoutManager(new GridLayout(3));
             for (Card card : tuiClient.getServerLiveData().getPlayerCard()) {

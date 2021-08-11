@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.tui.panel;
+package hu.xannosz.tarokk.client.tui.metapanel;
 
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
@@ -11,8 +11,8 @@ import java.util.Map;
 
 import static hu.xannosz.tarokk.client.util.Util.*;
 
-public class DataPanel extends Panel {
-    public DataPanel(TuiClient tuiClient, MainProto.GameSession gameData) {
+public class DataMetaPanel extends Panel {
+    public DataMetaPanel(TuiClient tuiClient, MainProto.GameSession gameData) {
         setLayoutManager(new GridLayout(2));
 
         if (!Util.anyNull(tuiClient.getServerLiveData().getGameType(),

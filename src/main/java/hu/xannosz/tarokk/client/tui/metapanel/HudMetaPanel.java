@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.tui.panel;
+package hu.xannosz.tarokk.client.tui.metapanel;
 
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
@@ -11,8 +11,8 @@ import java.util.Map;
 import static hu.xannosz.tarokk.client.util.Util.addData;
 import static hu.xannosz.tarokk.client.util.Util.getPlayerName;
 
-public class HudPanel extends Panel {
-    public HudPanel(TuiClient tuiClient, MainProto.GameSession gameData) {
+public class HudMetaPanel extends Panel {
+    public HudMetaPanel(TuiClient tuiClient, MainProto.GameSession gameData) {
         setLayoutManager(new GridLayout(2));
         if (!Util.anyNull(gameData)) {
             for (Map.Entry<Integer, Boolean> info : tuiClient.getServerLiveData().getPlayerTeamInfo().entrySet()) {

@@ -10,7 +10,7 @@ import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
@@ -89,7 +89,7 @@ public class FoldingSubFrame extends SubFrame {
     @Override
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.fold(foldedCard)));
+            tuiClient.getConnection().sendMessage(Messages.sendAction(Action.fold(foldedCard)));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character)) {
             if (keyStroke.getCharacter().equals('*')) {

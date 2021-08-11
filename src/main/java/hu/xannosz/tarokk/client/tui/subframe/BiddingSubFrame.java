@@ -9,7 +9,7 @@ import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.Map;
@@ -54,7 +54,7 @@ public class BiddingSubFrame extends SubFrame {
 
         for (int bid : tuiClient.getServerLiveData().getAvailableBids()) {
             keyMapDictionary.addFunction("" + bid, biddingToString(bid), () ->
-                    tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.bid(bid))));
+                    tuiClient.getConnection().sendMessage(Messages.sendAction(Action.bid(bid))));
         }
 
         return panel;

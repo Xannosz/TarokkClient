@@ -10,7 +10,7 @@ import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
@@ -86,11 +86,11 @@ public class AnnouncingSubFrame extends SubFrame {
         }
         resetPager();
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.announce(availableAnnouncing.get(page))));
+            tuiClient.getConnection().sendMessage(Messages.sendAction(Action.announce(availableAnnouncing.get(page))));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character)) {
             if (keyStroke.getCharacter().equals('-')) {
-                tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.announcePass()));
+                tuiClient.getConnection().sendMessage(Messages.sendAction(Action.announcePass()));
             }
         }
     }

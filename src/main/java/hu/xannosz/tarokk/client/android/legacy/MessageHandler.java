@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.android.network;
+package hu.xannosz.tarokk.client.android.legacy;
 
 import com.tisza.tarock.proto.MainProto.*;
 

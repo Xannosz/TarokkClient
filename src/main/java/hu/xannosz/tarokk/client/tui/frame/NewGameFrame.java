@@ -1,16 +1,19 @@
 package hu.xannosz.tarokk.client.tui.frame;
 
 import com.googlecode.lanterna.TerminalSize;
-import com.googlecode.lanterna.gui2.*;
+import com.googlecode.lanterna.gui2.Borders;
+import com.googlecode.lanterna.gui2.GridLayout;
+import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.Sleep;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
-import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.tui.panel.DoubleRoundPanel;
+import hu.xannosz.tarokk.client.tui.panel.GameTypePanel;
 import hu.xannosz.tarokk.client.util.Util;
 
 public class NewGameFrame extends Frame {
@@ -81,7 +84,7 @@ public class NewGameFrame extends Frame {
         }
 
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.newGame(doubleRoundType, gameType));
+            tuiClient.getConnection().sendMessage(Messages.newGame(doubleRoundType, gameType));
             Sleep.sleepMillis(200);
             int gameId = 0;
             for (MainProto.GameSession gameData : tuiClient.getServerLiveData().getGameSessions()) {
@@ -90,7 +93,7 @@ public class NewGameFrame extends Frame {
                     gameId = gameData.getId();
                 }
             }
-            tuiClient.getConnection().sendMessage(MessageTranslator.joinToGame(gameId));
+            tuiClient.getConnection().sendMessage(Messages.joinToGame(gameId));
             tuiClient.setFrame(new GameFrame(tuiClient, gameId));
         }
         if (keyStroke.getKeyType().equals(KeyType.Character) && keyStroke.getCharacter().equals('/')) {
@@ -107,25 +110,11 @@ public class NewGameFrame extends Frame {
         frame.setLayoutManager(new GridLayout(2));
         TerminalSize size = tuiClient.getSize();
 
-        Panel gameTypePanel = new Panel();
+        Panel gameTypePanel = new GameTypePanel(gameType, tuiClient);
         gameTypePanel.setPreferredSize(new TerminalSize(size.getColumns() / 2, size.getRows() - 2));
-        for (GameType gameType : GameType.values()) {
-            if (gameType.equals(this.gameType)) {
-                gameTypePanel.addComponent(new Label(gameType.getName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
-            } else {
-                gameTypePanel.addComponent(new Label(gameType.getName()));
-            }
-        }
 
-        Panel gameDoubleRoundPanel = new Panel();
+        Panel gameDoubleRoundPanel = new DoubleRoundPanel(doubleRoundType, tuiClient);
         gameDoubleRoundPanel.setPreferredSize(new TerminalSize(size.getColumns() / 2, size.getRows() - 2));
-        for (DoubleRoundType doubleRoundType : DoubleRoundType.values()) {
-            if (doubleRoundType.equals(this.doubleRoundType)) {
-                gameDoubleRoundPanel.addComponent(new Label(doubleRoundType.getName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
-            } else {
-                gameDoubleRoundPanel.addComponent(new Label(doubleRoundType.getName()));
-            }
-        }
 
         if (doublePanelActivated) {
             frame.addComponent(gameTypePanel.withBorder(Borders.singleLine(" Game Type ")));

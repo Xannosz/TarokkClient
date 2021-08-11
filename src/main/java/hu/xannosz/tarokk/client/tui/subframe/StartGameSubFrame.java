@@ -8,7 +8,7 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 
 import java.util.Collections;
 import java.util.Map;
@@ -53,7 +53,7 @@ public class StartGameSubFrame extends SubFrame {
     @Override
     public void handleKeyStroke(KeyStroke keyStroke) {
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.startGame());
+            tuiClient.getConnection().sendMessage(Messages.startGame());
         }
     }
 }

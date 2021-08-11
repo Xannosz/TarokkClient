@@ -9,7 +9,7 @@ import com.googlecode.lanterna.input.KeyType;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.MessageTranslator;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
@@ -68,7 +68,7 @@ public class CallingSubFrame extends SubFrame {
         }
         resetPager();
         if (keyStroke.getKeyType().equals(KeyType.Enter)) {
-            tuiClient.getConnection().sendMessage(MessageTranslator.sendAction(Action.call(availableCards.get(page))));
+            tuiClient.getConnection().sendMessage(Messages.sendAction(Action.call(availableCards.get(page))));
         }
     }
 

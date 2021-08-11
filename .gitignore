@@ -24,5 +24,5 @@ hs_err_pid*
 /.project
 /.idea
 /target
+/logs
 *.iml
-log.txt

@@ -1,4 +1,4 @@
-package hu.xannosz.tarokk.client.tui.panel;
+package hu.xannosz.tarokk.client.tui.metapanel;
 
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -8,8 +8,8 @@ import hu.xannosz.tarokk.client.tui.TuiClient;
 
 import static hu.xannosz.tarokk.client.util.Util.addData;
 
-public class StatisticPanel extends Panel {
-    public StatisticPanel(TuiClient tuiClient, EventProto.Event.Statistics statistic) {
+public class StatisticMetaPanel extends Panel {
+    public StatisticMetaPanel(TuiClient tuiClient, EventProto.Event.Statistics statistic) {
         setLayoutManager(new GridLayout(4));
         addData(this, "caller game points", "" + statistic.getCallerGamePoints(), tuiClient);
         addData(this, "opponent game points", "" + statistic.getOpponentGamePoints(), tuiClient);

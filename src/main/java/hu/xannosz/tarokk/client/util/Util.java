@@ -1,5 +1,8 @@
 package hu.xannosz.tarokk.client.util;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -10,25 +13,34 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.tisza.tarock.proto.MainProto;
-import hu.xannosz.tarokk.client.android.network.MessageHandler;
-import hu.xannosz.tarokk.client.android.network.ProtoConnection;
+import hu.xannosz.tarokk.client.android.legacy.MessageHandler;
+import hu.xannosz.tarokk.client.android.legacy.ProtoConnection;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.settings.LogSettings;
+import hu.xannosz.tarokk.client.util.settings.TerminalSettings;
 import lombok.experimental.UtilityClass;
+import org.apache.commons.io.FileUtils;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
+
+import static hu.xannosz.tarokk.client.util.Constants.LOG_DIRECTORY;
 
 @UtilityClass
 public class Util {
@@ -138,9 +150,28 @@ public class Util {
         return false;
     }
 
+    public static <IN, OUT> List<OUT> map(List<IN> list, Function<IN, OUT> f) {
+        List<OUT> result = new ArrayList<>();
+        for (IN t : list)
+            result.add(f.apply(t));
+        return result;
+    }
+
+    public static <T> T readData(Path path, Class<T> clazz) throws IOException {
+        path.toFile().getParentFile().mkdirs();
+        path.toFile().createNewFile();
+        JsonElement dataObject = JsonParser.parseString(FileUtils.readFileToString(path.toFile()));
+        return new Gson().fromJson(dataObject, clazz);
+    }
+
+    public static <T> void writeData(Path path, T data) throws IOException {
+        path.toFile().getParentFile().mkdirs();
+        path.toFile().createNewFile();
+        FileUtils.writeStringToFile(path.toFile(), new Gson().toJson(data));
+    }
+
     @UtilityClass
     public static class Log {
-        private static final String LOG_DIRECTORY = "logs";
         private static final String MESSAGE_LOG_FILE = "message_log.txt";
         private static final String GAME_LOG_FILE = "game_log.txt";
         private static final String KEY_LOG_FILE = "key_log.txt";
@@ -169,7 +200,7 @@ public class Util {
                     Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, KEY_LOG_FILE));
                 }
                 if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, ERROR_LOG_FILE))) {
-                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE));
+                    Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, ERROR_LOG_FILE));
                 }
                 if (!Files.exists(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE))) {
                     Files.createFile(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE));

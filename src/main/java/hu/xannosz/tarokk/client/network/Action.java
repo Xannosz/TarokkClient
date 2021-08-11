@@ -1,8 +1,7 @@
 package hu.xannosz.tarokk.client.network;
 
-import hu.xannosz.tarokk.client.android.Utils;
-import hu.xannosz.tarokk.client.android.game.Announcement;
 import hu.xannosz.tarokk.client.game.Card;
+import hu.xannosz.tarokk.client.util.Util;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -18,7 +17,7 @@ public class Action {
     }
 
     public static Action fold(List<Card> cards) {
-        return new Action("fold:" + String.join(",", Utils.map(cards, Card::getId)));
+        return new Action("fold:" + String.join(",", Util.map(cards, Card::getId)));
     }
 
     public static Action call(Card card) {

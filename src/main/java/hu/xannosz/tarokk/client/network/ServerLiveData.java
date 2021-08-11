@@ -3,7 +3,7 @@ package hu.xannosz.tarokk.client.network;
 import com.tisza.tarock.proto.EventProto;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
-import hu.xannosz.tarokk.client.android.network.MessageHandler;
+import hu.xannosz.tarokk.client.android.legacy.MessageHandler;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.tui.TuiClient;
@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Getter
 public class ServerLiveData implements MessageHandler {
-
+//TODO use fold method
     private ConcurrentLinkedQueue<MainProto.GameSession> gameSessions;
     private MainProto.LoginResult loginResult;
     private ConcurrentMap<Integer, MainProto.User> users;
