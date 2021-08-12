@@ -177,6 +177,7 @@ public class Util {
         private static final String KEY_LOG_FILE = "key_log.txt";
         private static final String ERROR_LOG_FILE = "error_log.txt";
         private static final String COMBINED_LOG_FILE = "combined_log.txt";
+        private static final int GAME_LOG_LENGTH = 30;
 
         private static final String DIRECTORY_INFIX = new SimpleDateFormat("yyyyy.MM.dd_hh.mm.ss").format(new Date());
 
@@ -251,6 +252,10 @@ public class Util {
         public static void logError(String log) {
             logToConsole(Constants.Color.ANSI_RED, log);
             logToFile(log, ERROR_LOG_FILE);
+        }
+
+        public static void formattedGameLog(int id, String log) {
+            logGame(String.format("%" + (id * GAME_LOG_LENGTH) + "s", "") + log.substring(0, GAME_LOG_LENGTH));
         }
     }
 }

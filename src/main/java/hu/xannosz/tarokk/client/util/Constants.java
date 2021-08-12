@@ -11,6 +11,7 @@ public class Constants {
     public static final String LOG_DIRECTORY = "logs";
     public static final String CONFIG_DIRECTORY = "config";
     public static final String INTERNAL_DATA_DIRECTORY = "internalData";
+    public static final String LANG_DIRECTORY = "lang";
 
     public static class Color {
         public static final String ANSI_RESET = "\u001B[0m";

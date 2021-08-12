@@ -28,4 +28,6 @@ public class InternalData {
     }
 
     private String faceBookToken = "";
+
+    private String langId = "HU.json";
 }
