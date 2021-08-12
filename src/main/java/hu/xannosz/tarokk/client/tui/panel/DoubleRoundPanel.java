@@ -7,7 +7,7 @@ import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 
 public class DoubleRoundPanel extends Panel {
-    public DoubleRoundPanel(DoubleRoundType doubleRoundTypeIn, TuiClient tuiClient){
+    public DoubleRoundPanel(DoubleRoundType doubleRoundTypeIn, TuiClient tuiClient) {
         for (DoubleRoundType doubleRoundType : DoubleRoundType.values()) {
             if (doubleRoundType.equals(doubleRoundTypeIn)) {
                 addComponent(new Label(doubleRoundType.getName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));

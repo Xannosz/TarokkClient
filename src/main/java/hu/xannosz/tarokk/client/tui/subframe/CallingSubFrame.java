@@ -8,8 +8,8 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
-import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.network.Messages;
+import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 
@@ -72,7 +72,7 @@ public class CallingSubFrame extends SubFrame {
         }
     }
 
-    private void resetPager(){
+    private void resetPager() {
         page = Math.max(page, 0);
         page = Math.min(page, availableCards.size() - 1);
     }

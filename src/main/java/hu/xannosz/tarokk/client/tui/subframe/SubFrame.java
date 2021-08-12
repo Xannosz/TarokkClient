@@ -15,7 +15,7 @@ public abstract class SubFrame {
 
     public abstract Component getPanel();
 
-    public abstract Map<String,String> getFooter();
+    public abstract Map<String, String> getFooter();
 
     public abstract void handleKeyStroke(KeyStroke keyStroke);
 }

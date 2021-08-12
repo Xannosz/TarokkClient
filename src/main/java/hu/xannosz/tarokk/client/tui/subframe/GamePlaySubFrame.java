@@ -9,8 +9,8 @@ import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
-import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.network.Messages;
+import hu.xannosz.tarokk.client.tui.TuiClient;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -4,7 +4,6 @@ import hu.xannosz.tarokk.client.util.Constants;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -21,7 +20,7 @@ public class LogSettings {
             INSTANCE = Util.readData(PATH, LogSettings.class);
             if (INSTANCE == null) {
                 INSTANCE = new LogSettings();
-                Util.writeData(PATH,INSTANCE);
+                Util.writeData(PATH, INSTANCE);
             }
         } catch (Exception e) {
             INSTANCE = new LogSettings();

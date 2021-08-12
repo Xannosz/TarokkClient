@@ -7,9 +7,9 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.network.Action;
+import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.Map;

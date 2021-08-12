@@ -9,8 +9,8 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
-import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.network.Messages;
+import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
 import hu.xannosz.tarokk.client.util.Util;
 

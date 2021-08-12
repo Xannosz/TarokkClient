@@ -2,7 +2,6 @@ package hu.xannosz.tarokk.client.util;
 
 import lombok.Getter;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 

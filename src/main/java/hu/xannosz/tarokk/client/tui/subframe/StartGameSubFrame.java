@@ -7,8 +7,8 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
-import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.network.Messages;
+import hu.xannosz.tarokk.client.tui.TuiClient;
 
 import java.util.Collections;
 import java.util.Map;

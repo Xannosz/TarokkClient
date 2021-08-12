@@ -12,7 +12,9 @@ import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.network.ServerLiveData;
 import hu.xannosz.tarokk.client.tui.frame.Frame;
 import hu.xannosz.tarokk.client.tui.frame.LobbyFrame;
-import hu.xannosz.tarokk.client.util.*;
+import hu.xannosz.tarokk.client.util.InternalData;
+import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Util;
 import hu.xannosz.tarokk.client.util.settings.TerminalSettings;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,7 +23,7 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class TuiClient implements WindowListener {
-//TODO closing problem
+    //TODO closing problem
     private Screen screen;
     @Getter
     private ProtoConnection connection;
@@ -106,7 +108,7 @@ public class TuiClient implements WindowListener {
         footerPanel.addComponent(new Label("Esc").setTheme(ThemeHandler.getKeyThemeFooterPanel(terminalSettings)));
         footerPanel.addComponent(new Label("]: Quit"));
         footerPanel.addComponent(frame.getFooter()); //TODO get footer as map
-        footerPanel.setPreferredSize(new TerminalSize(getSize().getColumns(),1));
+        footerPanel.setPreferredSize(new TerminalSize(getSize().getColumns(), 1));
         return footerPanel;
     }
 

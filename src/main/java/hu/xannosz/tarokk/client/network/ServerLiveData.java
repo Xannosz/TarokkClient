@@ -16,7 +16,7 @@ import java.util.concurrent.ConcurrentMap;
 
 @Getter
 public class ServerLiveData implements MessageHandler {
-//TODO use fold method
+    //TODO use fold method
     private ConcurrentLinkedQueue<MainProto.GameSession> gameSessions;
     private MainProto.LoginResult loginResult;
     private ConcurrentMap<Integer, MainProto.User> users;
@@ -50,7 +50,7 @@ public class ServerLiveData implements MessageHandler {
 
     @Override
     public void handleMessage(MainProto.Message message) {
-        Util.Log.logMessage("Message("+message.getMessageTypeCase()+"): " + message);
+        Util.Log.logMessage("Message(" + message.getMessageTypeCase() + "): " + message);
         switch (message.getMessageTypeCase()) {
             case CREATE_GAME_SESSION:
             case LOGIN:
