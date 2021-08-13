@@ -9,6 +9,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.Translator;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class StartGameSubFrame extends SubFrame {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(2));
 
-        panel.addComponent(new Label("Type:"));
+        panel.addComponent(new Label(Translator.INST.type));
         panel.addComponent(new Label(gameData.getType()));
 
         for (int i = 0; i < gameData.getUserIdCount(); i++) {
@@ -40,14 +41,14 @@ public class StartGameSubFrame extends SubFrame {
             panel.addComponent(new Label(""));
         }
 
-        panel.addComponent(new Label("Status:"));
+        panel.addComponent(new Label(Translator.INST.status));
         panel.addComponent(new Label("" + gameData.getState()));
         return panel;
     }
 
     @Override
     public Map<String, String> getFooter() {
-        return Collections.singletonMap("Enter", "Start game");
+        return Collections.singletonMap("Enter", Translator.INST.startGame);
     }
 
     @Override

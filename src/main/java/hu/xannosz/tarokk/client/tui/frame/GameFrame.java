@@ -14,6 +14,7 @@ import hu.xannosz.tarokk.client.tui.metapanel.DataMetaPanel;
 import hu.xannosz.tarokk.client.tui.metapanel.HudMetaPanel;
 import hu.xannosz.tarokk.client.tui.metapanel.StatisticMetaPanel;
 import hu.xannosz.tarokk.client.tui.subframe.*;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
@@ -53,13 +54,13 @@ public class GameFrame extends Frame {
 
         updateFooter();
 
-        frame.addComponent(new CardMetaPanel(tuiClient).withBorder(Borders.singleLine(" Cards ")));
-        frame.addComponent(new DataMetaPanel(tuiClient, gameData).withBorder(Borders.singleLine(" Data ")));
+        frame.addComponent(new CardMetaPanel(tuiClient).withBorder(Borders.singleLine(Translator.INST.cards)));
+        frame.addComponent(new DataMetaPanel(tuiClient, gameData).withBorder(Borders.singleLine(Translator.INST.data)));
 
         EventProto.Event.Statistics statistic = tuiClient.getServerLiveData().getStatistics();
         if (!Util.anyNull(statistic)) {
             frame.setLayoutManager(new GridLayout(3));
-            frame.addComponent(new StatisticMetaPanel(tuiClient, statistic));
+            frame.addComponent(new StatisticMetaPanel(statistic));
         }
 
         gameData = getGameData(gameId, tuiClient);
@@ -85,25 +86,18 @@ public class GameFrame extends Frame {
             subFrame = subFrames.get(tuiClient.getServerLiveData().getPhase());
         }
 
-        frame.addComponent(subFrame.getPanel().withBorder(Borders.singleLine(" " + (tuiClient.getServerLiveData().getPhase() == null ? "Lobby" : tuiClient.getServerLiveData().getPhase().getName()) + " ")));
-        frame.addComponent(new HudMetaPanel(tuiClient, gameData).withBorder(Borders.singleLine(" Hud ")));
+        frame.addComponent(subFrame.getPanel().withBorder(Borders.singleLine((tuiClient.getServerLiveData().getPhase() == null ? Translator.INST.lobby : tuiClient.getServerLiveData().getPhase().getName()))));
+        frame.addComponent(new HudMetaPanel(tuiClient, gameData).withBorder(Borders.singleLine(Translator.INST.hud)));
     }
 
     private void updateFooter() {
-        footer = new Panel();
-
         if (Util.anyNull(subFrame)) {
             return;
         }
 
-        Map<String, String> subFrameFooter = subFrame.getFooter();
+        footer.clear();
 
-        footer.setLayoutManager(new GridLayout(3 + subFrameFooter.size() * 3));
-
-        Util.addKey(footer, "/", "Back to Lobby", tuiClient);
-
-        for (Map.Entry<String, String> entry : subFrameFooter.entrySet()) {
-            Util.addKey(footer, entry.getKey(), entry.getValue(), tuiClient);
-        }
+        footer.put("/", Translator.INST.backToLobby);
+        footer.putAll(subFrame.getFooter());
     }
 }

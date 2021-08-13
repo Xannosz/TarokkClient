@@ -21,12 +21,12 @@ public class TerminalSettings {
             //INSTANCE = Util.readData(PATH, TerminalSettings.class); //TODO solve terminal color read problem
             if (INSTANCE == null) {
                 INSTANCE = new TerminalSettings();
-                Util.writeData(PATH, INSTANCE);
             }
+            Util.writeData(PATH, INSTANCE);
         } catch (Exception e) {
             INSTANCE = new TerminalSettings();
             Util.Log.logError("Cannot read " + TERMINAL_SETTINGS_FILE_NAME);
-            e.printStackTrace(); //TODO print to logfile
+            Util.Log.logError(e);
         }
     }
 

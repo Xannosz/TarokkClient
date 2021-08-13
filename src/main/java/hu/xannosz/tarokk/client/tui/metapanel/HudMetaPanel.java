@@ -4,6 +4,7 @@ import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.Map;
@@ -16,7 +17,7 @@ public class HudMetaPanel extends Panel {
         setLayoutManager(new GridLayout(2));
         if (!Util.anyNull(gameData)) {
             for (Map.Entry<Integer, Boolean> info : tuiClient.getServerLiveData().getPlayerTeamInfo().entrySet()) {
-                addData(this, getPlayerName(info.getKey(), gameData, tuiClient) + " is caller:", "" + info.getValue(), tuiClient);
+                addData(this, getPlayerName(info.getKey(), gameData, tuiClient) + Translator.INST.isCaller, "" + info.getValue());
             }
         }
     }

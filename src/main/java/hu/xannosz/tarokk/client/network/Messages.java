@@ -19,7 +19,7 @@ public class Messages {
 
     public static MainProto.Message newGame(DoubleRoundType doubleRoundType, GameType type) {
         return MainProto.Message.newBuilder().setCreateGameSession(MainProto.CreateGameSession.newBuilder()
-                .setDoubleRoundType(doubleRoundType.getName()).setType(type.getName()).build()).build();
+                .setDoubleRoundType(doubleRoundType.getId()).setType(type.getId()).build()).build();
     }
 
     public static MainProto.Message startGame() {

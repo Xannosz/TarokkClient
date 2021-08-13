@@ -11,6 +11,7 @@ import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class CallingSubFrame extends SubFrame {
 
         for (int i = 0; i < availableCards.size(); i++) {
             if (i == page) {
-                panel.addComponent(new Label(availableCards.get(i).getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+                panel.addComponent(new Label(availableCards.get(i).getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
             } else {
                 panel.addComponent(new Label(availableCards.get(i).getFormattedName()));
             }
@@ -53,8 +54,8 @@ public class CallingSubFrame extends SubFrame {
     @Override
     public Map<String, String> getFooter() {
         Map<String, String> response = new HashMap<>();
-        response.put("Arrows", "Movement");
-        response.put("Enter", "Send calling");
+        response.put(Translator.INST.arrows, Translator.INST.movement);
+        response.put("Enter", Translator.INST.sendCalling);
         return response;
     }
 

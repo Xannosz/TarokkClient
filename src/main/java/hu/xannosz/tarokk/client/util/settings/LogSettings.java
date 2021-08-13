@@ -20,12 +20,12 @@ public class LogSettings {
             INSTANCE = Util.readData(PATH, LogSettings.class);
             if (INSTANCE == null) {
                 INSTANCE = new LogSettings();
-                Util.writeData(PATH, INSTANCE);
             }
+            Util.writeData(PATH, INSTANCE);
         } catch (Exception e) {
             INSTANCE = new LogSettings();
             Util.Log.logError("Cannot read " + LOG_SETTINGS_FILE_NAME);
-            e.printStackTrace(); //TODO print to logfile
+            Util.Log.logError(e);
         }
     }
 

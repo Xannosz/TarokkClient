@@ -18,12 +18,12 @@ public class InternalData {
             INSTANCE = Util.readData(PATH, InternalData.class);
             if (INSTANCE == null) {
                 INSTANCE = new InternalData();
-                Util.writeData(PATH, INSTANCE);
             }
+            Util.writeData(PATH, INSTANCE);
         } catch (Exception e) {
             INSTANCE = new InternalData();
             Util.Log.logError("Cannot read " + INTERNAL_DATA_FILE_NAME);
-            e.printStackTrace(); //TODO print to logfile
+            Util.Log.logError(e);
         }
     }
 

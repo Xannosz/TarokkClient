@@ -2,6 +2,7 @@ package hu.xannosz.tarokk.client.android.legacy;
 
 import com.tisza.tarock.proto.MainProto;
 import com.tisza.tarock.proto.MainProto.Message;
+import hu.xannosz.microtools.Sleep;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -165,6 +166,10 @@ public class ProtoConnection implements Closeable {
             return;
 
         thread.interrupt();
+
+        while (thread.isAlive()){
+            Sleep.sleepMillis(100);
+        }
     }
 
     public synchronized boolean isAlive() {
@@ -177,12 +182,12 @@ public class ProtoConnection implements Closeable {
 
         closeRequested = true;
 
+        stopThreads();
+
         if (socket != null) {
             socket.close();
             socket = null;
         }
-
-        stopThreads();
 
         synchronized (packetHandlersLock) {
             for (MessageHandler handler : packetHandlers) {

@@ -4,23 +4,23 @@ import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.tisza.tarock.proto.EventProto;
-import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.Translator;
 
 import static hu.xannosz.tarokk.client.util.Util.addData;
 
 public class StatisticMetaPanel extends Panel {
-    public StatisticMetaPanel(TuiClient tuiClient, EventProto.Event.Statistics statistic) {
+    public StatisticMetaPanel(EventProto.Event.Statistics statistic) {
         setLayoutManager(new GridLayout(4));
-        addData(this, "caller game points", "" + statistic.getCallerGamePoints(), tuiClient);
-        addData(this, "opponent game points", "" + statistic.getOpponentGamePoints(), tuiClient);
-        addData(this, "sum points", "" + statistic.getSumPoints(), tuiClient);
-        addData(this, "point multiplier", "" + statistic.getPointMultiplier(), tuiClient);
+        addData(this, Translator.INST.callerGamePoints, "" + statistic.getCallerGamePoints());
+        addData(this, Translator.INST.opponentGamePoints, "" + statistic.getOpponentGamePoints());
+        addData(this, Translator.INST.sumPoints, "" + statistic.getSumPoints());
+        addData(this, Translator.INST.pointMultiplier, "" + statistic.getPointMultiplier());
 
         for (EventProto.Event.Statistics.AnnouncementResult stat : statistic.getAnnouncementResultList()) {
             Panel panel = new Panel();
-            addData(panel, "announcement", stat.getAnnouncement(), tuiClient);
-            addData(panel, "points", "" + stat.getPoints(), tuiClient);
-            addData(panel, "caller team", "" + stat.getCallerTeam(), tuiClient);
+            addData(panel, Translator.INST.announcement, stat.getAnnouncement());
+            addData(panel, Translator.INST.points, "" + stat.getPoints());
+            addData(panel, Translator.INST.callerTeam, "" + stat.getCallerTeam());
             addComponent(panel.withBorder(Borders.singleLine()));
         }
     }

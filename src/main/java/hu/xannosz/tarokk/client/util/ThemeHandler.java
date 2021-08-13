@@ -7,35 +7,35 @@ import lombok.experimental.UtilityClass;
 
 @UtilityClass
 public class ThemeHandler {
-    public Theme getTheme(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getForeGround(), terminalSettings.getBackGround());
+    public Theme getTheme() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getForeGround(), TerminalSettings.INSTANCE.getBackGround());
     }
 
-    public Theme getHighLightedTheme(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getHighLightedForeGround(), terminalSettings.getBackGround());
+    public Theme getHighLightedTheme() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getHighLightedForeGround(), TerminalSettings.INSTANCE.getBackGround());
     }
 
-    public Theme getHighLightedThemeMainPanel(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getHighLightedForeGround(), terminalSettings.getMainPanelBackGround());
+    public Theme getHighLightedThemeMainPanel() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getHighLightedForeGround(), TerminalSettings.INSTANCE.getMainPanelBackGround());
     }
 
-    public Theme getErrorTheme(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getErrorForeGround(), terminalSettings.getBackGround());
+    public Theme getErrorTheme() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getErrorForeGround(), TerminalSettings.INSTANCE.getBackGround());
     }
 
-    public Theme getSubLightedThemeMainPanel(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getSubLightedForeGround(), terminalSettings.getMainPanelBackGround());
+    public Theme getSubLightedThemeMainPanel() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getSubLightedForeGround(), TerminalSettings.INSTANCE.getMainPanelBackGround());
     }
 
-    public Theme getOnlineColorThemeMainPanel(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getOnlineColor(), terminalSettings.getMainPanelBackGround());
+    public Theme getOnlineColorThemeMainPanel() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getOnlineColor(), TerminalSettings.INSTANCE.getMainPanelBackGround());
     }
 
-    public Theme getKeyThemeFooterPanel(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getKeyColor(), terminalSettings.getFooterPanelBackGround());
+    public Theme getKeyThemeFooterPanel() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getKeyColor(), TerminalSettings.INSTANCE.getFooterPanelBackGround());
     }
 
-    public Theme getFooterPanelTheme(TerminalSettings terminalSettings) {
-        return new SimpleTheme(terminalSettings.getFooterPanelForeGround(), terminalSettings.getFooterPanelBackGround());
+    public Theme getFooterPanelTheme() {
+        return new SimpleTheme(TerminalSettings.INSTANCE.getFooterPanelForeGround(), TerminalSettings.INSTANCE.getFooterPanelBackGround());
     }
 }

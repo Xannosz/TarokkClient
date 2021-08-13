@@ -8,10 +8,12 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
+import hu.xannosz.tarokk.client.game.Actions;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.ArrayList;
@@ -46,9 +48,9 @@ public class AnnouncingSubFrame extends SubFrame {
 
         Panel playerAnnouncing = new Panel();
         playerAnnouncing.setLayoutManager(new GridLayout(4));
-        if (tuiClient.getServerLiveData().getPlayerActions().get("announce") != null) {
-            for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get("announce")) {
-                addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, tuiClient) + " announce", announce.getSecond(), tuiClient);
+        if (tuiClient.getServerLiveData().getPlayerActions().get(Actions.ANNOUNCE) != null) {
+            for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get(Actions.ANNOUNCE)) {
+                addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, tuiClient) + Translator.INST.announce, announce.getSecond());
             }
         }
         panel.addComponent(playerAnnouncing);
@@ -57,7 +59,7 @@ public class AnnouncingSubFrame extends SubFrame {
         nextAnnouncing.setLayoutManager(new GridLayout(4));
         for (int i = 0; i < availableAnnouncing.size(); i++) {
             if (i == page) {
-                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
             } else {
                 nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)));
             }
@@ -70,9 +72,9 @@ public class AnnouncingSubFrame extends SubFrame {
     @Override
     public Map<String, String> getFooter() {
         Map<String, String> response = new HashMap<>();
-        response.put("Arrows", "Movement");
-        response.put("Enter", "Send calling");
-        response.put("-", "Pass");
+        response.put(Translator.INST.arrows, Translator.INST.movement);
+        response.put("Enter", Translator.INST.sendAnnouncing);
+        response.put("-", Translator.INST.pass);
         return response;
     }
 

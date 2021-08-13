@@ -13,7 +13,7 @@ public class CardMetaPanel extends Panel {
         if (!Util.anyNull(tuiClient.getServerLiveData().getPlayerCard())) {
             setLayoutManager(new GridLayout(3));
             for (Card card : tuiClient.getServerLiveData().getPlayerCard()) {
-                addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+                addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
             }
         }
     }

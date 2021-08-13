@@ -14,21 +14,22 @@ import hu.xannosz.tarokk.client.tui.frame.Frame;
 import hu.xannosz.tarokk.client.tui.frame.LobbyFrame;
 import hu.xannosz.tarokk.client.util.InternalData;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
-import hu.xannosz.tarokk.client.util.settings.TerminalSettings;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import static hu.xannosz.tarokk.client.util.Util.addKey;
+
 public class TuiClient implements WindowListener {
-    //TODO closing problem
-    private Screen screen;
+
+    private Screen screen; //TODO close when kill window
     @Getter
     private ProtoConnection connection;
-    @Getter
-    private final TerminalSettings terminalSettings;
     @Getter
     private final ServerLiveData serverLiveData = new ServerLiveData(this);
     private final BasicWindow window = new BasicWindow();
@@ -36,8 +37,7 @@ public class TuiClient implements WindowListener {
     @Setter
     private Frame frame = new LobbyFrame(this);
 
-    public TuiClient(TerminalSettings terminalSettings) {
-        this.terminalSettings = terminalSettings;
+    public TuiClient() {
         try {
             // start screen
             screen = Util.createScreen();
@@ -53,7 +53,7 @@ public class TuiClient implements WindowListener {
 
             // init gui
             MultiWindowTextGUI gui = new MultiWindowTextGUI(screen);
-            gui.setTheme(ThemeHandler.getTheme(terminalSettings));
+            gui.setTheme(ThemeHandler.getTheme());
             gui.addWindowAndWait(window);
         } catch (Exception ex) {
             Util.Log.logError("Error client creation: " + ex);
@@ -81,33 +81,36 @@ public class TuiClient implements WindowListener {
         Panel head = new Panel();
         if (serverLiveData.getLoginResult() != null) {
             int userId = serverLiveData.getLoginResult().getUserId();
-            head.addComponent(new Label("User Id:"));
-            head.addComponent(new Label("" + userId).setTheme(ThemeHandler.getHighLightedTheme(terminalSettings)));
+            head.addComponent(new Label(Translator.INST.userId));
+            head.addComponent(new Label("" + userId).setTheme(ThemeHandler.getHighLightedTheme()));
+            head.setLayoutManager(new GridLayout(2));
             if (serverLiveData.getUsers() != null) {
                 if (userId != 0) {
                     MainProto.User user = serverLiveData.getUsers().get(userId);
-                    head.addComponent(new Label("User Name:"));
-                    head.addComponent(new Label(user == null ? "" : user.getName()).setTheme(ThemeHandler.getHighLightedTheme(terminalSettings)));
+                    head.addComponent(new Label(Translator.INST.userName));
+                    head.addComponent(new Label(user == null ? "" : user.getName()).setTheme(ThemeHandler.getHighLightedTheme()));
                     head.setLayoutManager(new GridLayout(4));
                 } else {
-                    head.addComponent(new Label("Login not succeed.").setTheme(ThemeHandler.getErrorTheme(terminalSettings)));
+                    head.addComponent(new Label(Translator.INST.loginNotSucceed).setTheme(ThemeHandler.getErrorTheme()));
                     head.setLayoutManager(new GridLayout(3));
                 }
             }
         } else {
-            head.addComponent(new Label("Not logged in."));
+            head.addComponent(new Label(Translator.INST.notLoggedIn));
+            head.setLayoutManager(new GridLayout(1));
         }
         return head;
     }
 
     private Component createFooterPanel() {
         Panel footerPanel = new Panel();
-        footerPanel.setTheme(ThemeHandler.getFooterPanelTheme(terminalSettings));
-        footerPanel.setLayoutManager(new GridLayout(4));
-        footerPanel.addComponent(new Label("["));
-        footerPanel.addComponent(new Label("Esc").setTheme(ThemeHandler.getKeyThemeFooterPanel(terminalSettings)));
-        footerPanel.addComponent(new Label("]: Quit"));
-        footerPanel.addComponent(frame.getFooter()); //TODO get footer as map
+        footerPanel.setTheme(ThemeHandler.getFooterPanelTheme());
+        Map<String, String> footer = frame.getFooter();
+        footerPanel.setLayoutManager(new GridLayout(3 * (1 + footer.size())));
+        addKey(footerPanel, "Esc", Translator.INST.quit);
+        for (Map.Entry<String, String> entry : footer.entrySet()) {
+            addKey(footerPanel, entry.getKey(), entry.getValue());
+        }
         footerPanel.setPreferredSize(new TerminalSize(getSize().getColumns(), 1));
         return footerPanel;
     }
@@ -117,14 +120,23 @@ public class TuiClient implements WindowListener {
         Util.Log.logKey("Key: " + keyStroke);
         try {
             if (keyStroke.getKeyType() == KeyType.Escape) {
-                connection.close();
-                screen.stopScreen();
-                window.close();
+                try {
+                    screen.close();
+                } catch (Exception | Error e) {
+                    //Not expected
+                }
+                try {
+                    connection.close();
+                } catch (Exception | Error e) {
+                    //Not expected
+                }
+                System.exit(0);
+            } else {
+                frame.handleKeyStroke(keyStroke);
             }
-            frame.handleKeyStroke(keyStroke);
         } catch (Exception ex) {
             Util.Log.logError("Error during execution: ");
-            ex.printStackTrace(); //TODO print to file
+            Util.Log.logError(ex);
         }
     }
 

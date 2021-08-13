@@ -1,1 +1,5 @@
-{"messageLog":false,"gameLog":false,"keyLog":false}
+{
+  "messageLog": false,
+  "gameLog": false,
+  "keyLog": false
+}

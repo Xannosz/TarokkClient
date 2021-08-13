@@ -12,6 +12,7 @@ import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.ArrayList;
@@ -42,11 +43,11 @@ public class FoldingSubFrame extends SubFrame {
         Panel foldDone = new Panel();
         foldDone.setLayoutManager(new GridLayout(4));
         for (int foldedUser : tuiClient.getServerLiveData().getFoldDone()) {
-            Util.addData(foldDone, Util.getPlayerName(foldedUser, gameData, tuiClient), "Fold done", tuiClient);
+            Util.addData(foldDone, Util.getPlayerName(foldedUser, gameData, tuiClient), Translator.INST.foldDone);
         }
         panel.addComponent(foldDone);
 
-        panel.addComponent(new Label("Cards:"));
+        panel.addComponent(new Label(Translator.INST.cards));
 
         card = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCard());
         card.removeAll(foldedCard);
@@ -55,23 +56,23 @@ public class FoldingSubFrame extends SubFrame {
         cards.setLayoutManager(new GridLayout(4));
         for (int i = 0; i < card.size(); i++) {
             if (i <= 9) {
-                addKeyWithCardToPanel(cards, "" + i, card.get(i), tuiClient);
+                addKeyWithCardToPanel(cards, "" + i, card.get(i));
             }
             if (i == 10) {
-                addKeyWithCardToPanel(cards, "-", card.get(i), tuiClient);
+                addKeyWithCardToPanel(cards, "-", card.get(i));
             }
             if (i == 11) {
-                addKeyWithCardToPanel(cards, "+", card.get(i), tuiClient);
+                addKeyWithCardToPanel(cards, "+", card.get(i));
             }
         }
         panel.addComponent(cards);
 
-        panel.addComponent(new Label("Folded Cards:"));
+        panel.addComponent(new Label(Translator.INST.foldedCards));
 
         Panel foldedCards = new Panel();
         foldedCards.setLayoutManager(new GridLayout(4));
         for (Card card : foldedCard) {
-            foldedCards.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+            foldedCards.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
         }
         panel.addComponent(foldedCards);
 
@@ -81,8 +82,8 @@ public class FoldingSubFrame extends SubFrame {
     @Override
     public Map<String, String> getFooter() {
         Map<String, String> response = new HashMap<>();
-        response.put("*", "Reset folding");
-        response.put("Enter", "Send folding");
+        response.put("*", Translator.INST.resetFolding);
+        response.put("Enter", Translator.INST.sendFolding);
         return response;
     }
 

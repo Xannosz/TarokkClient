@@ -10,6 +10,7 @@ import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.tui.frame.GameFrame;
+import hu.xannosz.tarokk.client.util.Translator;
 
 import java.util.Collections;
 import java.util.Map;
@@ -30,17 +31,17 @@ public class EndSubFrame extends SubFrame {
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(4));
         for (Map.Entry<Integer, Integer> playerPoints : tuiClient.getServerLiveData().getPlayerPoints().entrySet()) {
-            addData(panel, getPlayerName(playerPoints.getKey(), gameData, tuiClient) + " points", "" + playerPoints.getValue(), tuiClient);
+            addData(panel, getPlayerName(playerPoints.getKey(), gameData, tuiClient) + Translator.INST.points, "" + playerPoints.getValue());
         }
         for (Map.Entry<Integer, Integer> playerIncrementPoints : tuiClient.getServerLiveData().getIncrementPlayerPoints().entrySet()) {
-            addData(panel, getPlayerName(playerIncrementPoints.getKey(), gameData, tuiClient) + " incremented points", "" + playerIncrementPoints.getValue(), tuiClient);
+            addData(panel, getPlayerName(playerIncrementPoints.getKey(), gameData, tuiClient) + Translator.INST.incrementedPoints, "" + playerIncrementPoints.getValue());
         }
         return panel;
     }
 
     @Override
     public Map<String, String> getFooter() {
-        return Collections.singletonMap("Enter", "new game");
+        return Collections.singletonMap("Enter", Translator.INST.newGame);
     }
 
     @Override

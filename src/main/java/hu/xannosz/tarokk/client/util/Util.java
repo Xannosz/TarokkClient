@@ -1,6 +1,7 @@
 package hu.xannosz.tarokk.client.util;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.googlecode.lanterna.Symbols;
@@ -19,13 +20,14 @@ import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.settings.LogSettings;
-import hu.xannosz.tarokk.client.util.settings.TerminalSettings;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.io.FileUtils;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -62,15 +64,15 @@ public class Util {
         return new TerminalScreen(terminal);
     }
 
-    public static Panel formatActions(TerminalSettings terminalSettings, KeyMapDictionary dictionary) {
+    public static Panel formatActions(KeyMapDictionary dictionary) {
         Panel panel = new Panel();
-        panel.setTheme(ThemeHandler.getFooterPanelTheme(terminalSettings));
+        panel.setTheme(ThemeHandler.getFooterPanelTheme());
 
         for (Map.Entry<String, String> entry : dictionary.getFunctionNames().entrySet()) {
             Panel tag = new Panel();
             tag.setLayoutManager(new GridLayout(3));
             tag.addComponent(new Label("["));
-            tag.addComponent(new Label(entry.getKey()).setTheme(ThemeHandler.getKeyThemeFooterPanel(terminalSettings)));
+            tag.addComponent(new Label(entry.getKey()).setTheme(ThemeHandler.getKeyThemeFooterPanel()));
             tag.addComponent(new Label("]: " + entry.getValue()));
             panel.addComponent(tag);
         }
@@ -95,34 +97,34 @@ public class Util {
         return cardObj == null ? "" : cardObj.getFormattedName();
     }
 
-    public static void addData(Panel data, String name, String value, TuiClient tuiClient) {
+    public static void addData(Panel data, String name, String value) {
         data.addComponent(new Label(name + ":"));
-        data.addComponent(new Label(value).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+        data.addComponent(new Label(value).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
     }
 
-    public static void addKey(Panel footer, String key, String name, TuiClient tuiClient) {
+    public static void addKey(Panel footer, String key, String name) {
         footer.addComponent(new Label("["));
-        footer.addComponent(new Label(key).setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
+        footer.addComponent(new Label(key).setTheme(ThemeHandler.getKeyThemeFooterPanel()));
         footer.addComponent(new Label("]: " + name));
     }
 
-    public static void addKeyWithCardToPanel(Panel panel, String key, Card card, TuiClient tuiClient) {
+    public static void addKeyWithCardToPanel(Panel panel, String key, Card card) {
         panel.addComponent(new Label(key + ":"));
-        panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+        panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
     }
 
     public static Component createUserPanel(int userId, TuiClient tuiClient) {
         if (userId != 0) {
             MainProto.User user = tuiClient.getServerLiveData().getUsers().get(userId);
             if (user.getBot()) {
-                return new Label(" Bot").setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings()));
+                return new Label(" Bot").setTheme(ThemeHandler.getSubLightedThemeMainPanel());
             } else {
                 Panel panel = new Panel(new GridLayout(2));
                 panel.addComponent(new Label(user.getName()));
                 if (user.getOnline()) {
-                    panel.addComponent(new Label("" + Symbols.TRIANGLE_UP_POINTING_BLACK).setTheme(ThemeHandler.getOnlineColorThemeMainPanel(tuiClient.getTerminalSettings())));
+                    panel.addComponent(new Label("" + Symbols.TRIANGLE_UP_POINTING_BLACK).setTheme(ThemeHandler.getOnlineColorThemeMainPanel()));
                 } else {
-                    panel.addComponent(new Label("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK).setTheme(ThemeHandler.getSubLightedThemeMainPanel(tuiClient.getTerminalSettings())));
+                    panel.addComponent(new Label("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK).setTheme(ThemeHandler.getSubLightedThemeMainPanel()));
                 }
                 return panel;
             }
@@ -167,7 +169,7 @@ public class Util {
     public static <T> void writeData(Path path, T data) throws IOException {
         path.toFile().getParentFile().mkdirs();
         path.toFile().createNewFile();
-        FileUtils.writeStringToFile(path.toFile(), new Gson().toJson(data));
+        FileUtils.writeStringToFile(path.toFile(), new GsonBuilder().setPrettyPrinting().create().toJson(data));
     }
 
     @UtilityClass
@@ -252,6 +254,17 @@ public class Util {
         public static void logError(String log) {
             logToConsole(Constants.Color.ANSI_RED, log);
             logToFile(log, ERROR_LOG_FILE);
+        }
+
+        public static void logError(Exception ex) {
+            ex.printStackTrace();
+            try {
+                ex.printStackTrace(new PrintWriter(new FileWriter(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, ERROR_LOG_FILE).toString(), true)));
+                ex.printStackTrace(new PrintWriter(new FileWriter(Paths.get(LOG_DIRECTORY, DIRECTORY_INFIX, COMBINED_LOG_FILE).toString(), true)));
+            } catch (IOException e) {
+                //Unexpected
+            }
+            logError("\n\n");
         }
 
         public static void formattedGameLog(int id, String log) {

@@ -5,11 +5,14 @@ import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public abstract class Frame {
 
     protected TuiClient tuiClient;
     protected Panel frame = new Panel();
-    protected Panel footer = new Panel();
+    protected Map<String,String> footer = new HashMap<>();
 
     public Frame(TuiClient tuiClient) {
         this.tuiClient = tuiClient;
@@ -19,7 +22,7 @@ public abstract class Frame {
         return frame;
     }
 
-    public Component getFooter() {
+    public Map<String,String> getFooter() {
         return footer;
     }
 

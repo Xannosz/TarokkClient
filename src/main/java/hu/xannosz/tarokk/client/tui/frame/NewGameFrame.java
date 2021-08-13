@@ -14,7 +14,7 @@ import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.tui.panel.DoubleRoundPanel;
 import hu.xannosz.tarokk.client.tui.panel.GameTypePanel;
-import hu.xannosz.tarokk.client.util.Util;
+import hu.xannosz.tarokk.client.util.Translator;
 
 public class NewGameFrame extends Frame {
 
@@ -24,11 +24,9 @@ public class NewGameFrame extends Frame {
 
     public NewGameFrame(TuiClient tuiClient) {
         super(tuiClient);
-        footer = new Panel();
-        footer.setLayoutManager(new GridLayout(9));
-        Util.addKey(footer, "Arrows", "Movement", tuiClient);
-        Util.addKey(footer, "Enter", "Create game", tuiClient);
-        Util.addKey(footer, "/", "Cancel", tuiClient);
+        footer.put(Translator.INST.arrows, Translator.INST.movement);
+        footer.put("Enter", Translator.INST.createGame);
+        footer.put("/", Translator.INST.cancel);
     }
 
     @Override
@@ -110,18 +108,18 @@ public class NewGameFrame extends Frame {
         frame.setLayoutManager(new GridLayout(2));
         TerminalSize size = tuiClient.getSize();
 
-        Panel gameTypePanel = new GameTypePanel(gameType, tuiClient);
+        Panel gameTypePanel = new GameTypePanel(gameType);
         gameTypePanel.setPreferredSize(new TerminalSize(size.getColumns() / 2, size.getRows() - 2));
 
-        Panel gameDoubleRoundPanel = new DoubleRoundPanel(doubleRoundType, tuiClient);
+        Panel gameDoubleRoundPanel = new DoubleRoundPanel(doubleRoundType);
         gameDoubleRoundPanel.setPreferredSize(new TerminalSize(size.getColumns() / 2, size.getRows() - 2));
 
         if (doublePanelActivated) {
-            frame.addComponent(gameTypePanel.withBorder(Borders.singleLine(" Game Type ")));
-            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.doubleLine(" Double Round Type ")));
+            frame.addComponent(gameTypePanel.withBorder(Borders.singleLine(Translator.INST.gameType)));
+            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.doubleLine(Translator.INST.doubleRoundType)));
         } else {
-            frame.addComponent(gameTypePanel.withBorder(Borders.doubleLine(" Game Type ")));
-            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.singleLine(" Double Round Type ")));
+            frame.addComponent(gameTypePanel.withBorder(Borders.doubleLine(Translator.INST.gameType)));
+            frame.addComponent(gameDoubleRoundPanel.withBorder(Borders.singleLine(Translator.INST.doubleRoundType)));
         }
     }
 }

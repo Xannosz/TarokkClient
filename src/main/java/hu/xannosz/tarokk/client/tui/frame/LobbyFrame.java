@@ -3,7 +3,6 @@ package hu.xannosz.tarokk.client.tui.frame;
 import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
-import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
@@ -13,7 +12,7 @@ import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.tui.panel.GameSessionPanel;
 import hu.xannosz.tarokk.client.tui.panel.UserPanel;
-import hu.xannosz.tarokk.client.util.ThemeHandler;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 import java.util.ArrayList;
@@ -116,7 +115,7 @@ public class LobbyFrame extends Frame {
             List<Map.Entry<Integer, MainProto.User>> userList = new ArrayList<>(tuiClient.getServerLiveData().getUsers().entrySet());
             for (int i = namePage; i < userList.size() && i < namePage + nameListHeight; i++) {
                 if (!userList.get(i).getValue().getBot() && userList.get(i).getValue().getId() != tuiClient.getServerLiveData().getLoginResult().getUserId()) {
-                    userPanel.addComponent(new UserPanel(userList.get(i).getValue(), drawNameOnlinePanel, drawNameFriendPanel, nameNamePanelSize, nameOnlinePanelSize, nameFriendPanelSize, tuiClient));
+                    userPanel.addComponent(new UserPanel(userList.get(i).getValue(), drawNameOnlinePanel, drawNameFriendPanel, nameNamePanelSize, nameOnlinePanelSize, nameFriendPanelSize));
                 }
             }
             if (namePanelActivated) {
@@ -220,24 +219,24 @@ public class LobbyFrame extends Frame {
     }
 
     private void updateFooter() {
-        footer = new Panel();
         if (Util.anyNull(tuiClient.getServerLiveData().getGameSessions(),
                 tuiClient.getServerLiveData().getUsers(),
                 tuiClient.getServerLiveData().getLoginResult(),
                 gameSessions)) {
             return;
         }
+        footer.clear();
 
         MainProto.GameSession gameInfo = gameSessions.get(gamePage);
         int userID = tuiClient.getServerLiveData().getLoginResult().getUserId();
 
         String joinButtonText;
         if (gameInfo.getState() == MainProto.GameSession.State.LOBBY) {
-            joinButtonText = "Join to lobby";
+            joinButtonText = Translator.INST.joinToLobby;
         } else if (gameInfo.getUserIdList().contains(userID)) {
-            joinButtonText = "Join to game";
+            joinButtonText = Translator.INST.joinToGame;
         } else {
-            joinButtonText = "Join to game as observer";
+            joinButtonText = Translator.INST.joinToGameAsObserver;
         }
 
         boolean deleteButtonVisible;
@@ -247,24 +246,12 @@ public class LobbyFrame extends Frame {
             deleteButtonVisible = gameInfo.getUserIdList().contains(userID);
         }
 
-        footer.setLayoutManager(new GridLayout(deleteButtonVisible ? 12 : 9));
-
-        footer.addComponent(new Label("["));
-        footer.addComponent(new Label("Arrows").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: Movement"));
-
-        footer.addComponent(new Label("["));
-        footer.addComponent(new Label("Enter").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: " + joinButtonText));
-
-        footer.addComponent(new Label("["));
-        footer.addComponent(new Label("+").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-        footer.addComponent(new Label("]: Create Game"));
+        footer.put(Translator.INST.arrows, Translator.INST.movement);
+        footer.put("Enter", joinButtonText);
+        footer.put("+", Translator.INST.createGame);
 
         if (deleteButtonVisible) {
-            footer.addComponent(new Label("["));
-            footer.addComponent(new Label("-").setTheme(ThemeHandler.getKeyThemeFooterPanel(tuiClient.getTerminalSettings())));
-            footer.addComponent(new Label("]: Delete Game"));
+            footer.put("-", Translator.INST.deleteGame);
         }
     }
 }

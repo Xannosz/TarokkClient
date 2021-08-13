@@ -1,1 +1,57 @@
-{"foreGround":{"red":129,"green":236,"blue":13},"backGround":{"red":22,"green":23,"blue":29},"mainPanelBackGround":{"red":22,"green":23,"blue":29},"mainPanelForeGround":{"red":129,"green":236,"blue":13},"errorForeGround":{"red":210,"green":0,"blue":0},"highLightedForeGround":{"red":153,"green":51,"blue":204},"subLightedForeGround":{"red":70,"green":70,"blue":70},"onlineColor":{"red":68,"green":180,"blue":204},"footerPanelBackGround":{"red":31,"green":32,"blue":41},"footerPanelForeGround":{"red":25,"green":209,"blue":216},"keyColor":{"red":255,"green":102,"blue":0}}
+{
+  "foreGround": {
+    "red": 129,
+    "green": 236,
+    "blue": 13
+  },
+  "backGround": {
+    "red": 22,
+    "green": 23,
+    "blue": 29
+  },
+  "mainPanelBackGround": {
+    "red": 22,
+    "green": 23,
+    "blue": 29
+  },
+  "mainPanelForeGround": {
+    "red": 129,
+    "green": 236,
+    "blue": 13
+  },
+  "errorForeGround": {
+    "red": 210,
+    "green": 0,
+    "blue": 0
+  },
+  "highLightedForeGround": {
+    "red": 153,
+    "green": 51,
+    "blue": 204
+  },
+  "subLightedForeGround": {
+    "red": 70,
+    "green": 70,
+    "blue": 70
+  },
+  "onlineColor": {
+    "red": 68,
+    "green": 180,
+    "blue": 204
+  },
+  "footerPanelBackGround": {
+    "red": 31,
+    "green": 32,
+    "blue": 41
+  },
+  "footerPanelForeGround": {
+    "red": 25,
+    "green": 209,
+    "blue": 216
+  },
+  "keyColor": {
+    "red": 255,
+    "green": 102,
+    "blue": 0
+  }
+}

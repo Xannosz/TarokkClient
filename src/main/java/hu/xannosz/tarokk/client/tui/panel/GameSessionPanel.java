@@ -6,6 +6,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 public class GameSessionPanel extends Panel {
@@ -13,7 +14,7 @@ public class GameSessionPanel extends Panel {
         setLayoutManager(new GridLayout(2));
         setPreferredSize(gameDataPanelSize);
 
-        addComponent(new Label("Type:").setPreferredSize(gameNamePanelSize));
+        addComponent(new Label(Translator.INST.type).setPreferredSize(gameNamePanelSize));
         addComponent(new Label(game.getType()).setPreferredSize(gameNamePanelSize));
 
         for (int i = 0; i < game.getUserIdCount(); i++) {
@@ -23,7 +24,7 @@ public class GameSessionPanel extends Panel {
             addComponent(new Label("").setPreferredSize(gameNamePanelSize));
         }
 
-        addComponent(new Label("Status:").setPreferredSize(gameNamePanelSize));
+        addComponent(new Label(Translator.INST.status).setPreferredSize(gameNamePanelSize));
         addComponent(new Label("" + game.getState()).setPreferredSize(gameNamePanelSize));
     }
 }

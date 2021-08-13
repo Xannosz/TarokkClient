@@ -7,10 +7,12 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
+import hu.xannosz.tarokk.client.game.Actions;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
+import hu.xannosz.tarokk.client.util.Translator;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,11 +39,11 @@ public class GamePlaySubFrame extends SubFrame {
 
         Panel playCard = new Panel();
         playCard.setLayoutManager(new GridLayout(4));
-        if (tuiClient.getServerLiveData().getPlayerActions().get("play") != null) {
+        if (tuiClient.getServerLiveData().getPlayerActions().get(Actions.PLAY) != null) {
             for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getTurnPlayerActions()) {
-                addData(playCard, getPlayerName(play.getFirst(), gameData, tuiClient) + " play card", getFormattedCardName(play.getSecond()), tuiClient);
+                addData(playCard, getPlayerName(play.getFirst(), gameData, tuiClient) + Translator.INST.playCard, getFormattedCardName(play.getSecond()));
             }
-            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get("play")) {
+            for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get(Actions.PLAY)) {
                 if (gameData.getUserId(play.getFirst()) == tuiClient.getServerLiveData().getLoginResult().getUserId()) {
                     card.remove(Card.parseCard(play.getSecond()));
                 }
@@ -52,7 +54,7 @@ public class GamePlaySubFrame extends SubFrame {
         Panel cards = new Panel();
         cards.setLayoutManager(new GridLayout(8));
         for (int i = 0; i < card.size(); i++) {
-            addKeyWithCardToPanel(cards, "" + (i + 1), card.get(i), tuiClient);
+            addKeyWithCardToPanel(cards, "" + (i + 1), card.get(i));
         }
         panel.addComponent(cards);
 
