@@ -9,7 +9,7 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 
 import java.util.Collections;
 import java.util.Map;

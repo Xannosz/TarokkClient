@@ -1,7 +1,9 @@
-package hu.xannosz.tarokk.client.util;
+package hu.xannosz.tarokk.client.util.translator;
 
-import com.google.gson.annotations.Expose;
 import com.googlecode.lanterna.Symbols;
+import hu.xannosz.tarokk.client.util.Constants;
+import hu.xannosz.tarokk.client.util.InternalData;
+import hu.xannosz.tarokk.client.util.Util;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
@@ -156,63 +158,21 @@ public class Translator {
     // announcing
     public String silent = "silent";
 
-    public String getContraName(int id) {
-        if (id < 0 || id >= contraNames.size()) {
-            return "" + id;
-        }
-        return contraNames.get(id);
-    }
+    public String kontra = "kontra";
+    public String rekontra = "rekontra";
+    public String subkontra = "subkontra";
+    public String hirshkontra = "hirshkontra";
+    public String mordkontra = "mordkontra";
+    public String fedakSari = "fedakSari";
 
-    public String getSuitName(int id) {
-        if (id < 0 || id >= suitNames.size()) {
-            return "" + id;
-        }
-        return suitNames.get(id);
-    }
+    public String pheasant = "pheasant";
+    public String centrum = "centrum";
+    public String littleBird = "littleBird";
+    public String bigBird = "bigBird";
+    public String uhu = "uhu";
+    public String ultimo = "ultimo";
 
-    public String getTrickName(int id) {
-        if (id < 0 || id >= trickNames.size()) {
-            return "" + id;
-        }
-        return trickNames.get(id);
-    }
-
-    public String getAnnouncementNameText(String key) {
-        Class<?> objectClass = announcementNameTexts.getClass();
-        for (Field field : objectClass.getFields()) {
-            if (field.getName().equals(key)) {
-                try {
-                    return (String) field.get(announcementNameTexts);
-                } catch (Exception e) {
-                    Util.Log.logError("Get announcementNameText failed.");
-                    Util.Log.logError(e);
-                    return key;
-                }
-            }
-        }
-        Util.Log.logError("AnnouncementNameText not exist.");
-        return key;
-    }
-
-    private String kontra = "kontra";
-    private String rekontra = "rekontra";
-    private String subkontra = "subkontra";
-    private String hirshkontra = "hirshkontra";
-    private String mordkontra = "mordkontra";
-    private String fedakSari = "fedakSari";
-    private final List<String> contraNames = Arrays.asList("", kontra, rekontra, subkontra, hirshkontra, mordkontra, fedakSari);
-
-    private final List<String> suitNames = Arrays.asList("" + Symbols.HEART, "" + Symbols.DIAMOND, "" + Symbols.SPADES, "" + Symbols.CLUB);
-
-    private String pheasant = "pheasant";
-    private String centrum = "centrum";
-    private String littleBird = "littleBird";
-    private String bigBird = "bigBird";
-    private String uhu = "uhu";
-    private String ultimo = "ultimo";
-    private final List<String> trickNames = Arrays.asList(pheasant, "", "", "", centrum, littleBird, bigBird, uhu, ultimo);
-
-    private AnnouncementNameTexts announcementNameTexts = new AnnouncementNameTexts();
+    public AnnouncementNameTexts announcementNameTexts = new AnnouncementNameTexts();
 
     public static class AnnouncementNameTexts {
         public String jatek = "jatek";

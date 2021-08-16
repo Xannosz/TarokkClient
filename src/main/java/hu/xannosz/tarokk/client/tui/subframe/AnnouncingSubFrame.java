@@ -9,12 +9,13 @@ import com.googlecode.lanterna.input.KeyType;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Actions;
+import hu.xannosz.tarokk.client.game.Announcement;
 import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
-import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ import static hu.xannosz.tarokk.client.util.Util.*;
 
 public class AnnouncingSubFrame extends SubFrame {
     private int page = 0;
-    private List<String> availableAnnouncing;
+    private List<Announcement> availableAnnouncing;
     private final int gameId;
 
     public AnnouncingSubFrame(TuiClient tuiClient, int gameId) {
@@ -59,9 +60,9 @@ public class AnnouncingSubFrame extends SubFrame {
         nextAnnouncing.setLayoutManager(new GridLayout(4));
         for (int i = 0; i < availableAnnouncing.size(); i++) {
             if (i == page) {
-                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
+                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i).toString()).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
             } else {
-                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i)));
+                nextAnnouncing.addComponent(new Label(availableAnnouncing.get(i).toString()));
             }
         }
         panel.addComponent(nextAnnouncing);

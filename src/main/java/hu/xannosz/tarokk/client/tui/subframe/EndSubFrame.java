@@ -10,7 +10,7 @@ import hu.xannosz.tarokk.client.network.Action;
 import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.tui.frame.GameFrame;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 
 import java.util.Collections;
 import java.util.Map;

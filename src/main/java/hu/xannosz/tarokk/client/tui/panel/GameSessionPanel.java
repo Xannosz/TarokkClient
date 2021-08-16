@@ -6,7 +6,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.tui.TuiClient;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 
 public class GameSessionPanel extends Panel {

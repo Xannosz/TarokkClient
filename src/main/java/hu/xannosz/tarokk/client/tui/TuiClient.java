@@ -14,8 +14,8 @@ import hu.xannosz.tarokk.client.tui.frame.Frame;
 import hu.xannosz.tarokk.client.tui.frame.LobbyFrame;
 import hu.xannosz.tarokk.client.util.InternalData;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
-import hu.xannosz.tarokk.client.util.Translator;
 import hu.xannosz.tarokk.client.util.Util;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +27,7 @@ import static hu.xannosz.tarokk.client.util.Util.addKey;
 
 public class TuiClient implements WindowListener {
 
-    private Screen screen; //TODO close when kill window
+    private Screen screen;
     @Getter
     private ProtoConnection connection;
     @Getter

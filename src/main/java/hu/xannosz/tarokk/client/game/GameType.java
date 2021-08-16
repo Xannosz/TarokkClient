@@ -1,6 +1,6 @@
 package hu.xannosz.tarokk.client.game;
 
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

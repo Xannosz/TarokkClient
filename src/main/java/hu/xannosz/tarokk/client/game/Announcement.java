@@ -1,6 +1,7 @@
 package hu.xannosz.tarokk.client.game;
 
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
+import hu.xannosz.tarokk.client.util.translator.TranslatorUtil;
 import lombok.Getter;
 
 @Getter
@@ -91,16 +92,16 @@ public class Announcement {
         if (isSilent())
             builder.append(Translator.INST.silent);
         else
-            builder.append(Translator.INST.getContraName(getContraLevel()));
+            builder.append(TranslatorUtil.getContraName(getContraLevel()));
 
         if (hasSuit())
-            builder.append(Translator.INST.getSuitName(getSuit()));
+            builder.append(TranslatorUtil.getSuitName(getSuit()));
         if (hasCard())
             builder.append(getCard().getFormattedName());
         if (hasTrick())
-            builder.append(Translator.INST.getTrickName(getTrick()));
+            builder.append(TranslatorUtil.getTrickName(getTrick()));
 
-        String nameText = Translator.INST.getAnnouncementNameText(getName());
+        String nameText = TranslatorUtil.getAnnouncementNameText(getName());
         if (nameText == null)
             nameText = "[" + getName() + "]";
         builder.append(nameText);
@@ -108,19 +109,19 @@ public class Announcement {
         return builder.toString();
     }
 
-    public boolean isSilent() {
+    private boolean isSilent() {
         return contraLevel < 0;
     }
 
-    public boolean hasSuit() {
+    private boolean hasSuit() {
         return suit >= 0;
     }
 
-    public boolean hasCard() {
+    private boolean hasCard() {
         return card != null;
     }
 
-    public boolean hasTrick() {
+    private boolean hasTrick() {
         return trick >= 0;
     }
 }

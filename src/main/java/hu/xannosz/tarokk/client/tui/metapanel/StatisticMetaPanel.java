@@ -4,7 +4,7 @@ import com.googlecode.lanterna.gui2.Borders;
 import com.googlecode.lanterna.gui2.GridLayout;
 import com.googlecode.lanterna.gui2.Panel;
 import com.tisza.tarock.proto.EventProto;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 
 import static hu.xannosz.tarokk.client.util.Util.addData;
 

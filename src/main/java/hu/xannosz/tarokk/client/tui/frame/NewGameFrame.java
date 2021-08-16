@@ -14,7 +14,7 @@ import hu.xannosz.tarokk.client.network.Messages;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.tui.panel.DoubleRoundPanel;
 import hu.xannosz.tarokk.client.tui.panel.GameTypePanel;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 
 public class NewGameFrame extends Frame {
 

@@ -1,5 +1,6 @@
 package hu.xannosz.tarokk.client.network;
 
+import hu.xannosz.tarokk.client.game.Announcement;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.AllArgsConstructor;
@@ -24,8 +25,8 @@ public class Action {
         return new Action("call:" + card.getId());
     }
 
-    public static Action announce(String announcement) {
-        return new Action("announce:" + announcement);
+    public static Action announce(Announcement announcement) {
+        return new Action("announce:" + announcement.getId());
     }
 
     public static Action announcePass() {

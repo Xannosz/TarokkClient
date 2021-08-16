@@ -14,7 +14,7 @@ import hu.xannosz.tarokk.client.tui.metapanel.DataMetaPanel;
 import hu.xannosz.tarokk.client.tui.metapanel.HudMetaPanel;
 import hu.xannosz.tarokk.client.tui.metapanel.StatisticMetaPanel;
 import hu.xannosz.tarokk.client.tui.subframe.*;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
@@ -24,7 +24,7 @@ import java.util.Map;
 import static hu.xannosz.tarokk.client.util.Util.getGameData;
 
 public class GameFrame extends Frame {
-
+//TODO size to translated names
     @Getter
     private final int gameId;
     private SubFrame subFrame;

@@ -6,7 +6,7 @@ import com.googlecode.lanterna.gui2.Label;
 import com.googlecode.lanterna.gui2.Panel;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.util.ThemeHandler;
-import hu.xannosz.tarokk.client.util.Translator;
+import hu.xannosz.tarokk.client.util.translator.Translator;
 
 public class UserPanel extends Panel {
     public UserPanel(MainProto.User user, boolean drawNameOnlinePanel, boolean drawNameFriendPanel, TerminalSize nameNamePanelSize, TerminalSize nameOnlinePanelSize, TerminalSize nameFriendPanelSize) {

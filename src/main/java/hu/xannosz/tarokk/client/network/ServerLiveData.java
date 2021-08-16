@@ -4,6 +4,7 @@ import com.tisza.tarock.proto.EventProto;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.android.legacy.MessageHandler;
+import hu.xannosz.tarokk.client.game.Announcement;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.tui.TuiClient;
@@ -30,7 +31,7 @@ public class ServerLiveData implements MessageHandler {
     private EventProto.Event.Statistics statistics;
     private ConcurrentLinkedQueue<Integer> availableBids;
     private ConcurrentLinkedQueue<Card> availableCalls;
-    private ConcurrentLinkedQueue<String> availableAnnouncements;
+    private final ConcurrentLinkedQueue<Announcement> availableAnnouncements = new ConcurrentLinkedQueue<>();
     private final ConcurrentMap<String, ConcurrentLinkedQueue<Douplet<Integer, String>>> playerActions = new ConcurrentHashMap<>();
     private final ConcurrentLinkedQueue<Card> playerCard = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Integer> foldDone = new ConcurrentLinkedQueue<>();
@@ -118,7 +119,10 @@ public class ServerLiveData implements MessageHandler {
                         }
                         break;
                     case AVAILABLE_ANNOUNCEMENTS:
-                        availableAnnouncements = new ConcurrentLinkedQueue<>(event.getAvailableAnnouncements().getAnnouncementList());
+                        availableAnnouncements.clear();
+                        for (String announcement : event.getAvailableAnnouncements().getAnnouncementList()) {
+                            availableAnnouncements.add(Announcement.fromID(announcement));
+                        }
                         break;
                     case CARDS_TAKEN:
                         int player = event.getCardsTaken().getPlayer();
