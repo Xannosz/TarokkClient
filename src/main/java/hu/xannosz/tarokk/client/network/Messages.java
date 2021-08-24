@@ -3,7 +3,9 @@ package hu.xannosz.tarokk.client.network;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
+import lombok.experimental.UtilityClass;
 
+@UtilityClass
 public class Messages {
     public static MainProto.Message fbLogin(String token) {
         return MainProto.Message.newBuilder().setLogin(MainProto.Login.newBuilder().setFacebookToken(token).build()).build();

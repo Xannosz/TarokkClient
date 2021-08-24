@@ -28,7 +28,7 @@
                     <archive>
                         <manifest>
                             <mainClass>
-                                hu.xannosz.tarokk.client.app.Main
+                                hu.xannosz.tarokk.client.App
                             </mainClass>
                         </manifest>
                     </archive>
@@ -67,7 +67,6 @@
         </plugins>
     </build>
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/com.google.protobuf/protobuf-java -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -76,78 +75,18 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.4</version>
+            <version>[1.18.4,)</version>
         </dependency>
         <dependency>
             <groupId>hu.xannosz</groupId>
             <artifactId>microtools</artifactId>
-            <version>0.5.2</version>
+            <version>[0.5.2,)</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.api-ads/google-ads -->
-        <dependency>
-            <groupId>com.google.api-ads</groupId>
-            <artifactId>google-ads</artifactId>
-            <version>14.0.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.auth/google-auth-library-oauth2-http -->
-        <dependency>
-            <groupId>com.google.auth</groupId>
-            <artifactId>google-auth-library-oauth2-http</artifactId>
-            <version>0.27.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.apis/google-api-services-plus -->
-        <dependency>
-            <groupId>com.google.apis</groupId>
-            <artifactId>google-api-services-plus</artifactId>
-            <version>v1-rev590-1.25.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-java6 -->
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client-java6</artifactId>
-            <version>1.31.5</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.oauth-client/google-oauth-client-jetty -->
-        <dependency>
-            <groupId>com.google.oauth-client</groupId>
-            <artifactId>google-oauth-client-jetty</artifactId>
-            <version>1.31.5</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/com.google.api-client/google-api-client-jackson2 -->
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client-jackson2</artifactId>
-            <version>1.23.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.google.api-client</groupId>
-            <artifactId>google-api-client</artifactId>
-            <version>1.32.1</version>
-        </dependency>
-
-
-        <!-- https://mvnrepository.com/artifact/visural-common-and-wicket-w15/visural-common-and-wicket-w15 -->
-        <dependency>
-            <groupId>visural-common-and-wicket-w15</groupId>
-            <artifactId>visural-common-and-wicket-w15</artifactId>
-            <version>0.7.0</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/javax.servlet/javax.servlet-api -->
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>4.0.1</version>
-            <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.json/json -->
-        <dependency>
-            <groupId>org.json</groupId>
-            <artifactId>json</artifactId>
-            <version>20210307</version>
-        </dependency>
-
-        <!-- https://mvnrepository.com/artifact/com.googlecode.lanterna/lanterna -->
         <dependency>
             <groupId>com.googlecode.lanterna</groupId>
             <artifactId>lanterna</artifactId>
@@ -160,12 +99,6 @@
             <id>xannosz.repo</id>
             <name>Xannosz</name>
             <url>http://daedalus.xannosz.cloud/repositories/</url>
-        </repository>
-
-        <repository>
-            <id>zoidberg.repo</id>
-            <name>zoidberg</name>
-            <url>http://zoidberg.ukp.informatik.tu-darmstadt.de/artifactory/public-releases/</url>
         </repository>
     </repositories>
 

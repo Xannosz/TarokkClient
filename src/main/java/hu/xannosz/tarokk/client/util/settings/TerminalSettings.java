@@ -1,6 +1,7 @@
 package hu.xannosz.tarokk.client.util.settings;
 
 import com.googlecode.lanterna.TextColor;
+import hu.xannosz.microtools.Json;
 import hu.xannosz.tarokk.client.util.Constants;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
@@ -18,11 +19,11 @@ public class TerminalSettings {
 
     static {
         try {
-            //INSTANCE = Util.readData(PATH, TerminalSettings.class); //TODO solve terminal color read problem
+            //INSTANCE = Json.readData(PATH, TerminalSettings.class); //TODO solve terminal color read problem
             if (INSTANCE == null) {
                 INSTANCE = new TerminalSettings();
             }
-            Util.writeData(PATH, INSTANCE);
+            Json.writeData(PATH, INSTANCE);
         } catch (Exception e) {
             INSTANCE = new TerminalSettings();
             Util.Log.logError("Cannot read " + TERMINAL_SETTINGS_FILE_NAME);

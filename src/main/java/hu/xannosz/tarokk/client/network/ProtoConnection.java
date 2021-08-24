@@ -1,8 +1,9 @@
-package hu.xannosz.tarokk.client.android.legacy;
+package hu.xannosz.tarokk.client.network;
 
 import com.tisza.tarock.proto.MainProto;
 import com.tisza.tarock.proto.MainProto.Message;
 import hu.xannosz.microtools.Sleep;
+import hu.xannosz.tarokk.client.util.Util;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,28 +26,30 @@ public class ProtoConnection implements Closeable {
 
     private final Executor messageHandlerExecutor;
     private Socket socket;
-    private InputStream is;
-    private OutputStream os;
+    private final InputStream is;
+    private final OutputStream os;
     private final Object packetHandlersLock = new Object();
-    private List<MessageHandler> packetHandlers = new ArrayList<>();
-    private BlockingQueue<Message> messagesToSend = new LinkedBlockingQueue<>();
+    private final List<MessageHandler> packetHandlers = new ArrayList<>();
+    private final BlockingQueue<Message> messagesToSend = new LinkedBlockingQueue<>();
     private volatile boolean started = false;
     private volatile boolean closeRequested = false;
 
-    private Thread readerThread = new Thread(new Runnable() {
+    private final Thread readerThread = new Thread(new Runnable() {
         @Override
         public void run() {
             try {
                 byte[] helloArr = new byte[10];
-                is.read(helloArr);
+                if (is.read(helloArr) == 0) {
+                    Util.Log.logError("Hello string reading not success.");
+                }
                 ByteBuffer helloByteBuffer = ByteBuffer.wrap(helloArr);
                 String serverHelloString = new String(helloArr, 0, 6);
                 int serverVersion = helloByteBuffer.getInt(6);
 
                 if (!serverHelloString.equals(HELLO_STRING)) {
-                    error(MessageHandler.ErrorType.INVALID_HELLO);
+                    error(ErrorType.INVALID_HELLO);
                 } else if (serverVersion != VERSION) {
-                    error(MessageHandler.ErrorType.VERSION_MISMATCH);
+                    error(ErrorType.VERSION_MISMATCH);
                 }
 
                 while (!closeRequested) {
@@ -78,7 +81,7 @@ public class ProtoConnection implements Closeable {
         }
     });
 
-    private Thread writerThread = new Thread(new Runnable() {
+    private final Thread writerThread = new Thread(new Runnable() {
         @Override
         public void run() {
             try {
@@ -119,11 +122,9 @@ public class ProtoConnection implements Closeable {
         os = socket.getOutputStream();
     }
 
-    private void error(MessageHandler.ErrorType errorType) throws IOException {
+    private void error(ErrorType errorType) throws IOException {
         synchronized (packetHandlersLock) {
-            for (MessageHandler handler : packetHandlers) {
-                messageHandlerExecutor.execute(() -> handler.connectionError(errorType));
-            }
+            Util.Log.logError("Error: " + errorType);
         }
         close();
     }
@@ -143,14 +144,10 @@ public class ProtoConnection implements Closeable {
         }
     }
 
-    public void removeMessageHandler(MessageHandler handler) {
-        synchronized (packetHandlersLock) {
-            packetHandlers.remove(handler);
-        }
-    }
-
     public void sendMessage(Message message) {
-        messagesToSend.offer(message);
+        if (!messagesToSend.offer(message)) {
+            Util.Log.logError("Message sending not success.");
+        }
     }
 
     private void stopThreads() {
@@ -167,13 +164,9 @@ public class ProtoConnection implements Closeable {
 
         thread.interrupt();
 
-        while (thread.isAlive()){
+        while (thread.isAlive()) {
             Sleep.sleepMillis(100);
         }
-    }
-
-    public synchronized boolean isAlive() {
-        return started && !closeRequested;
     }
 
     public synchronized void close() throws IOException {
@@ -190,9 +183,15 @@ public class ProtoConnection implements Closeable {
         }
 
         synchronized (packetHandlersLock) {
-            for (MessageHandler handler : packetHandlers) {
-                messageHandlerExecutor.execute(() -> handler.connectionClosed());
-            }
+            Util.Log.logMessage("Connection closed!");
         }
+    }
+
+    public interface MessageHandler {
+        void handleMessage(Message message);
+    }
+
+    private enum ErrorType {
+        VERSION_MISMATCH, INVALID_HELLO
     }
 }

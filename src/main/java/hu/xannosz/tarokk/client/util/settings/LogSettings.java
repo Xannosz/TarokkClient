@@ -1,5 +1,6 @@
 package hu.xannosz.tarokk.client.util.settings;
 
+import hu.xannosz.microtools.Json;
 import hu.xannosz.tarokk.client.util.Constants;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
@@ -17,11 +18,11 @@ public class LogSettings {
 
     static {
         try {
-            INSTANCE = Util.readData(PATH, LogSettings.class);
+            INSTANCE = Json.readData(PATH, LogSettings.class);
             if (INSTANCE == null) {
                 INSTANCE = new LogSettings();
             }
-            Util.writeData(PATH, INSTANCE);
+            Json.writeData(PATH, INSTANCE);
         } catch (Exception e) {
             INSTANCE = new LogSettings();
             Util.Log.logError("Cannot read " + LOG_SETTINGS_FILE_NAME);

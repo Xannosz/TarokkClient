@@ -1,15 +1,12 @@
 package hu.xannosz.tarokk.client.util.translator;
 
-import com.googlecode.lanterna.Symbols;
+import hu.xannosz.microtools.Json;
 import hu.xannosz.tarokk.client.util.Constants;
 import hu.xannosz.tarokk.client.util.InternalData;
 import hu.xannosz.tarokk.client.util.Util;
 
-import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.List;
 
 public class Translator {
 
@@ -18,11 +15,11 @@ public class Translator {
     static {
         Path path = Paths.get(Constants.LANG_DIRECTORY, InternalData.INSTANCE.getLangId());
         try {
-            INST = Util.readData(path, Translator.class);
+            INST = Json.readData(path, Translator.class);
             if (INST == null) {
                 INST = new Translator();
             }
-            Util.writeData(path, INST);
+            Json.writeData(path, INST);
         } catch (Exception e) {
             INST = new Translator();
             Util.Log.logError("Cannot read " + InternalData.INSTANCE.getLangId());

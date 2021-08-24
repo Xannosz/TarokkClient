@@ -3,7 +3,6 @@ package hu.xannosz.tarokk.client.network;
 import com.tisza.tarock.proto.EventProto;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
-import hu.xannosz.tarokk.client.android.legacy.MessageHandler;
 import hu.xannosz.tarokk.client.game.Announcement;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
@@ -16,7 +15,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 @Getter
-public class ServerLiveData implements MessageHandler {
+public class ServerLiveData implements ProtoConnection.MessageHandler {
     //TODO use fold method
     private ConcurrentLinkedQueue<MainProto.GameSession> gameSessions;
     private MainProto.LoginResult loginResult;
@@ -170,16 +169,6 @@ public class ServerLiveData implements MessageHandler {
                 return;
         }
         tuiClient.update();
-    }
-
-    @Override
-    public void connectionError(ErrorType errorType) {
-        Util.Log.logError("Error: " + errorType);
-    }
-
-    @Override
-    public void connectionClosed() {
-        Util.Log.logMessage("Connection closed!");
     }
 
     public void clearGameData() {

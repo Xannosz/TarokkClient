@@ -1,5 +1,6 @@
 package hu.xannosz.tarokk.client.util;
 
+import hu.xannosz.microtools.Json;
 import lombok.Getter;
 
 import java.nio.file.Path;
@@ -15,11 +16,11 @@ public class InternalData {
 
     static {
         try {
-            INSTANCE = Util.readData(PATH, InternalData.class);
+            INSTANCE = Json.readData(PATH, InternalData.class);
             if (INSTANCE == null) {
                 INSTANCE = new InternalData();
             }
-            Util.writeData(PATH, INSTANCE);
+            Json.writeData(PATH, INSTANCE);
         } catch (Exception e) {
             INSTANCE = new InternalData();
             Util.Log.logError("Cannot read " + INTERNAL_DATA_FILE_NAME);

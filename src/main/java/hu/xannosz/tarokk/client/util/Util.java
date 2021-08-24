@@ -1,9 +1,5 @@
 package hu.xannosz.tarokk.client.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.googlecode.lanterna.Symbols;
 import com.googlecode.lanterna.gui2.Component;
 import com.googlecode.lanterna.gui2.GridLayout;
@@ -14,14 +10,13 @@ import com.googlecode.lanterna.screen.TerminalScreen;
 import com.googlecode.lanterna.terminal.DefaultTerminalFactory;
 import com.googlecode.lanterna.terminal.Terminal;
 import com.tisza.tarock.proto.MainProto;
-import hu.xannosz.tarokk.client.android.legacy.MessageHandler;
-import hu.xannosz.tarokk.client.android.legacy.ProtoConnection;
+import hu.xannosz.microtools.AnsiColors;
 import hu.xannosz.tarokk.client.game.Card;
+import hu.xannosz.tarokk.client.network.ProtoConnection;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.settings.LogSettings;
 import lombok.experimental.UtilityClass;
-import org.apache.commons.io.FileUtils;
 
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
@@ -30,7 +25,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.InetSocketAddress;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.SimpleDateFormat;
@@ -46,7 +40,7 @@ import static hu.xannosz.tarokk.client.util.Constants.LOG_DIRECTORY;
 
 @UtilityClass
 public class Util {
-    public static ProtoConnection createProtoConnection(MessageHandler messageHandler) throws IOException {
+    public static ProtoConnection createProtoConnection(ProtoConnection.MessageHandler messageHandler) throws IOException {
         SSLSocket socket = (SSLSocket) SSLSocketFactory.getDefault().createSocket();
         socket.connect(new InetSocketAddress(Constants.ADDRESS, Constants.PORT), Constants.TIME_OUT);
 
@@ -159,19 +153,6 @@ public class Util {
         return result;
     }
 
-    public static <T> T readData(Path path, Class<T> clazz) throws IOException {
-        path.toFile().getParentFile().mkdirs();
-        path.toFile().createNewFile();
-        JsonElement dataObject = JsonParser.parseString(FileUtils.readFileToString(path.toFile()));
-        return new Gson().fromJson(dataObject, clazz);
-    }
-
-    public static <T> void writeData(Path path, T data) throws IOException {
-        path.toFile().getParentFile().mkdirs();
-        path.toFile().createNewFile();
-        FileUtils.writeStringToFile(path.toFile(), new GsonBuilder().setPrettyPrinting().create().toJson(data));
-    }
-
     @UtilityClass
     public static class Log {
         private static final String MESSAGE_LOG_FILE = "message_log.txt";
@@ -213,12 +194,12 @@ public class Util {
             }
 
             if (!logSetup) {
-                logToConsole(Constants.Color.ANSI_RED, "Logging service not started.");
+                logToConsole(AnsiColors.ANSI_RED, "Logging service not started.");
             }
         }
 
         private static void logToConsole(String color, String message) {
-            System.out.println(color + message + Constants.Color.ANSI_RESET);
+            System.out.println(color + message + AnsiColors.ANSI_RESET);
         }
 
         private static void logToFile(String line, String fileName) {
@@ -232,27 +213,27 @@ public class Util {
 
         public static void logMessage(String log) {
             if (LogSettings.INSTANCE.isMessageLog()) {
-                logToConsole(Constants.Color.ANSI_GREEN, log);
+                logToConsole(AnsiColors.ANSI_GREEN, log);
             }
             logToFile(log, MESSAGE_LOG_FILE);
         }
 
         public static void logGame(String log) {
             if (LogSettings.INSTANCE.isGameLog()) {
-                logToConsole(Constants.Color.ANSI_BLUE, log);
+                logToConsole(AnsiColors.ANSI_BLUE, log);
             }
             logToFile(log, GAME_LOG_FILE);
         }
 
         public static void logKey(String log) {
             if (LogSettings.INSTANCE.isKeyLog()) {
-                logToConsole(Constants.Color.ANSI_CYAN, log);
+                logToConsole(AnsiColors.ANSI_CYAN, log);
             }
             logToFile(log, KEY_LOG_FILE);
         }
 
         public static void logError(String log) {
-            logToConsole(Constants.Color.ANSI_RED, log);
+            logToConsole(AnsiColors.ANSI_RED, log);
             logToFile(log, ERROR_LOG_FILE);
         }
 
