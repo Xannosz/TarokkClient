@@ -6,7 +6,6 @@ import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.Announcement;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.GamePhase;
-import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
@@ -42,10 +41,10 @@ public class ServerLiveData implements ProtoConnection.MessageHandler {
     private final ConcurrentLinkedQueue<Douplet<Integer, String>> turnPlayerActions = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Douplet<Integer, String>> chat = new ConcurrentLinkedQueue<>();  //TODO implement chatting
 
-    private final TuiClient tuiClient;
+    private final Runnable callOnUpdate;
 
-    public ServerLiveData(TuiClient tuiClient) {
-        this.tuiClient = tuiClient;
+    public ServerLiveData(Runnable callOnUpdate) {
+        this.callOnUpdate = callOnUpdate;
     }
 
     @Override
@@ -168,7 +167,7 @@ public class ServerLiveData implements ProtoConnection.MessageHandler {
                 Util.Log.logError("Message type not set: " + message);
                 return;
         }
-        tuiClient.update();
+        callOnUpdate.run();
     }
 
     public void clearGameData() {

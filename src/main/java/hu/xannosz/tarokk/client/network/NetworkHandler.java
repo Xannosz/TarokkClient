@@ -15,8 +15,8 @@ public class NetworkHandler {
     @Getter
     private final ServerLiveData liveData;
 
-    public NetworkHandler() throws IOException {
-        liveData = new ServerLiveData(null);
+    public NetworkHandler(Runnable runOnUpdate) throws IOException {
+        liveData = new ServerLiveData(runOnUpdate);
         connection = Util.createProtoConnection(liveData);
     }
 

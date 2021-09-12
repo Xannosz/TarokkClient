@@ -7,8 +7,8 @@ import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
 import com.tisza.tarock.proto.MainProto;
-import hu.xannosz.tarokk.client.network.ProtoConnection;
 import hu.xannosz.tarokk.client.network.Messages;
+import hu.xannosz.tarokk.client.network.ProtoConnection;
 import hu.xannosz.tarokk.client.network.ServerLiveData;
 import hu.xannosz.tarokk.client.tui.frame.Frame;
 import hu.xannosz.tarokk.client.tui.frame.LobbyFrame;
@@ -31,7 +31,7 @@ public class TuiClient implements WindowListener {
     @Getter
     private ProtoConnection connection;
     @Getter
-    private final ServerLiveData serverLiveData = new ServerLiveData(this);
+    private final ServerLiveData serverLiveData = new ServerLiveData(this::update);
     private final BasicWindow window = new BasicWindow();
 
     @Setter
