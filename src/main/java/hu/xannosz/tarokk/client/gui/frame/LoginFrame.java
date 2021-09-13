@@ -22,5 +22,8 @@ public class LoginFrame extends Frame {
         if (event.getEventId().equals(GuiConstants.LOGIN_EVENT_ID)) {
             connectionsData.setFrame(new LobbyFrame(networkHandler, connectionsData));
         }
+        if (event.getEventId().equals(GuiConstants.ENTER_KEY_CODE)) {
+            connectionsData.setFrame(new LobbyFrame(networkHandler, connectionsData));
+        }
     }
 }

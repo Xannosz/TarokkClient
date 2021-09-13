@@ -32,11 +32,12 @@ public class GuiClient implements TryHandler {
             }
         }
         if (requestBody.getRequestType().equals(RequestTypes.BUTTON_REQUEST)) {
-            connectionsDataMap.get(sessionId).handleEvent(new Event(requestBody.getEventId()));
+            connectionsDataMap.get(sessionId).handleEvent(new Event(requestBody.getEventId(),
+                    requestBody.getAdditionalParams()));
         }
         if (requestBody.getRequestType().equals(RequestTypes.KEY_STROKE_REQUEST)) {
             connectionsDataMap.get(sessionId).handleEvent(
-                    new Event(KeyStrokeEvent.getFromMap(requestBody.getAdditionalParams()).getCode()));
+                    new Event(KeyStrokeEvent.getFromMap(requestBody.getAdditionalParams()).getCode(),new HashMap<>()));
         }
         if (requestBody.getRequestType().equals(RequestTypes.ON_CLOSE_WEB_SOCKET_REQUEST)) {
             connectionsDataMap.remove(sessionId);
