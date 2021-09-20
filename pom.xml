@@ -4,7 +4,7 @@
     <groupId>hu.xannosz</groupId>
     <artifactId>tarokk.client</artifactId>
     <version>0.0.1</version>
-    <name>TarokkClient</name>
+    <name>TarockClient</name>
     <description></description>
     <organization>
         <name>xannosz</name>
@@ -101,9 +101,9 @@
 
     <repositories>
         <repository>
-            <id>xannosz.repo</id>
             <name>Xannosz</name>
-            <url>http://daedalus.xannosz.cloud/repositories/</url>
+            <id>xannosz-repository</id>
+            <url>http://daedalus.xannosz.cloud:2192/snapshots</url>
         </repository>
     </repositories>
 
