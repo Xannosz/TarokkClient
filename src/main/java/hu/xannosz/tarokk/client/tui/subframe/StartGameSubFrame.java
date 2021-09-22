@@ -27,7 +27,7 @@ public class StartGameSubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
-        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient.getServerLiveData());
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(2));
 

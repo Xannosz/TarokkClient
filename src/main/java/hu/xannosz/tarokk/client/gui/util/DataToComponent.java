@@ -2,6 +2,12 @@ package hu.xannosz.tarokk.client.gui.util;
 
 import com.googlecode.lanterna.Symbols;
 import com.tisza.tarock.proto.MainProto;
+import hu.xannosz.microtools.pack.Douplet;
+import hu.xannosz.tarokk.client.game.Actions;
+import hu.xannosz.tarokk.client.game.Card;
+import hu.xannosz.tarokk.client.game.DoubleRoundType;
+import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.network.NetworkHandler;
 import hu.xannosz.tarokk.client.util.translator.Translator;
 import hu.xannosz.veneos.core.html.HtmlComponent;
 import hu.xannosz.veneos.core.html.box.Div;
@@ -9,13 +15,13 @@ import hu.xannosz.veneos.core.html.str.P;
 import hu.xannosz.veneos.trie.TryButton;
 import lombok.experimental.UtilityClass;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
 import static hu.xannosz.tarokk.client.gui.GuiConstants.*;
+import static hu.xannosz.tarokk.client.util.Util.getFormattedCardName;
+import static hu.xannosz.tarokk.client.util.Util.getPlayerName;
 
 @UtilityClass
 public class DataToComponent {
@@ -102,5 +108,80 @@ public class DataToComponent {
             }
             return userDiv;
         }
+    }
+
+    public static HtmlComponent createGameTypeComponent(GameType gameType) {
+        Div div = new Div();
+        Arrays.stream(GameType.values()).forEach((t) -> {
+            TryButton button = new TryButton(GAME_TYPE_EVENT_ID, Collections.singletonMap(GAME_TYPE_ID, t), t.getName());
+            if (t == gameType) {
+                button.addClass(SELECTED_GAME_TYPE_CLAZZ);
+            }
+            div.add(button);
+        });
+        return div;
+    }
+
+    public static HtmlComponent createDoubleRoundTypeComponent(DoubleRoundType doubleRoundType) {
+        Div div = new Div();
+        Arrays.stream(DoubleRoundType.values()).forEach((t) -> {
+            TryButton button = new TryButton(DOUBLE_ROUND_TYPE_EVENT_ID, Collections.singletonMap(DOUBLE_ROUND_TYPE_ID, t), t.getName());
+            if (t == doubleRoundType) {
+                button.addClass(SELECTED_DOUBLE_ROUND_TYPE_CLAZZ);
+            }
+            div.add(button);
+        });
+        return div;
+    }
+
+    public static HtmlComponent createCardsComponent(ConcurrentLinkedQueue<Card> playerCard) {
+        Div div = new Div();
+        for (Card card : playerCard) {
+            div.add(new P(card.getFormattedName()));
+        }
+        return div;
+    }
+
+    public static HtmlComponent createDataComponent(NetworkHandler networkHandler, MainProto.GameSession gameData) {
+        Div div = new Div();
+        addData(div, Translator.INST.gameType, networkHandler.getLiveData().getGameType());
+        addData(div, Translator.INST.beginnerPlayer, getPlayerName(networkHandler.getLiveData().getBeginnerPlayer(), gameData, networkHandler.getLiveData()));
+        addData(div, Translator.INST.phase, networkHandler.getLiveData().getPhase().getName());
+        addData(div, Translator.INST.playerInTurn, getPlayerName(networkHandler.getLiveData().getPlayerTurn(), gameData, networkHandler.getLiveData()));
+
+        if (networkHandler.getLiveData().getPlayerActions().get(Actions.FOLD) != null) {
+            for (Douplet<Integer, String> folded : networkHandler.getLiveData().getPlayerActions().get(Actions.FOLD)) {
+                addData(div, getPlayerName(folded.getFirst(), gameData, networkHandler.getLiveData()) + Translator.INST.foldedTarock, getFormattedCardName(folded.getSecond()));
+            }
+        }
+
+        for (
+                Map.Entry<Integer, Integer> skartedTarock : networkHandler.getLiveData().getSkartedTarocks().entrySet()) {
+            addData(div, getPlayerName(skartedTarock.getKey(), gameData, networkHandler.getLiveData()) + Translator.INST.foldedTarock, "" + skartedTarock.getValue());
+        }
+
+        if (networkHandler.getLiveData().getPlayerActions().get(Actions.CALL) != null) {
+            for (Douplet<Integer, String> call : networkHandler.getLiveData().getPlayerActions().get(Actions.CALL)) {
+                addData(div, getPlayerName(call.getFirst(), gameData, networkHandler.getLiveData()) + Translator.INST.calledTarock, getFormattedCardName(call.getSecond()));
+            }
+        }
+
+        for (Map.Entry<Integer, Integer> entry : networkHandler.getLiveData().getCardsTakenUsers().entrySet()) {
+            addData(div, getPlayerName(entry.getKey(), gameData, networkHandler.getLiveData()) + Translator.INST.takenCards, "" + entry.getValue());
+        }
+        return div;
+    }
+
+    public static HtmlComponent createHudComponent(NetworkHandler networkHandler, MainProto.GameSession gameData) {
+        Div div = new Div();
+        for (Map.Entry<Integer, Boolean> info : networkHandler.getLiveData().getPlayerTeamInfo().entrySet()) {
+            addData(div, getPlayerName(info.getKey(), gameData, networkHandler.getLiveData()) + Translator.INST.isCaller, "" + info.getValue());
+        }
+        return div;
+    }
+
+    private static void addData(Div div, String name, String value) {
+        div.add(new P(name + ":"));
+        div.add(new P(value).addClass(DATA_VALUE_CLAZZ));
     }
 }

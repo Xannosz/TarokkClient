@@ -17,7 +17,7 @@ public class HudMetaPanel extends Panel {
         setLayoutManager(new GridLayout(2));
         if (!Util.anyNull(gameData)) {
             for (Map.Entry<Integer, Boolean> info : tuiClient.getServerLiveData().getPlayerTeamInfo().entrySet()) {
-                addData(this, getPlayerName(info.getKey(), gameData, tuiClient) + Translator.INST.isCaller, "" + info.getValue());
+                addData(this, getPlayerName(info.getKey(), gameData, tuiClient.getServerLiveData()) + Translator.INST.isCaller, "" + info.getValue());
             }
         }
     }

@@ -27,14 +27,14 @@ public class EndSubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
-        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient.getServerLiveData());
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(4));
         for (Map.Entry<Integer, Integer> playerPoints : tuiClient.getServerLiveData().getPlayerPoints().entrySet()) {
-            addData(panel, getPlayerName(playerPoints.getKey(), gameData, tuiClient) + Translator.INST.points, "" + playerPoints.getValue());
+            addData(panel, getPlayerName(playerPoints.getKey(), gameData, tuiClient.getServerLiveData()) + Translator.INST.points, "" + playerPoints.getValue());
         }
         for (Map.Entry<Integer, Integer> playerIncrementPoints : tuiClient.getServerLiveData().getIncrementPlayerPoints().entrySet()) {
-            addData(panel, getPlayerName(playerIncrementPoints.getKey(), gameData, tuiClient) + Translator.INST.incrementedPoints, "" + playerIncrementPoints.getValue());
+            addData(panel, getPlayerName(playerIncrementPoints.getKey(), gameData, tuiClient.getServerLiveData()) + Translator.INST.incrementedPoints, "" + playerIncrementPoints.getValue());
         }
         return panel;
     }

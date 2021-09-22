@@ -32,7 +32,7 @@ public class GamePlaySubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
-        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient.getServerLiveData());
         Panel panel = new Panel();
 
         card = new ArrayList<>(tuiClient.getServerLiveData().getPlayerCard());
@@ -41,7 +41,7 @@ public class GamePlaySubFrame extends SubFrame {
         playCard.setLayoutManager(new GridLayout(4));
         if (tuiClient.getServerLiveData().getPlayerActions().get(Actions.PLAY) != null) {
             for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getTurnPlayerActions()) {
-                addData(playCard, getPlayerName(play.getFirst(), gameData, tuiClient) + Translator.INST.playCard, getFormattedCardName(play.getSecond()));
+                addData(playCard, getPlayerName(play.getFirst(), gameData, tuiClient.getServerLiveData()) + Translator.INST.playCard, getFormattedCardName(play.getSecond()));
             }
             for (Douplet<Integer, String> play : tuiClient.getServerLiveData().getPlayerActions().get(Actions.PLAY)) {
                 if (gameData.getUserId(play.getFirst()) == tuiClient.getServerLiveData().getLoginResult().getUserId()) {

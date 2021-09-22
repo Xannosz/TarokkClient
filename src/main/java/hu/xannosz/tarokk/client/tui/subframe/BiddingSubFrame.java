@@ -41,7 +41,7 @@ public class BiddingSubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
-        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient.getServerLiveData());
         keyMapDictionary.clear();
         Panel panel = new Panel(new GridLayout(4));
 
@@ -51,7 +51,7 @@ public class BiddingSubFrame extends SubFrame {
         }
 
         for (Douplet<Integer, String> action : tuiClient.getServerLiveData().getPlayerActions().get(Actions.BID)) {
-            addData(panel, getPlayerName(action.getFirst(), gameData, tuiClient), biddingToString(action.getSecond()));
+            addData(panel, getPlayerName(action.getFirst(), gameData, tuiClient.getServerLiveData()), biddingToString(action.getSecond()));
         }
 
         for (int bid : tuiClient.getServerLiveData().getAvailableBids()) {

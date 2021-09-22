@@ -36,14 +36,14 @@ public class FoldingSubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
-        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient.getServerLiveData());
         Panel panel = new Panel();
         panel.setLayoutManager(new GridLayout(1));
 
         Panel foldDone = new Panel();
         foldDone.setLayoutManager(new GridLayout(4));
         for (int foldedUser : tuiClient.getServerLiveData().getFoldDone()) {
-            Util.addData(foldDone, Util.getPlayerName(foldedUser, gameData, tuiClient), Translator.INST.foldDone);
+            Util.addData(foldDone, Util.getPlayerName(foldedUser, gameData, tuiClient.getServerLiveData()), Translator.INST.foldDone);
         }
         panel.addComponent(foldDone);
 

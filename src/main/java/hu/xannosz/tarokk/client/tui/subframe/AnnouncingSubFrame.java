@@ -36,7 +36,7 @@ public class AnnouncingSubFrame extends SubFrame {
 
     @Override
     public Component getPanel() {
-        MainProto.GameSession gameData = getGameData(gameId, tuiClient);
+        MainProto.GameSession gameData = getGameData(gameId, tuiClient.getServerLiveData());
         Panel panel = new Panel();
 
         if (Util.anyNull(tuiClient.getServerLiveData().getAvailableAnnouncements())) {
@@ -51,7 +51,7 @@ public class AnnouncingSubFrame extends SubFrame {
         playerAnnouncing.setLayoutManager(new GridLayout(4));
         if (tuiClient.getServerLiveData().getPlayerActions().get(Actions.ANNOUNCE) != null) {
             for (Douplet<Integer, String> announce : tuiClient.getServerLiveData().getPlayerActions().get(Actions.ANNOUNCE)) {
-                addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, tuiClient) + Translator.INST.announce, announce.getSecond());
+                addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, tuiClient.getServerLiveData()) + Translator.INST.announce, announce.getSecond());
             }
         }
         panel.addComponent(playerAnnouncing);

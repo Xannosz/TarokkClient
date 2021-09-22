@@ -63,7 +63,7 @@ public class GameFrame extends Frame {
             frame.addComponent(new StatisticMetaPanel(statistic));
         }
 
-        gameData = getGameData(gameId, tuiClient);
+        gameData = getGameData(gameId, tuiClient.getServerLiveData());
 
         if (Util.anyNull(gameData)) {
             return;

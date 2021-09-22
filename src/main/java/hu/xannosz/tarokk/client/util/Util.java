@@ -13,6 +13,7 @@ import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.AnsiColors;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.ProtoConnection;
+import hu.xannosz.tarokk.client.network.ServerLiveData;
 import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
 import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.settings.LogSettings;
@@ -74,11 +75,11 @@ public class Util {
         return panel;
     }
 
-    public static String getPlayerName(int playerId, MainProto.GameSession gameData, TuiClient tuiClient) {
+    public static String getPlayerName(int playerId, MainProto.GameSession gameData, ServerLiveData serverLiveData) {
         if (gameData.getUserIdCount() <= playerId) {
             return "";
         }
-        MainProto.User user = tuiClient.getServerLiveData().getUsers().get(gameData.getUserId(playerId));
+        MainProto.User user = serverLiveData.getUsers().get(gameData.getUserId(playerId));
         if (user.getBot()) {
             return "Bot " + user.getName().replace("bot", "");
         } else {
@@ -127,9 +128,9 @@ public class Util {
         }
     }
 
-    public static MainProto.GameSession getGameData(int id, TuiClient tuiClient) {
+    public static MainProto.GameSession getGameData(int id, ServerLiveData serverLiveData) {
         MainProto.GameSession result = null;
-        for (MainProto.GameSession gameData : tuiClient.getServerLiveData().getGameSessions()) {
+        for (MainProto.GameSession gameData : serverLiveData.getGameSessions()) {
             if (id == gameData.getId()) {
                 result = gameData;
             }
