@@ -10,15 +10,16 @@ import static hu.xannosz.tarokk.client.gui.util.DataToComponent.createHudCompone
 
 public class HudWidget extends Widget {
 
-    private final MainProto.GameSession gameData;
+    private final int gameId;
 
-    public HudWidget(NetworkHandler networkHandler, MainProto.GameSession gameData) {
+    public HudWidget(NetworkHandler networkHandler, int gameId) {
         super(networkHandler);
-        this.gameData = gameData;
+        this.gameId = gameId;
     }
 
     @Override
     public HtmlComponent updateComponent() {
+        MainProto.GameSession gameData = Util.getGameData(gameId, networkHandler.getLiveData());
         if (!Util.anyNull(gameData)) {
             return createHudComponent(networkHandler, gameData);
         } else {

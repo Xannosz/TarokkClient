@@ -7,7 +7,10 @@ import hu.xannosz.tarokk.client.game.Actions;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.gui.subframe.BiddingSubFrame;
 import hu.xannosz.tarokk.client.network.NetworkHandler;
+import hu.xannosz.tarokk.client.network.ServerLiveData;
+import hu.xannosz.tarokk.client.util.Util;
 import hu.xannosz.tarokk.client.util.translator.Translator;
 import hu.xannosz.veneos.core.html.HtmlComponent;
 import hu.xannosz.veneos.core.html.box.Div;
@@ -180,8 +183,104 @@ public class DataToComponent {
         return div;
     }
 
+    public static HtmlComponent createStartGameComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
+        Div div = new Div();
+
+        div.add(new P(Translator.INST.type));
+        div.add(new P(gameData.getType()));
+
+        for (int i = 0; i < gameData.getUserIdCount(); i++) {
+            div.add(createUserPanel(gameData.getUserId(i), liveData));
+        }
+        for (int i = gameData.getUserIdCount(); i < 4; i++) {
+            div.add(new P(""));
+        }
+
+        div.add(new P(Translator.INST.status));
+        div.add(new P("" + gameData.getState()));
+        div.add(new TryButton(START_GAME_EVENT_ID, Translator.INST.startGame));
+
+        return div;
+    }
+
+    public static HtmlComponent createBiddingComponent(MainProto.GameSession gameData, ServerLiveData liveData,
+                                                       BiddingSubFrame biddingSubFrame) {
+        Div div = new Div();
+
+        if (Util.anyNull(liveData.getPlayerActions().get(Actions.BID),
+                liveData.getAvailableBids())) {
+            return div;
+        }
+
+        for (Douplet<Integer, String> action : liveData.getPlayerActions().get(Actions.BID)) {
+            addData(div, getPlayerName(action.getFirst(), gameData, liveData),
+                    biddingToString(action.getSecond(), biddingSubFrame));
+        }
+
+        for (int bid : liveData.getAvailableBids()) {
+            div.add(new TryButton(BIDDING_EVENT_ID, Collections.singletonMap(BIDDING_ID, bid), biddingToString(bid, biddingSubFrame)));
+        }
+
+        return div;
+    }
+
     private static void addData(Div div, String name, String value) {
         div.add(new P(name + ":"));
         div.add(new P(value).addClass(DATA_VALUE_CLAZZ));
+    }
+
+    private static HtmlComponent createUserPanel(int userId, ServerLiveData liveData) {
+        if (userId != 0) {
+            MainProto.User user = liveData.getUsers().get(userId);
+            if (user.getBot()) {
+                return new P(" Bot");
+            } else {
+                Div div = new Div();
+                div.add(new P(user.getName()));
+                if (user.getOnline()) {
+                    div.add(new P("" + Symbols.TRIANGLE_UP_POINTING_BLACK));
+                } else {
+                    div.add(new P("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK));
+                }
+                return div;
+            }
+        } else {
+            return new Div();
+        }
+    }
+
+    private String biddingToString(String action, BiddingSubFrame biddingSubFrame) {
+        if (action.equals("p")) {
+            return Translator.INST.pass;
+        }
+
+        return biddingToString(Integer.parseInt(action), biddingSubFrame);
+    }
+
+    private String biddingToString(int num, BiddingSubFrame biddingSubFrame) {
+        if (num == -1) {
+            return Translator.INST.pass;
+        }
+
+        if (num == biddingSubFrame.getLastBid()) {
+            return Translator.INST.hold;
+        }
+
+        biddingSubFrame.setLastBid(num);
+
+        if (num == 3) {
+            return Translator.INST.three;
+        }
+        if (num == 2) {
+            return Translator.INST.two;
+        }
+        if (num == 1) {
+            return Translator.INST.one;
+        }
+        if (num == 0) {
+            return Translator.INST.solo;
+        }
+
+        return Translator.INST.invalid + num;
     }
 }

@@ -10,15 +10,16 @@ import static hu.xannosz.tarokk.client.gui.util.DataToComponent.createDataCompon
 
 public class DataWidget extends Widget {
 
-    private final MainProto.GameSession gameData;
+    private final int gameId;
 
-    public DataWidget(NetworkHandler networkHandler, MainProto.GameSession gameData) {
+    public DataWidget(NetworkHandler networkHandler, int gameId) {
         super(networkHandler);
-        this.gameData = gameData;
+        this.gameId = gameId;
     }
 
     @Override
     public HtmlComponent updateComponent() {
+        MainProto.GameSession gameData = Util.getGameData(gameId, networkHandler.getLiveData());
         if (!Util.anyNull(networkHandler.getLiveData().getGameType(),
                 networkHandler.getLiveData().getPhase(),
                 networkHandler.getLiveData().getBeginnerPlayer(),

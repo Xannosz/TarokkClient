@@ -9,6 +9,8 @@ import hu.xannosz.tarokk.client.game.GamePhase;
 import hu.xannosz.tarokk.client.util.Util;
 import lombok.Getter;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -41,10 +43,10 @@ public class ServerLiveData implements ProtoConnection.MessageHandler {
     private final ConcurrentLinkedQueue<Douplet<Integer, String>> turnPlayerActions = new ConcurrentLinkedQueue<>();
     private final ConcurrentLinkedQueue<Douplet<Integer, String>> chat = new ConcurrentLinkedQueue<>();  //TODO implement chatting
 
-    private final Runnable callOnUpdate;
+    private final Set<Runnable> callOnUpdates = new HashSet<>();
 
-    public ServerLiveData(Runnable callOnUpdate) {
-        this.callOnUpdate = callOnUpdate;
+    public void addCallOnUpdate(Runnable callOnUpdate) {
+        callOnUpdates.add(callOnUpdate);
     }
 
     @Override
@@ -167,7 +169,9 @@ public class ServerLiveData implements ProtoConnection.MessageHandler {
                 Util.Log.logError("Message type not set: " + message);
                 return;
         }
-        callOnUpdate.run();
+        for (Runnable callOnUpdate : callOnUpdates) {
+            callOnUpdate.run();
+        }
     }
 
     public void clearGameData() {

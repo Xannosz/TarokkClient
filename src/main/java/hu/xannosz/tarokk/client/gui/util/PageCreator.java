@@ -4,6 +4,7 @@ import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
 import hu.xannosz.tarokk.client.util.translator.Translator;
+import hu.xannosz.veneos.core.html.HtmlComponent;
 import hu.xannosz.veneos.core.html.structure.Page;
 import hu.xannosz.veneos.trie.TryButton;
 import lombok.experimental.UtilityClass;
@@ -36,6 +37,15 @@ public class PageCreator {
         page.addComponent(DataToComponent.createDoubleRoundTypeComponent(doubleRoundType));
         page.addComponent(new TryButton(CREATE_GAME_EVENT_ID, Translator.INST.createGame));
         page.addComponent(new TryButton(CANCEL_EVENT_ID, Translator.INST.cancel));
+        return page;
+    }
+
+    public static Page createGamePage(HtmlComponent cards, HtmlComponent data, HtmlComponent subFrame, HtmlComponent hud) {
+        Page page = new Page();
+        page.addComponent(cards);
+        page.addComponent(data);
+        page.addComponent(subFrame);
+        page.addComponent(hud);
         return page;
     }
 }

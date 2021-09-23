@@ -16,7 +16,8 @@ public class NetworkHandler {
     private final ServerLiveData liveData;
 
     public NetworkHandler(Runnable runOnUpdate) throws IOException {
-        liveData = new ServerLiveData(runOnUpdate);
+        liveData = new ServerLiveData();
+        liveData.addCallOnUpdate(runOnUpdate);
         connection = Util.createProtoConnection(liveData);
     }
 

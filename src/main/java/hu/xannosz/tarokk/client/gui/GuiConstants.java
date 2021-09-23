@@ -12,6 +12,8 @@ public class GuiConstants {
     public static final String GAME_TYPE_EVENT_ID = "gameTypeEventId";
     public static final String DOUBLE_ROUND_TYPE_EVENT_ID = "doubleRoundTypeEventId";
     public static final String CANCEL_EVENT_ID = "cancelEventId";
+    public static final String START_GAME_EVENT_ID = "startGameEventId";
+    public static final String BIDDING_EVENT_ID = "biddingEventId";
 
     public static final String ENTER_KEY_CODE = "Enter";
     public static final String ARROW_UP_KEY_CODE = "ArrowUp";
@@ -31,4 +33,5 @@ public class GuiConstants {
     public static final String GAME_ID = "gameId";
     public static final String GAME_TYPE_ID = "gameTypeId";
     public static final String DOUBLE_ROUND_TYPE_ID = "doubleRoundTypeId";
+    public static final String BIDDING_ID = "biddingId";
 }
