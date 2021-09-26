@@ -3,11 +3,9 @@ package hu.xannosz.tarokk.client.gui.util;
 import com.googlecode.lanterna.Symbols;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
-import hu.xannosz.tarokk.client.game.Actions;
-import hu.xannosz.tarokk.client.game.Card;
-import hu.xannosz.tarokk.client.game.DoubleRoundType;
-import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.game.*;
 import hu.xannosz.tarokk.client.gui.subframe.BiddingSubFrame;
+import hu.xannosz.tarokk.client.gui.subframe.FoldingSubFrame;
 import hu.xannosz.tarokk.client.network.NetworkHandler;
 import hu.xannosz.tarokk.client.network.ServerLiveData;
 import hu.xannosz.tarokk.client.util.Util;
@@ -183,22 +181,30 @@ public class DataToComponent {
         return div;
     }
 
-    public static HtmlComponent createStartGameComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
+    public static HtmlComponent createAnnouncingComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
         Div div = new Div();
 
-        div.add(new P(Translator.INST.type));
-        div.add(new P(gameData.getType()));
-
-        for (int i = 0; i < gameData.getUserIdCount(); i++) {
-            div.add(createUserPanel(gameData.getUserId(i), liveData));
-        }
-        for (int i = gameData.getUserIdCount(); i < 4; i++) {
-            div.add(new P(""));
+        if (Util.anyNull(liveData.getAvailableAnnouncements())) {
+            return div;
         }
 
-        div.add(new P(Translator.INST.status));
-        div.add(new P("" + gameData.getState()));
-        div.add(new TryButton(START_GAME_EVENT_ID, Translator.INST.startGame));
+        List<Announcement> availableAnnouncing = new ArrayList<>(liveData.getAvailableAnnouncements());
+
+        Div playerAnnouncing = new Div();
+        if (liveData.getPlayerActions().get(Actions.ANNOUNCE) != null) {
+            for (Douplet<Integer, String> announce : liveData.getPlayerActions().get(Actions.ANNOUNCE)) {
+                addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, liveData) + Translator.INST.announce, announce.getSecond());
+            }
+        }
+        div.add(playerAnnouncing);
+
+        Div nextAnnouncing = new Div();
+        for (Announcement announcement : availableAnnouncing) {
+            nextAnnouncing.add(new TryButton(ANNOUNCING_EVENT_ID, Collections.singletonMap(ANNOUNCING_ID, announcement),
+                    announcement.toString()));
+        }
+        div.add(nextAnnouncing);
+        div.add(new TryButton(ANNOUNCING_EVENT_ID, Collections.singletonMap(ANNOUNCING_ID, null), Translator.INST.pass));
 
         return div;
     }
@@ -220,6 +226,116 @@ public class DataToComponent {
         for (int bid : liveData.getAvailableBids()) {
             div.add(new TryButton(BIDDING_EVENT_ID, Collections.singletonMap(BIDDING_ID, bid), biddingToString(bid, biddingSubFrame)));
         }
+
+        return div;
+    }
+
+    public static HtmlComponent createCallingComponent(ServerLiveData liveData) {
+        Div div = new Div();
+
+        if (Util.anyNull(liveData.getAvailableCalls())) {
+            return div;
+        }
+
+        List<Card> availableCards = new ArrayList<>(liveData.getAvailableCalls());
+
+        for (Card availableCard : availableCards) {
+            div.add(new TryButton(CALLING_EVENT_ID, Collections.singletonMap(CALLING_ID, availableCard), availableCard.getFormattedName()));
+        }
+
+        return div;
+    }
+
+    public static HtmlComponent createEndComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
+        Div div = new Div();
+
+        for (Map.Entry<Integer, Integer> playerPoints : liveData.getPlayerPoints().entrySet()) {
+            addData(div, getPlayerName(playerPoints.getKey(), gameData, liveData) + Translator.INST.points, "" + playerPoints.getValue());
+        }
+        for (Map.Entry<Integer, Integer> playerIncrementPoints : liveData.getIncrementPlayerPoints().entrySet()) {
+            addData(div, getPlayerName(playerIncrementPoints.getKey(), gameData, liveData) + Translator.INST.incrementedPoints, "" + playerIncrementPoints.getValue());
+        }
+
+        return div;
+    }
+
+    public static HtmlComponent createFoldingComponent(MainProto.GameSession gameData, ServerLiveData liveData,
+                                                       FoldingSubFrame foldingSubFrame) {
+        Div div = new Div();
+
+        Div foldDone = new Div();
+        for (int foldedUser : liveData.getFoldDone()) {
+            addData(foldDone, Util.getPlayerName(foldedUser, gameData, liveData), Translator.INST.foldDone);
+        }
+        div.add(foldDone);
+
+        div.add(new P(Translator.INST.cards));
+
+        List<Card> card = new ArrayList<>(liveData.getPlayerCard());
+        card.removeAll(foldingSubFrame.getFoldedCards());
+
+        Div cards = new Div();
+        for (Card value : card) {
+            cards.add(new TryButton(FOLDING_EVENT_ID, Collections.singletonMap(FOLDING_ID, value), value.getFormattedName()));
+        }
+        div.add(cards);
+
+        div.add(new P(Translator.INST.foldedCards));
+
+        Div foldedCards = new Div();
+        for (Card fCard : foldingSubFrame.getFoldedCards()) {
+            foldedCards.add(new P(fCard.getFormattedName()));
+        }
+        div.add(foldedCards);
+        div.add(new TryButton(SEND_FOLDING_EVENT_ID, Translator.INST.sendFolding));
+        div.add(new TryButton(RESET_FOLDING_EVENT_ID, Translator.INST.resetFolding));
+
+        return div;
+    }
+
+    public static HtmlComponent createGamePlayComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
+        Div div = new Div();
+
+        List<Card> card = new ArrayList<>(liveData.getPlayerCard());
+
+        Div playCard = new Div();
+        if (liveData.getPlayerActions().get(Actions.PLAY) != null) {
+            for (Douplet<Integer, String> play : liveData.getTurnPlayerActions()) {
+                addData(playCard, getPlayerName(play.getFirst(), gameData, liveData) + Translator.INST.playCard, getFormattedCardName(play.getSecond()));
+            }
+            for (Douplet<Integer, String> play : liveData.getPlayerActions().get(Actions.PLAY)) {
+                if (gameData.getUserId(play.getFirst()) == liveData.getLoginResult().getUserId()) {
+                    card.remove(Card.parseCard(play.getSecond()));
+                }
+            }
+        }
+        div.add(playCard);
+
+        Div cards = new Div();
+        for (Card value : card) {
+            cards.add(new TryButton(GAME_PLAY_EVENT_ID, Collections.singletonMap(GAME_PLAY_ID, value), value.getFormattedName()));
+        }
+        div.add(cards);
+
+        return div;
+    }
+
+    public static HtmlComponent createStartGameComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
+        Div div = new Div();
+
+        div.add(new P(Translator.INST.type));
+        div.add(new P(gameData.getType()));
+
+        for (int i = 0; i < gameData.getUserIdCount(); i++) {
+            div.add(createUserPanel(gameData.getUserId(i), liveData));
+        }
+        for (int i = gameData.getUserIdCount(); i < 4; i++) {
+            div.add(new P(""));
+        }
+
+        div.add(new P(Translator.INST.status));
+        div.add(new P("" + gameData.getState()));
+        div.add(new TryButton(START_GAME_EVENT_ID, Translator.INST.startGame));
 
         return div;
     }
