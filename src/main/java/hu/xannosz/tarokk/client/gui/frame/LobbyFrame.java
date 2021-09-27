@@ -5,6 +5,7 @@ import hu.xannosz.tarokk.client.gui.ConnectionsData;
 import hu.xannosz.tarokk.client.gui.Event;
 import hu.xannosz.tarokk.client.gui.util.PageCreator;
 import hu.xannosz.tarokk.client.network.NetworkHandler;
+import hu.xannosz.tarokk.client.util.Util;
 import hu.xannosz.veneos.core.html.structure.Page;
 
 import java.util.ArrayList;
@@ -23,9 +24,11 @@ public class LobbyFrame extends Frame {
 
     @Override
     public Page updatePage() {
-        gameSessions = new ArrayList<>(networkHandler.getLiveData().getGameSessions());
+        if (!Util.anyNull(networkHandler.getLiveData().getGameSessions())) {
+            gameSessions = new ArrayList<>(networkHandler.getLiveData().getGameSessions());
+        }
         return PageCreator.createLobbyPage(gameSessions, selectedGame,
-                networkHandler.getLiveData().getUsers(), networkHandler.getLiveData().getLoginResult().getUserId());
+                networkHandler.getLiveData().getUsers(), networkHandler.getLiveData().getLoginResult());
     }
 
     @Override

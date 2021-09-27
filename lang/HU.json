@@ -10,7 +10,7 @@
   "lobby": "Lobby",
   "hud": " HUD ",
   "backToLobby": "vissza a lobbyba",
-  "userId": "felhasználó ID:",
+  "userId": "felhasználó ID: ",
   "userName": "felhasználó név:",
   "loginNotSucceed": "Bejelentkezés nem sikerült.",
   "notLoggedIn": "Nincs bejelentkezve.",

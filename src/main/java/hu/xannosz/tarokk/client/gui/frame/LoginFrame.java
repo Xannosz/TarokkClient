@@ -5,6 +5,7 @@ import hu.xannosz.tarokk.client.gui.Event;
 import hu.xannosz.tarokk.client.gui.GuiConstants;
 import hu.xannosz.tarokk.client.gui.util.PageCreator;
 import hu.xannosz.tarokk.client.network.NetworkHandler;
+import hu.xannosz.tarokk.client.util.InternalData;
 import hu.xannosz.veneos.core.html.structure.Page;
 
 public class LoginFrame extends Frame {
@@ -19,10 +20,8 @@ public class LoginFrame extends Frame {
 
     @Override
     public void handleEvent(Event event) {
-        if (event.getEventId().equals(GuiConstants.LOGIN_EVENT_ID)) {
-            connectionsData.setFrame(new LobbyFrame(networkHandler, connectionsData));
-        }
-        if (event.getEventId().equals(GuiConstants.ENTER_KEY_CODE)) {
+        if (event.getEventId().equals(GuiConstants.LOGIN_EVENT_ID)||event.getEventId().equals(GuiConstants.ENTER_KEY_CODE)) {
+            networkHandler.fbLogin(InternalData.INSTANCE.getFaceBookToken());
             connectionsData.setFrame(new LobbyFrame(networkHandler, connectionsData));
         }
     }

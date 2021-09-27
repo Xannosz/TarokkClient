@@ -3,8 +3,10 @@ package hu.xannosz.tarokk.client.gui.util;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.tarokk.client.game.DoubleRoundType;
 import hu.xannosz.tarokk.client.game.GameType;
+import hu.xannosz.tarokk.client.util.Util;
 import hu.xannosz.tarokk.client.util.translator.Translator;
 import hu.xannosz.veneos.core.html.HtmlComponent;
+import hu.xannosz.veneos.core.html.str.P;
 import hu.xannosz.veneos.core.html.structure.Page;
 import hu.xannosz.veneos.trie.TryButton;
 import lombok.experimental.UtilityClass;
@@ -23,11 +25,21 @@ public class PageCreator {
     }
 
     public static Page createLobbyPage(List<MainProto.GameSession> gameSessions, int selectedGame,
-                                       ConcurrentMap<Integer, MainProto.User> users, int selfUserId) {
+                                       ConcurrentMap<Integer, MainProto.User> users, MainProto.LoginResult loginResult) {
         Page page = new Page();
-        page.addComponent(DataToComponent.createGameListComponent(gameSessions, users, selectedGame, selfUserId));
-        page.addComponent(DataToComponent.createNameListComponent(users, selfUserId));
-        page.addComponent(new TryButton(CREATE_GAME_EVENT_ID, Translator.INST.createGame));
+        if (Util.anyNull(loginResult)) {
+            page.addComponent(new P(Translator.INST.notLoggedIn));
+        } else {
+            page.addComponent(new P(Translator.INST.userId + loginResult.getUserId()));
+            if (loginResult.getUserId() == 0) {
+                page.addComponent(new P(Translator.INST.notLoggedIn));
+            }
+            if (!Util.anyNull(gameSessions, users)) {
+                page.addComponent(DataToComponent.createGameListComponent(gameSessions, users, selectedGame, loginResult.getUserId()));
+                page.addComponent(DataToComponent.createNameListComponent(users, loginResult.getUserId()));
+                page.addComponent(new TryButton(CREATE_GAME_EVENT_ID, Translator.INST.createGame));
+            }
+        }
         return page;
     }
 

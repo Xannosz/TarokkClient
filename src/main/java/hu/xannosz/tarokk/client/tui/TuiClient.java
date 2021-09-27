@@ -31,13 +31,14 @@ public class TuiClient implements WindowListener {
     @Getter
     private ProtoConnection connection;
     @Getter
-    private final ServerLiveData serverLiveData = new ServerLiveData(this::update);
+    private final ServerLiveData serverLiveData = new ServerLiveData();
     private final BasicWindow window = new BasicWindow();
 
     @Setter
     private Frame frame = new LobbyFrame(this);
 
     public TuiClient() {
+        serverLiveData.addCallOnUpdate(this::update);
         try {
             // start screen
             screen = Util.createScreen();
