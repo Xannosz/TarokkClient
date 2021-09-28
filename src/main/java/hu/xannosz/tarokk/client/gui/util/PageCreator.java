@@ -9,18 +9,24 @@ import hu.xannosz.veneos.core.html.HtmlComponent;
 import hu.xannosz.veneos.core.html.str.P;
 import hu.xannosz.veneos.core.html.structure.Page;
 import hu.xannosz.veneos.trie.TryButton;
+import hu.xannosz.veneos.util.Scripts;
 import lombok.experimental.UtilityClass;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import static hu.xannosz.tarokk.client.gui.GuiConstants.*;
+import static hu.xannosz.veneos.trie.RequestTypes.REFRESH_REQUEST;
 
 @UtilityClass
 public class PageCreator {
+
+    private static final String SCRIPT = Scripts.getCreateWebSocketScript("localhost:"+8400);
+
     public static Page createLoginPage() {
         Page page = new Page();
         page.addComponent(new TryButton(LOGIN_EVENT_ID, "Login"));
+        page.addScript(SCRIPT);
         return page;
     }
 

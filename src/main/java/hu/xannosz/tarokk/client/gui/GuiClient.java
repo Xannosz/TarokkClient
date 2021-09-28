@@ -18,6 +18,7 @@ public class GuiClient implements TryHandler {
     public GuiClient() {
         new VeneosServer().createServer(new VeneosServerConfig(this, 8000));
         webSocketServer = new TryWebSocketServer(8400, this);
+        webSocketServer.start();
     }
 
 
@@ -38,10 +39,6 @@ public class GuiClient implements TryHandler {
         if (requestBody.getRequestType().equals(RequestTypes.KEY_STROKE_REQUEST)) {
             connectionsDataMap.get(sessionId).handleEvent(
                     new Event(KeyStrokeEvent.getFromMap(requestBody.getAdditionalParams()).getCode(),new HashMap<>()));
-        }
-        if (requestBody.getRequestType().equals(RequestTypes.ON_CLOSE_WEB_SOCKET_REQUEST)) {
-            connectionsDataMap.remove(sessionId);
-            return new ResponseBody();
         }
         return new ResponseBody(connectionsDataMap.get(sessionId).updatePage());
     }
