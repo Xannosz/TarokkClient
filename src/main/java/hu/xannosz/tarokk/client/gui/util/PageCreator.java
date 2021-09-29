@@ -16,12 +16,11 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import static hu.xannosz.tarokk.client.gui.GuiConstants.*;
-import static hu.xannosz.veneos.trie.RequestTypes.REFRESH_REQUEST;
 
 @UtilityClass
 public class PageCreator {
 
-    private static final String SCRIPT = Scripts.getCreateWebSocketScript("localhost:"+8400);
+    private static final String SCRIPT = Scripts.getCreateWebSocketScript("localhost:" + 8400);
 
     public static Page createLoginPage() {
         Page page = new Page();
