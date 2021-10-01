@@ -31,6 +31,8 @@ public class GuiConstants {
     public static final HtmlClass OFFLINE_CLAZZ = new HtmlClass();
     public static final HtmlClass FRIEND_CLAZZ = new HtmlClass();
     public static final HtmlClass NON_FRIEND_CLAZZ = new HtmlClass();
+    public static final HtmlClass NAME_LIST_PANEL_CLAZZ = new HtmlClass();
+    public static final HtmlClass NAME_LIST_SUB_PANEL_CLAZZ = new HtmlClass();
     public static final HtmlClass SELECTED_GAME_CLAZZ = new HtmlClass();
     public static final HtmlClass SELECTED_GAME_TYPE_CLAZZ = new HtmlClass();
     public static final HtmlClass SELECTED_DOUBLE_ROUND_TYPE_CLAZZ = new HtmlClass();

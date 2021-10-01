@@ -24,6 +24,7 @@ public class PageCreator {
 
     public static Page createLoginPage() {
         Page page = new Page();
+        page.addTheme(ThemeCreator.createDefaultTheme());
         page.addComponent(new TryButton(LOGIN_EVENT_ID, "Login"));
         page.addScript(SCRIPT);
         return page;
@@ -32,6 +33,7 @@ public class PageCreator {
     public static Page createLobbyPage(List<MainProto.GameSession> gameSessions, int selectedGame,
                                        ConcurrentMap<Integer, MainProto.User> users, MainProto.LoginResult loginResult) {
         Page page = new Page();
+        page.addTheme(ThemeCreator.createDefaultTheme());
         if (Util.anyNull(loginResult)) {
             page.addComponent(new P(Translator.INST.notLoggedIn));
         } else {
@@ -50,6 +52,7 @@ public class PageCreator {
 
     public static Page createNewGamePage(GameType gameType, DoubleRoundType doubleRoundType) {
         Page page = new Page();
+        page.addTheme(ThemeCreator.createDefaultTheme());
         page.addComponent(DataToComponent.createGameTypeComponent(gameType));
         page.addComponent(DataToComponent.createDoubleRoundTypeComponent(doubleRoundType));
         page.addComponent(new TryButton(CREATE_GAME_EVENT_ID, Translator.INST.createGame));
@@ -57,12 +60,17 @@ public class PageCreator {
         return page;
     }
 
-    public static Page createGamePage(HtmlComponent cards, HtmlComponent data, HtmlComponent subFrame, HtmlComponent hud) {
+    public static Page createGamePage(HtmlComponent cards, HtmlComponent data, HtmlComponent subFrame, HtmlComponent hud, boolean end) {
         Page page = new Page();
+        page.addTheme(ThemeCreator.createDefaultTheme());
         page.addComponent(cards);
         page.addComponent(data);
         page.addComponent(subFrame);
         page.addComponent(hud);
+        page.addComponent(new TryButton(CANCEL_EVENT_ID, Translator.INST.cancel));
+        if (end) {
+            page.addComponent(new TryButton(START_GAME_EVENT_ID, Translator.INST.newGame));
+        }
         return page;
     }
 }

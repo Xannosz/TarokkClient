@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import static hu.xannosz.tarokk.client.gui.GuiConstants.CANCEL_EVENT_ID;
+import static hu.xannosz.tarokk.client.gui.GuiConstants.START_GAME_EVENT_ID;
 
 public class GameFrame extends Frame {
 
@@ -25,6 +26,7 @@ public class GameFrame extends Frame {
     private final DataWidget dataWidget;
     private final HudWidget hudWidget;
     private GamePhase lastPhase;
+    private boolean end;
 
     public GameFrame(NetworkHandler networkHandler, ConnectionsData connectionsData, int gameId) {
         super(networkHandler, connectionsData);
@@ -34,6 +36,7 @@ public class GameFrame extends Frame {
         this.hudWidget = new HudWidget(networkHandler, gameId);
         subFrame = new StartGameSubFrame(networkHandler, connectionsData, this);
         networkHandler.getLiveData().addCallOnUpdate(() -> {
+            end = false;
             if (networkHandler.getLiveData().getPhase() != lastPhase) {
                 lastPhase = networkHandler.getLiveData().getPhase();
                 switch (lastPhase) {
@@ -54,6 +57,7 @@ public class GameFrame extends Frame {
                         break;
                     case END:
                         subFrame = new EndSubFrame(networkHandler, connectionsData, this);
+                        end = true;
                         break;
                 }
             }
@@ -63,13 +67,16 @@ public class GameFrame extends Frame {
     @Override
     public Page updatePage() {
         return PageCreator.createGamePage(cardWidget.updateComponent(), dataWidget.updateComponent(),
-                subFrame.updateComponent(), hudWidget.updateComponent());
+                subFrame.updateComponent(), hudWidget.updateComponent(), end);
     }
 
     @Override
     public void handleEvent(Event event) {
         if (event.getEventId().equals(CANCEL_EVENT_ID)) {
             connectionsData.setFrame(new LobbyFrame(networkHandler, connectionsData));
+        }
+        if (event.getEventId().equals(START_GAME_EVENT_ID)) {
+            networkHandler.readyForNewGame();
         }
         subFrame.handleEvent(event);
     }

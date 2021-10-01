@@ -52,14 +52,14 @@ public class LobbyFrame extends Frame {
         }
 
         if (event.getEventId().equals(JOIN_GAME_EVENT_ID)) {
-            networkHandler.joinToGame((Integer) event.getAdditionalParams().get(GAME_ID));
-            connectionsData.setFrame(new GameFrame(networkHandler, connectionsData, (Integer) event.getAdditionalParams().get(GAME_ID)));
+            networkHandler.joinToGame(event.getAdditionalParam(GAME_ID, Integer.class));
+            connectionsData.setFrame(new GameFrame(networkHandler, connectionsData, event.getAdditionalParam(GAME_ID, Integer.class)));
         }
         if (event.getEventId().equals(CREATE_GAME_EVENT_ID)) {
             connectionsData.setFrame(new NewGameFrame(networkHandler, connectionsData));
         }
         if (event.getEventId().equals(DELETE_GAME_EVENT_ID)) {
-            networkHandler.deleteToGame((Integer) event.getAdditionalParams().get(GAME_ID));
+            networkHandler.deleteToGame(event.getAdditionalParam(GAME_ID, Integer.class));
         }
     }
 }

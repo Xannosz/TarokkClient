@@ -31,7 +31,7 @@ public class BiddingSubFrame extends SubFrame {
     @Override
     public void handleEvent(Event event) {
         if (event.getEventId().equals(GuiConstants.BIDDING_EVENT_ID)) {
-            networkHandler.bid((Integer) event.getAdditionalParams().get(GuiConstants.BIDDING_ID));
+            networkHandler.bid(event.getAdditionalParam(GuiConstants.BIDDING_ID, Integer.class));
         }
     }
 }

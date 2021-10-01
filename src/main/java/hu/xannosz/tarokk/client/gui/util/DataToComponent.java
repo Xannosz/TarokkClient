@@ -82,16 +82,17 @@ public class DataToComponent {
 
     public static HtmlComponent createUserComponent(MainProto.User user) {
         Div userDiv = new Div();
-        userDiv.add(new P(user.getName()));
+        userDiv.addClass(NAME_LIST_PANEL_CLAZZ);
+        userDiv.add(new P(user.getName()).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
         if (user.getOnline()) {
-            userDiv.add(new P(Translator.INST.online).addClass(ONLINE_CLAZZ));
+            userDiv.add(new P(Translator.INST.online).addClass(ONLINE_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
         } else {
-            userDiv.add(new P(Translator.INST.offline).addClass(OFFLINE_CLAZZ));
+            userDiv.add(new P(Translator.INST.offline).addClass(OFFLINE_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
         }
         if (user.getIsFriend()) {
-            userDiv.add(new P(Translator.INST.friend).addClass(FRIEND_CLAZZ));
+            userDiv.add(new P(Translator.INST.friend).addClass(FRIEND_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
         } else {
-            userDiv.add(new P(Translator.INST.notFriend).addClass(NON_FRIEND_CLAZZ));
+            userDiv.add(new P(Translator.INST.notFriend).addClass(NON_FRIEND_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
         }
         return userDiv;
     }
