@@ -1,6 +1,5 @@
 package hu.xannosz.tarokk.client.gui.util;
 
-import com.googlecode.lanterna.Symbols;
 import com.tisza.tarock.proto.MainProto;
 import hu.xannosz.microtools.pack.Douplet;
 import hu.xannosz.tarokk.client.game.*;
@@ -31,6 +30,7 @@ public class DataToComponent {
             List<MainProto.GameSession> gameSessions, ConcurrentMap<Integer, MainProto.User> users,
             int selectedGame, int selfUserId) {
         Div gameDiv = new Div();
+        gameDiv.addClass(GAME_LIST_CLAZZ);
         for (int i = 0; i < gameSessions.size(); i++) {
             if (selectedGame == i) {
                 gameDiv.add(createGameSessionComponent(gameSessions.get(i), users, selfUserId).addClass(SELECTED_GAME_CLAZZ));
@@ -54,6 +54,7 @@ public class DataToComponent {
 
     public static HtmlComponent createGameSessionComponent(MainProto.GameSession game, ConcurrentMap<Integer, MainProto.User> users, int selfUserId) {
         Div gameDiv = new Div();
+        gameDiv.addClass(GAME_SESSION_CLAZZ);
 
         gameDiv.add(new P(Translator.INST.type));
         gameDiv.add(new P(game.getType()));
@@ -72,7 +73,9 @@ public class DataToComponent {
         gameDiv.add(new P(Translator.INST.status));
         gameDiv.add(new P("" + game.getState()));
 
-        gameDiv.add(new TryButton(JOIN_GAME_EVENT_ID, Collections.singletonMap(GAME_ID, game.getId()), Translator.INST.joinToGame));
+        if (selfUserId != 0) {
+            gameDiv.add(new TryButton(JOIN_GAME_EVENT_ID, Collections.singletonMap(GAME_ID, game.getId()), Translator.INST.joinToGame));
+        }
         if (game.getUserIdList().contains(selfUserId)) {
             gameDiv.add(new TryButton(DELETE_GAME_EVENT_ID, Collections.singletonMap(GAME_ID, game.getId()), Translator.INST.deleteGame));
         }
@@ -83,16 +86,16 @@ public class DataToComponent {
     public static HtmlComponent createUserComponent(MainProto.User user) {
         Div userDiv = new Div();
         userDiv.addClass(NAME_LIST_PANEL_CLAZZ);
-        userDiv.add(new P(user.getName()).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
+        userDiv.add(new P(user.getName()));
         if (user.getOnline()) {
-            userDiv.add(new P(Translator.INST.online).addClass(ONLINE_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
+            userDiv.add(new P(Translator.INST.online).addClass(ONLINE_CLAZZ));
         } else {
-            userDiv.add(new P(Translator.INST.offline).addClass(OFFLINE_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
+            userDiv.add(new P(Translator.INST.offline).addClass(OFFLINE_CLAZZ));
         }
         if (user.getIsFriend()) {
-            userDiv.add(new P(Translator.INST.friend).addClass(FRIEND_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
+            userDiv.add(new P(Translator.INST.friend).addClass(FRIEND_CLAZZ));
         } else {
-            userDiv.add(new P(Translator.INST.notFriend).addClass(NON_FRIEND_CLAZZ).addClass(NAME_LIST_SUB_PANEL_CLAZZ));
+            userDiv.add(new P(Translator.INST.notFriend).addClass(NON_FRIEND_CLAZZ));
         }
         return userDiv;
     }
@@ -101,14 +104,11 @@ public class DataToComponent {
         if (user.getBot()) {
             return new P("Bot");
         } else {
-            Div userDiv = new Div();
-            userDiv.add(new P(user.getName()));
             if (user.getOnline()) {
-                userDiv.add(new P("" + Symbols.TRIANGLE_UP_POINTING_BLACK));
+                return new P(user.getName()).addClass(ONLINE_CLAZZ);
             } else {
-                userDiv.add(new P("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK));
+                return new P(user.getName()).addClass(OFFLINE_CLAZZ);
             }
-            return userDiv;
         }
     }
 
@@ -138,6 +138,7 @@ public class DataToComponent {
 
     public static HtmlComponent createCardsComponent(ConcurrentLinkedQueue<Card> playerCard) {
         Div div = new Div();
+        div.addClass(CARDS_COMPONENT_CLAZZ);
         for (Card card : playerCard) {
             div.add(new P(card.getFormattedName()));
         }
@@ -146,6 +147,7 @@ public class DataToComponent {
 
     public static HtmlComponent createDataComponent(NetworkHandler networkHandler, MainProto.GameSession gameData) {
         Div div = new Div();
+        div.addClass(DUAL_PANEL_CLAZZ);
         addData(div, Translator.INST.gameType, networkHandler.getLiveData().getGameType());
         addData(div, Translator.INST.beginnerPlayer, getPlayerName(networkHandler.getLiveData().getBeginnerPlayer(), gameData, networkHandler.getLiveData()));
         addData(div, Translator.INST.phase, networkHandler.getLiveData().getPhase().getName());
@@ -176,6 +178,7 @@ public class DataToComponent {
 
     public static HtmlComponent createHudComponent(NetworkHandler networkHandler, MainProto.GameSession gameData) {
         Div div = new Div();
+        div.addClass(DUAL_PANEL_CLAZZ);
         for (Map.Entry<Integer, Boolean> info : networkHandler.getLiveData().getPlayerTeamInfo().entrySet()) {
             addData(div, getPlayerName(info.getKey(), gameData, networkHandler.getLiveData()) + Translator.INST.isCaller, "" + info.getValue());
         }
@@ -192,6 +195,7 @@ public class DataToComponent {
         List<Announcement> availableAnnouncing = new ArrayList<>(liveData.getAvailableAnnouncements());
 
         Div playerAnnouncing = new Div();
+        playerAnnouncing.addClass(DUAL_PANEL_CLAZZ);
         if (liveData.getPlayerActions().get(Actions.ANNOUNCE) != null) {
             for (Douplet<Integer, String> announce : liveData.getPlayerActions().get(Actions.ANNOUNCE)) {
                 addData(playerAnnouncing, getPlayerName(announce.getFirst(), gameData, liveData) + Translator.INST.announce, announce.getSecond());
@@ -213,19 +217,19 @@ public class DataToComponent {
     public static HtmlComponent createBiddingComponent(MainProto.GameSession gameData, ServerLiveData liveData,
                                                        BiddingSubFrame biddingSubFrame) {
         Div div = new Div();
+        div.addClass(DUAL_PANEL_CLAZZ);
 
-        if (Util.anyNull(liveData.getPlayerActions().get(Actions.BID),
-                liveData.getAvailableBids())) {
-            return div;
+        if (!Util.anyNull(liveData.getPlayerActions().get(Actions.BID))) {
+            for (Douplet<Integer, String> action : liveData.getPlayerActions().get(Actions.BID)) {
+                addData(div, getPlayerName(action.getFirst(), gameData, liveData),
+                        biddingToString(action.getSecond(), biddingSubFrame));
+            }
         }
 
-        for (Douplet<Integer, String> action : liveData.getPlayerActions().get(Actions.BID)) {
-            addData(div, getPlayerName(action.getFirst(), gameData, liveData),
-                    biddingToString(action.getSecond(), biddingSubFrame));
-        }
-
-        for (int bid : liveData.getAvailableBids()) {
-            div.add(new TryButton(BIDDING_EVENT_ID, Collections.singletonMap(BIDDING_ID, bid), biddingToString(bid, biddingSubFrame)));
+        if (!Util.anyNull(liveData.getAvailableBids())) {
+            for (int bid : liveData.getAvailableBids()) {
+                div.add(new TryButton(BIDDING_EVENT_ID, Collections.singletonMap(BIDDING_ID, bid), biddingToString(bid, biddingSubFrame)));
+            }
         }
 
         return div;
@@ -249,6 +253,7 @@ public class DataToComponent {
 
     public static HtmlComponent createEndComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
         Div div = new Div();
+        div.addClass(DUAL_PANEL_CLAZZ);
 
         for (Map.Entry<Integer, Integer> playerPoints : liveData.getPlayerPoints().entrySet()) {
             addData(div, getPlayerName(playerPoints.getKey(), gameData, liveData) + Translator.INST.points, "" + playerPoints.getValue());
@@ -265,6 +270,7 @@ public class DataToComponent {
         Div div = new Div();
 
         Div foldDone = new Div();
+        foldDone.addClass(DUAL_PANEL_CLAZZ);
         for (int foldedUser : liveData.getFoldDone()) {
             addData(foldDone, Util.getPlayerName(foldedUser, gameData, liveData), Translator.INST.foldDone);
         }
@@ -300,6 +306,7 @@ public class DataToComponent {
         List<Card> card = new ArrayList<>(liveData.getPlayerCard());
 
         Div playCard = new Div();
+        playCard.addClass(DUAL_PANEL_CLAZZ);
         if (liveData.getPlayerActions().get(Actions.PLAY) != null) {
             for (Douplet<Integer, String> play : liveData.getTurnPlayerActions()) {
                 addData(playCard, getPlayerName(play.getFirst(), gameData, liveData) + Translator.INST.playCard, getFormattedCardName(play.getSecond()));
@@ -321,49 +328,9 @@ public class DataToComponent {
         return div;
     }
 
-    public static HtmlComponent createStartGameComponent(MainProto.GameSession gameData, ServerLiveData liveData) {
-        Div div = new Div();
-
-        div.add(new P(Translator.INST.type));
-        div.add(new P(gameData.getType()));
-
-        for (int i = 0; i < gameData.getUserIdCount(); i++) {
-            div.add(createUserPanel(gameData.getUserId(i), liveData));
-        }
-        for (int i = gameData.getUserIdCount(); i < 4; i++) {
-            div.add(new P(""));
-        }
-
-        div.add(new P(Translator.INST.status));
-        div.add(new P("" + gameData.getState()));
-        div.add(new TryButton(START_GAME_EVENT_ID, Translator.INST.startGame));
-
-        return div;
-    }
-
     private static void addData(Div div, String name, String value) {
         div.add(new P(name + ":"));
         div.add(new P(value).addClass(DATA_VALUE_CLAZZ));
-    }
-
-    private static HtmlComponent createUserPanel(int userId, ServerLiveData liveData) {
-        if (userId != 0) {
-            MainProto.User user = liveData.getUsers().get(userId);
-            if (user.getBot()) {
-                return new P(" Bot");
-            } else {
-                Div div = new Div();
-                div.add(new P(user.getName()));
-                if (user.getOnline()) {
-                    div.add(new P("" + Symbols.TRIANGLE_UP_POINTING_BLACK));
-                } else {
-                    div.add(new P("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK));
-                }
-                return div;
-            }
-        } else {
-            return new Div();
-        }
     }
 
     private String biddingToString(String action, BiddingSubFrame biddingSubFrame) {

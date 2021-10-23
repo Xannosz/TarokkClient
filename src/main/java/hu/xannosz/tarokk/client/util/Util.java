@@ -14,8 +14,6 @@ import hu.xannosz.microtools.AnsiColors;
 import hu.xannosz.tarokk.client.game.Card;
 import hu.xannosz.tarokk.client.network.ProtoConnection;
 import hu.xannosz.tarokk.client.network.ServerLiveData;
-import hu.xannosz.tarokk.client.tui.KeyMapDictionary;
-import hu.xannosz.tarokk.client.tui.TuiClient;
 import hu.xannosz.tarokk.client.util.settings.LogSettings;
 import lombok.experimental.UtilityClass;
 
@@ -59,22 +57,6 @@ public class Util {
         return new TerminalScreen(terminal);
     }
 
-    public static Panel formatActions(KeyMapDictionary dictionary) {
-        Panel panel = new Panel();
-        panel.setTheme(ThemeHandler.getFooterPanelTheme());
-
-        for (Map.Entry<String, String> entry : dictionary.getFunctionNames().entrySet()) {
-            Panel tag = new Panel();
-            tag.setLayoutManager(new GridLayout(3));
-            tag.addComponent(new Label("["));
-            tag.addComponent(new Label(entry.getKey()).setTheme(ThemeHandler.getKeyThemeFooterPanel()));
-            tag.addComponent(new Label("]: " + entry.getValue()));
-            panel.addComponent(tag);
-        }
-
-        return panel;
-    }
-
     public static String getPlayerName(int playerId, MainProto.GameSession gameData, ServerLiveData serverLiveData) {
         if (gameData.getUserIdCount() <= playerId) {
             return "";
@@ -106,26 +88,6 @@ public class Util {
     public static void addKeyWithCardToPanel(Panel panel, String key, Card card) {
         panel.addComponent(new Label(key + ":"));
         panel.addComponent(new Label(card.getFormattedName()).setTheme(ThemeHandler.getHighLightedThemeMainPanel()));
-    }
-
-    public static Component createUserPanel(int userId, TuiClient tuiClient) {
-        if (userId != 0) {
-            MainProto.User user = tuiClient.getServerLiveData().getUsers().get(userId);
-            if (user.getBot()) {
-                return new Label(" Bot").setTheme(ThemeHandler.getSubLightedThemeMainPanel());
-            } else {
-                Panel panel = new Panel(new GridLayout(2));
-                panel.addComponent(new Label(user.getName()));
-                if (user.getOnline()) {
-                    panel.addComponent(new Label("" + Symbols.TRIANGLE_UP_POINTING_BLACK).setTheme(ThemeHandler.getOnlineColorThemeMainPanel()));
-                } else {
-                    panel.addComponent(new Label("" + Symbols.TRIANGLE_DOWN_POINTING_BLACK).setTheme(ThemeHandler.getSubLightedThemeMainPanel()));
-                }
-                return panel;
-            }
-        } else {
-            return new Label("");
-        }
     }
 
     public static MainProto.GameSession getGameData(int id, ServerLiveData serverLiveData) {

@@ -32,11 +32,16 @@ public class GuiConstants {
     public static final HtmlClass FRIEND_CLAZZ = new HtmlClass();
     public static final HtmlClass NON_FRIEND_CLAZZ = new HtmlClass();
     public static final HtmlClass NAME_LIST_PANEL_CLAZZ = new HtmlClass();
-    public static final HtmlClass NAME_LIST_SUB_PANEL_CLAZZ = new HtmlClass();
     public static final HtmlClass SELECTED_GAME_CLAZZ = new HtmlClass();
     public static final HtmlClass SELECTED_GAME_TYPE_CLAZZ = new HtmlClass();
     public static final HtmlClass SELECTED_DOUBLE_ROUND_TYPE_CLAZZ = new HtmlClass();
     public static final HtmlClass DATA_VALUE_CLAZZ = new HtmlClass();
+    public static final HtmlClass GAME_LIST_CLAZZ = new HtmlClass();
+    public static final HtmlClass GAME_SESSION_CLAZZ = new HtmlClass();
+    public static final HtmlClass CONTAINER_CLAZZ = new HtmlClass();
+    public static final HtmlClass CONTAINER_SUB_CLAZZ = new HtmlClass();
+    public static final HtmlClass CARDS_COMPONENT_CLAZZ = new HtmlClass();
+    public static final HtmlClass DUAL_PANEL_CLAZZ = new HtmlClass();
 
     public static final String GAME_ID = "gameId";
     public static final String GAME_TYPE_ID = "gameTypeId";

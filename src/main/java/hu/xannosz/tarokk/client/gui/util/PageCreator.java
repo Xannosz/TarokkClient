@@ -6,6 +6,7 @@ import hu.xannosz.tarokk.client.game.GameType;
 import hu.xannosz.tarokk.client.util.Util;
 import hu.xannosz.tarokk.client.util.translator.Translator;
 import hu.xannosz.veneos.core.html.HtmlComponent;
+import hu.xannosz.veneos.core.html.box.Div;
 import hu.xannosz.veneos.core.html.str.P;
 import hu.xannosz.veneos.core.html.structure.Page;
 import hu.xannosz.veneos.trie.TryButton;
@@ -42,8 +43,11 @@ public class PageCreator {
                 page.addComponent(new P(Translator.INST.notLoggedIn));
             }
             if (!Util.anyNull(gameSessions, users)) {
-                page.addComponent(DataToComponent.createGameListComponent(gameSessions, users, selectedGame, loginResult.getUserId()));
-                page.addComponent(DataToComponent.createNameListComponent(users, loginResult.getUserId()));
+                Div container = new Div();
+                container.addClass(CONTAINER_CLAZZ);
+                container.add(DataToComponent.createGameListComponent(gameSessions, users, selectedGame, loginResult.getUserId()));
+                container.add(DataToComponent.createNameListComponent(users, loginResult.getUserId()));
+                page.addComponent(container);
                 page.addComponent(new TryButton(CREATE_GAME_EVENT_ID, Translator.INST.createGame));
             }
         }
@@ -63,14 +67,20 @@ public class PageCreator {
     public static Page createGamePage(HtmlComponent cards, HtmlComponent data, HtmlComponent subFrame, HtmlComponent hud, boolean end) {
         Page page = new Page();
         page.addTheme(ThemeCreator.createDefaultTheme());
-        page.addComponent(cards);
-        page.addComponent(data);
-        page.addComponent(subFrame);
-        page.addComponent(hud);
-        page.addComponent(new TryButton(CANCEL_EVENT_ID, Translator.INST.cancel));
+
+        Div container = new Div();
+        container.addClass(CONTAINER_CLAZZ);
+
+        container.add(cards.addClass(CONTAINER_SUB_CLAZZ));
+        container.add(data.addClass(CONTAINER_SUB_CLAZZ));
+        container.add(subFrame.addClass(CONTAINER_SUB_CLAZZ));
+        container.add(hud.addClass(CONTAINER_SUB_CLAZZ));
+        container.add(new TryButton(CANCEL_EVENT_ID, Translator.INST.cancel).addClass(CONTAINER_SUB_CLAZZ));
         if (end) {
-            page.addComponent(new TryButton(START_GAME_EVENT_ID, Translator.INST.newGame));
+            container.add(new TryButton(START_GAME_EVENT_ID, Translator.INST.newGame).addClass(CONTAINER_SUB_CLAZZ));
         }
+
+        page.addComponent(container);
         return page;
     }
 }
